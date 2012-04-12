@@ -1,16 +1,7 @@
 package com.traackr.elasticsearch
 
-trait ClusterAdmin extends Health with Nodes{
+trait ClusterAdmin extends Health with Nodes with State with Metadata {
   self: Indexer =>
-}
-
-trait Nodes {
-  self: Indexer =>
-  def cluster = client.admin.cluster
-  def restartNodes(nodes: String*) = cluster.prepareNodesRestart(nodes.toArray: _*).execute.actionGet
-  def shutdownNodes(nodes: String*) = cluster.prepareNodesShutdown(nodes.toArray: _*).execute.actionGet
-  def infoForNodes(nodes: String*) = cluster.prepareNodesInfo(nodes.toArray: _*).execute.actionGet
-  def statsForNodes(nodes: String*) = cluster.prepareNodesStats(nodes.toArray: _*).execute.actionGet
 }
 
 trait Health {
@@ -27,4 +18,32 @@ trait Health {
 
   def prepareHealth(indices: String*) =
     client.admin.cluster.prepareHealth(indices.toArray: _*)
+}
+
+trait Nodes {
+  self: Indexer =>
+  def cluster = client.admin.cluster
+  def restartNodes(nodes: String*) = cluster.prepareNodesRestart(nodes.toArray: _*).execute.actionGet
+  def shutdownNodes(nodes: String*) = cluster.prepareNodesShutdown(nodes.toArray: _*).execute.actionGet
+  def infoForNodes(nodes: String*) = cluster.prepareNodesInfo(nodes.toArray: _*).execute.actionGet
+  def statsForNodes(nodes: String*) = cluster.prepareNodesStats(nodes.toArray: _*).execute.actionGet
+}
+
+trait State {
+  self: Indexer =>
+  def state = state_send.actionGet
+  def state_send = state_prepare.execute
+  def state_prepare = client.admin.cluster.prepareState
+  def clusterState = state.state
+  def clusterName = state.clusterName
+}
+
+trait Metadata {
+  self: State =>
+  def metadata = clusterState.metaData
+  def metadataFor(index: String) = metadata.index(index)
+  def metadataFor(index: String, `type`: String) = metadata.index(index).mappings().get(`type`)
+  def fieldsOf(index: String, `type`: String) = {
+    metadataFor(index, `type`).sourceAsMap.get("properties").asInstanceOf[Map[String, Object]]
+  }
 }
