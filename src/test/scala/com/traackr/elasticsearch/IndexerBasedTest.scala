@@ -5,7 +5,7 @@ import org.elasticsearch.action.search._
 import org.elasticsearch.common.logging._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.index.query._, QueryBuilders._
-import com.traackr.util.Conversions._
+import scala.collection.JavaConversions._
 
 abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
     with BeforeAndAfterEach with BeforeAndAfterAll with OneInstancePerTest with UsingIndexer {
