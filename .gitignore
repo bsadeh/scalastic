@@ -1,0 +1,23 @@
+# eclipse
+.classpath
+.project
+.settings
+.scala_dependencies
+.cache
+
+# sbt
+project
+
+# building
+target
+build
+null
+tmp*
+temp*
+dist
+test-output
+build.log
+
+# running
+logs
+data
