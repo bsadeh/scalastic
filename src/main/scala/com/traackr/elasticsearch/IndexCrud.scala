@@ -2,6 +2,7 @@ package com.traackr.elasticsearch
 
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._
+import scalaz._, Scalaz._
 
 trait IndexCrud extends IndexCreate with IndexDelete with Exists with Aliases
     with Optimize with Flush with Refresh with Status with Stats
@@ -12,17 +13,17 @@ trait IndexCrud extends IndexCreate with IndexDelete with Exists with Aliases
 trait IndexCreate {
   self: Indexer =>
 
-  def createIndex(index: String, settings: String = "", mappings: Map[String, String] = Map()) = {
+  def createIndex(index: String, settings: Option[String] = None, mappings: Map[String, String] = Map()) = {
     createIndex_send(index, settings, mappings).actionGet
   }
 
-  def createIndex_send(index: String, settings: String = "", mappings: Map[String, String] = Map()) = {
+  def createIndex_send(index: String, settings: Option[String] = None, mappings: Map[String, String] = Map()) = {
     createIndex_prepare(index, settings, mappings).execute
   }
 
-  def createIndex_prepare(index: String, settings: String = "", mappings: Map[String, String] = Map()) = {
+  def createIndex_prepare(index: String, settings: Option[String] = None, mappings: Map[String, String] = Map()) = {
     val request = client.admin.indices.prepareCreate(index)
-    if (!settings.isEmpty) request.setSettings(settingsBuilder.loadFromSource(settings).build())
+    settings some { that => request.setSettings(settingsBuilder.loadFromSource(that).build()) }
     for ((kind, mapping) <- mappings) request.addMapping(kind, mapping)
     request
   }

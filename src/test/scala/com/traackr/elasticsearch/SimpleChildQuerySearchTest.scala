@@ -1,11 +1,12 @@
 package com.traackr.elasticsearch
 
+import org.scalatest._, matchers._
+import scalaz._, Scalaz._
 import org.elasticsearch.common.xcontent.XContentFactory._
 import org.elasticsearch.index.query.FilterBuilders._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.search.facet._, terms._, FacetBuilders._
 import org.elasticsearch.action.search._
-import org.scalatest._, matchers._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleChildQuerySearchTest extends IndexerBasedTest {
@@ -19,8 +20,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.putMapping(indexName, "grandchild", """{"type" : {"_parent" : {"type" : "child"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field" : "p_value1"}""")
-    indexer.index(indexName, "child", "c1", """{"c_field" : "c_value1"}""", parent = "p1")
-    indexer.index(indexName, "grandchild", "gc1", """{"gc_field": "gc_value1"}""", parent = "c1", routing = "gc1")
+    indexer.index(indexName, "child", "c1", """{"c_field" : "c_value1"}""", parent = "p1".some)
+    indexer.index(indexName, "grandchild", "gc1", """{"gc_field": "gc_value1"}""", parent = "c1".some, routing = "gc1".some)
     indexer.refresh()
     val filtered = filteredQuery(
       matchAllQuery,
@@ -34,11 +35,11 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
   test("simple child query") {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field" :  "p_value1"}""")
-    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1")
-    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1")
+    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1".some)
+    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1".some)
     indexer.index(indexName, "parent", "p2", """{"p_field" : "p_value2"}""")
-    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2")
-    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2")
+    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2".some)
+    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2".some)
     indexer.refresh()
     var response = indexer.search(query = idsQuery("child").ids("c1"), fields = Seq("_parent"))
     shouldHaveNoFailures(response)
@@ -134,11 +135,11 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
   test("_simple child query with flush") {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field" : "p_value1"}""")
-    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1")
-    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1")
+    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1".some)
+    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1".some)
     indexer.index(indexName, "parent", "p2", """{"p_field" : "p_value2"}""")
-    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2")
-    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2")
+    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2".some)
+    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2".some)
     indexer.flush()
     indexer.refresh()
     var response = search(topChildrenQuery("child", termQuery("c_field", "yellow")))
@@ -196,14 +197,14 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
   test("simple child query with flush and 3 shards") {
     val specialIndex = indexName + "_3_shards"
-    indexer.createIndex(specialIndex, """{"number_of_shards":3}""")
+    indexer.createIndex(specialIndex, settings="""{"number_of_shards":3}""".some)
     indexer.putMapping(specialIndex, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(specialIndex, "parent", "p1", """{"p_field" : "p_value1"}""")
-    indexer.index(specialIndex, "child", "c1", """{"c_field" : "red"}""", parent = "p1")
-    indexer.index(specialIndex, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1")
+    indexer.index(specialIndex, "child", "c1", """{"c_field" : "red"}""", parent = "p1".some)
+    indexer.index(specialIndex, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1".some)
     indexer.index(specialIndex, "parent", "p2", """{"p_field" : "p_value2"}""")
-    indexer.index(specialIndex, "child", "c3", """{"c_field" : "blue"}""", parent = "p2")
-    indexer.index(specialIndex, "child", "c4", """{"c_field" : "red"}""", parent = "p2")
+    indexer.index(specialIndex, "child", "c3", """{"c_field" : "blue"}""", parent = "p2".some)
+    indexer.index(specialIndex, "child", "c4", """{"c_field" : "red"}""", parent = "p2".some)
     indexer.refresh()
 
     var response = search(topChildrenQuery("child", termQuery("c_field", "yellow")))
@@ -262,11 +263,11 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
   test("scoped facet") {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field" : "p_value1"}""")
-    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1")
-    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1")
+    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1".some)
+    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1".some)
     indexer.index(indexName, "parent", "p2", """{"p_field" : "p_value2"}""")
-    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2")
-    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2")
+    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2".some)
+    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2".some)
     indexer.refresh()
     val response = indexer.search(
       query = topChildrenQuery("child", boolQuery.should(termQuery("c_field", "red")).should(termQuery("c_field", "yellow"))).scope("child1"),
@@ -287,11 +288,11 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
   test("deleted parent") {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field" : "p_value1"}""")
-    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1")
-    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1")
+    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1".some)
+    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1".some)
     indexer.index(indexName, "parent", "p2", """{"p_field" : "p_value2"}""")
-    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2")
-    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2")
+    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2".some)
+    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2".some)
     indexer.refresh()
 
     // top children query
@@ -333,15 +334,15 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
   test("dfs search type") {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field": "p_value1"}""")
-    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1")
-    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1")
+    indexer.index(indexName, "child", "c1", """{"c_field" : "red"}""", parent = "p1".some)
+    indexer.index(indexName, "child", "c2", """{"c_field" : "yellow"}""", parent = "p1".some)
     indexer.index(indexName, "parent", "p2", """{"p_field" : "p_value2"}""")
-    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2")
-    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2")
+    indexer.index(indexName, "child", "c3", """{"c_field" : "blue"}""", parent = "p2".some)
+    indexer.index(indexName, "child", "c4", """{"c_field" : "red"}""", parent = "p2".some)
     indexer.refresh()
     val response = indexer.search(
       query = boolQuery.mustNot(hasChildQuery("child", boolQuery.should(queryString("c_field:*")))),
-      searchType = SearchType.DFS_QUERY_THEN_FETCH)
+      searchType = SearchType.DFS_QUERY_THEN_FETCH.some)
     response.shardFailures.length should be === (0)
   }
 }

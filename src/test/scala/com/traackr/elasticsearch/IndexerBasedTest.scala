@@ -1,6 +1,7 @@
 package com.traackr.elasticsearch
 
 import org.scalatest._, matchers._
+import scalaz._, Scalaz._
 import org.elasticsearch.action.search._
 import org.elasticsearch.common.logging._
 import org.elasticsearch.common.settings.ImmutableSettings._
@@ -25,7 +26,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   }
 
   def createDefaultIndex() {
-    indexer.createIndex(index = indexName, settings = """{"number_of_shards":1}""")
+    indexer.createIndex(index = indexName, settings="""{"number_of_shards":1}""".some)
     indexer.waitTillActive()
   }
 

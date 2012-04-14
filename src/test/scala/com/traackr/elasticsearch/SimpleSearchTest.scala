@@ -1,8 +1,9 @@
 package com.traackr.elasticsearch
 
+import org.scalatest._, matchers._
+import scalaz._, Scalaz._
 import org.elasticsearch.common.xcontent.XContentFactory._
 import org.elasticsearch.index.query.QueryBuilders._
-import org.scalatest._, matchers._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleSearchTest extends IndexerBasedTest {
@@ -90,7 +91,7 @@ class SimpleSearchTest extends IndexerBasedTest {
   
   test("dateRange with upper inclusive disabled") {
     val specialIndex = indexName + "_with_upper_inclusive_disabled"
-    indexer.createIndex(specialIndex, settings = "{\"index.mapping.date.parse_upper_inclusive\":false}")
+    indexer.createIndex(specialIndex, settings = "{\"index.mapping.date.parse_upper_inclusive\":false}".some)
     indexer.index(specialIndex, "type1", "1", """{"field":"2010-01-05T02:00"}""")
     indexer.index(specialIndex, "type1", "2", """{"field":"2010-01-06T02:00"}""")
     indexer.refresh()

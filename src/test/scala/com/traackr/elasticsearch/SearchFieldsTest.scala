@@ -1,11 +1,11 @@
 package com.traackr.elasticsearch
 
+import org.scalatest._, matchers._
 import org.elasticsearch.common.xcontent.XContentFactory._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.search._
 import org.elasticsearch.common.collect._
 import org.elasticsearch.search.sort._
-import org.scalatest._, matchers._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleFieldsTest extends IndexerBasedTest {
