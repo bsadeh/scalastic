@@ -5,6 +5,8 @@ import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.action._, index._, bulk._
 import org.elasticsearch.action.support.replication._
 import net.liftweb.json._
+import scala.collection._, JavaConversions._
+import scalaz._, Scalaz._
 
 trait Indexing extends Index with IndexInBulk with Searching with Count with Get with Multiget with Delete {
   self: Indexer =>
@@ -91,19 +93,35 @@ trait MoreLikeThis {
   }
 }
 
-//todo: add script+lang+parameters
 trait Update {
   self: Indexer =>
-  def update(index: String, `type`: String, id: String, parent: String = null, percolate: String = "*", replicationType: ReplicationType = ReplicationType.DEFAULT, consistencyLevel: WriteConsistencyLevel = WriteConsistencyLevel.DEFAULT) =
-    update_send(index, `type`, id, parent, percolate, replicationType, consistencyLevel).actionGet
-  def update_send(index: String, `type`: String, id: String, parent: String = null, percolate: String = "*", replicationType: ReplicationType = ReplicationType.DEFAULT, consistencyLevel: WriteConsistencyLevel = WriteConsistencyLevel.DEFAULT) =
-    update_prepare(index, `type`, id, parent, percolate, replicationType, consistencyLevel).execute
-  def update_prepare(index: String, `type`: String, id: String, parent: String = null, percolate: String = "*", replicationType: ReplicationType = ReplicationType.DEFAULT, consistencyLevel: WriteConsistencyLevel = WriteConsistencyLevel.DEFAULT) = {
+  def update(
+    index: String, `type`: String, id: String, parent: Option[String] = None,
+    script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
+    percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) =
+    update_send(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).actionGet
+  def update_send(
+    index: String, `type`: String, id: String, parent: Option[String] = None,
+    script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
+    percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) =
+    update_prepare(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).execute
+  def update_prepare(
+    index: String, `type`: String, id: String, parent: Option[String] = None,
+    script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
+    percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) = {
     val request = client.prepareUpdate(index, `type`, id)
-    request.setParent(parent)
-    request.setPercolate(percolate)
-    request.setReplicationType(replicationType)
-    request.setConsistencyLevel(consistencyLevel)
+    parent some { request.setParent(_) }
+    script some { that =>
+      request.setScript(that)
+      request.setScriptParams(scriptParams)
+      scriptLanguage some { request.setScriptLang(_) }
+    }
+    percolate some { request.setPercolate(_) }
+    replicationType some { request.setReplicationType(_) }
+    consistencyLevel some { request.setConsistencyLevel(_) }
+// revisit: should we do this:
+//    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
+//    request.setConsistencyLevel(consistencyLevel some { that => that } none { WriteConsistencyLevel.DEFAULT })
     request
   }
 }
