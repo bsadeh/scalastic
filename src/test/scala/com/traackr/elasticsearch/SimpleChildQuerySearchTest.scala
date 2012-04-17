@@ -342,7 +342,7 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
     indexer.refresh()
     val response = indexer.search(
       query = boolQuery.mustNot(hasChildQuery("child", boolQuery.should(queryString("c_field:*")))),
-      searchType = SearchType.DFS_QUERY_THEN_FETCH)
+      searchType = SearchType.DFS_QUERY_THEN_FETCH.some)
     response.shardFailures.length should be === (0)
   }
 }

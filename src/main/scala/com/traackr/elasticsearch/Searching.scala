@@ -5,6 +5,7 @@ import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.common.xcontent._
 import org.elasticsearch.search._, sort._, facet._, terms._
 import scala.collection._, JavaConversions._
+import scalaz._, Scalaz._
 
 trait Searching extends Query with Search with Multisearch with Percolate {
   self: Indexer =>
@@ -24,56 +25,63 @@ trait Search {
   type PartialField = Tuple3[String, String, String]
 
   def search(
-    indices: Seq[String] = Seq(), types: Seq[String] = Seq(),
+    indices: Seq[String] = Seq(),
+    types: Seq[String] = Seq(), 
+    filter: Map[String, Object] = Map(),
     query: QueryBuilder = matchAllQuery,
     fields: Seq[String] = Seq(),
     scriptFields: Seq[ScriptField] = Seq(),
     partialFields: Seq[PartialField] = Seq(),
     facets: Seq[TermsFacetBuilder] = Seq(),
     sorting: Map[String, SortOrder] = Map(),
-    from: Int = 0, size: Int = 10,
-    searchType: SearchType = SearchType.DEFAULT, explain: Boolean = false) = {
-    search_send(indices, types, query, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).actionGet
+    from: Option[Int] = None, size: Option[Int] = None,
+    searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
+    search_send(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).actionGet
   }
 
   def search_send(
-    indices: Seq[String] = Seq(), types: Seq[String] = Seq(),
-    query: QueryBuilder = matchAllQuery,
+    indices: Seq[String] = Seq(),
+    types: Seq[String] = Seq(),
+    query: QueryBuilder = matchAllQuery, 
+    filter: Map[String, Object] = Map(),
     fields: Seq[String] = Seq(),
     scriptFields: Seq[ScriptField] = Seq(),
     partialFields: Seq[PartialField] = Seq(),
     facets: Seq[TermsFacetBuilder] = Seq(),
     sorting: Map[String, SortOrder] = Map(),
-    from: Int = 0, size: Int = 10,
-    searchType: SearchType = SearchType.DEFAULT, explain: Boolean = false) = {
-    search_prepare(indices, types, query, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).execute
+    from: Option[Int] = None, size: Option[Int] = None,
+    searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
+    search_prepare(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).execute
   }
 
   def search_prepare(
-    indices: Seq[String] = Seq(), types: Seq[String] = Seq(),
-    query: QueryBuilder = matchAllQuery,
+    indices: Seq[String] = Seq(),
+    types: Seq[String] = Seq(),
+    query: QueryBuilder = matchAllQuery, 
+    filter: Map[String, Object] = Map(),
     fields: Seq[String] = Seq(),
     scriptFields: Seq[ScriptField] = Seq(),
     partialFields: Seq[PartialField] = Seq(),
     //todo: need to allow for includes/excludes, such as: partialFields: Seq[Tuple3[String, Seq[String], Seq[String]]] = Seq(),
     facets: Seq[TermsFacetBuilder] = Seq(),
     sorting: Map[String, SortOrder] = Map(),
-    from: Int = 0, size: Int = 10,
-    searchType: SearchType = SearchType.DEFAULT, explain: Boolean = false) = {
+    from: Option[Int] = None, size: Option[Int] = None,
+    searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
+//    request.setFilter(filter)
     for (each <- fields) request.addField(each)
     for ((field, script, parameters) <- scriptFields)
       request.addScriptField(field, script, if (parameters == null) null else parameters)
     for ((name, include, exclude) <- partialFields) request.addPartialField(name, include, exclude)
     for (each <- facets) request.addFacet(each)
     for ((field, order) <- sorting) request.addSort(field, order)
-    request.setFrom(from.intValue)
-    request.setSize(size.intValue)
-    request.setSearchType(searchType)
-    request.setExplain(explain)
+    from some { request.setFrom(_) }
+    size some { request.setSize(_) }
+    searchType some { request.setSearchType(_) }
+    explain some { request.setExplain(_) }
     request
   }
 }
