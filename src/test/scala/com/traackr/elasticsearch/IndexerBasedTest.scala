@@ -19,6 +19,8 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
 
   override def beforeEach {
     indexer_beforeEach
+    println("before each: " + indexer.count())
+//    indexer.count() should be === 0
   }
 
   override def afterAll {
@@ -26,12 +28,12 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   }
 
   def createDefaultIndex() {
-    indexer.createIndex(index = indexName, settings="""{"number_of_shards":1}""".some)
+    indexer.createIndex(index = indexName, settings = """{"number_of_shards": 1}""".some)
     indexer.waitTillActive()
   }
 
   def search(query: String): SearchResponse = {
-    search(queryString(query))
+    indexer.search(query = queryString(query))
   }
 
   def search(queryBuilder: QueryBuilder): SearchResponse = {

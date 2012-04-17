@@ -26,7 +26,8 @@ trait Search {
 
   def search(
     indices: Seq[String] = Seq(),
-    types: Seq[String] = Seq(),
+    types: Seq[String] = Seq(), 
+    filter: Map[String, Object] = Map(),
     query: QueryBuilder = matchAllQuery,
     fields: Seq[String] = Seq(),
     scriptFields: Seq[ScriptField] = Seq(),
@@ -35,13 +36,14 @@ trait Search {
     sorting: Map[String, SortOrder] = Map(),
     from: Option[Int] = None, size: Option[Int] = None,
     searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
-    search_send(indices, types, query, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).actionGet
+    search_send(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).actionGet
   }
 
   def search_send(
     indices: Seq[String] = Seq(),
     types: Seq[String] = Seq(),
-    query: QueryBuilder = matchAllQuery,
+    query: QueryBuilder = matchAllQuery, 
+    filter: Map[String, Object] = Map(),
     fields: Seq[String] = Seq(),
     scriptFields: Seq[ScriptField] = Seq(),
     partialFields: Seq[PartialField] = Seq(),
@@ -49,13 +51,14 @@ trait Search {
     sorting: Map[String, SortOrder] = Map(),
     from: Option[Int] = None, size: Option[Int] = None,
     searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
-    search_prepare(indices, types, query, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).execute
+    search_prepare(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).execute
   }
 
   def search_prepare(
     indices: Seq[String] = Seq(),
     types: Seq[String] = Seq(),
-    query: QueryBuilder = matchAllQuery,
+    query: QueryBuilder = matchAllQuery, 
+    filter: Map[String, Object] = Map(),
     fields: Seq[String] = Seq(),
     scriptFields: Seq[ScriptField] = Seq(),
     partialFields: Seq[PartialField] = Seq(),
@@ -68,6 +71,7 @@ trait Search {
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
+//    request.setFilter(filter)
     for (each <- fields) request.addField(each)
     for ((field, script, parameters) <- scriptFields)
       request.addScriptField(field, script, if (parameters == null) null else parameters)

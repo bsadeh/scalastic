@@ -61,8 +61,8 @@ class SimpleQueryTest extends IndexerBasedTest {
     indexer.index(indexName, "type1", "3", """{"field2": "value2_3"}""")
     indexer.index(indexName, "type1", "4", """{"field3": "value3_4"}""")
     indexer.refresh()
-    val response = indexer.search(query = filteredQuery(matchAllQuery, limitFilter(2)))
-    response.hits.totalHits should be === (2)
+    indexer.search().hits.totalHits should be === (4)
+    indexer.search(query = filteredQuery(matchAllQuery, limitFilter(2))).hits.totalHits should be === (2)
   }
 
   test("pass query as json string") {

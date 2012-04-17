@@ -38,7 +38,7 @@ trait IndexDelete {
 
 trait Exists {
   self: Indexer =>
-  def exists(indices: String*) = exists_send(indices.toArray: _*).actionGet
+  def exists(indices: String*) = exists_send(indices.toArray: _*).actionGet.exists
   def exists_send(indices: String*) = exists_prepare(indices.toArray: _*).execute
   def exists_prepare(indices: String*) = client.admin.indices.prepareExists(indices.toArray: _*)
 }
