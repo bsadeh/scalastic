@@ -33,10 +33,9 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
   def start: Indexer
   def stop
 
-  def catchUpOn(`type`: String, bar: Int, seed: Int = 1) = catchUpOnAll(Seq(`type`), bar, seed)
-  def catchUpOnAll(types: Seq[String] = Seq(), bar: Int, seed: Int = 1) = {
+  def catchUpOn(`type`: String, bar: Int, seed: Int = 1) = {
     var factor = seed
-    while (count(types = types) < bar) {
+    while (count(types = Seq(`type`)) < bar) {
       println("catching up in %s sec ...".format(factor))
       Thread sleep factor * 1000
       factor *= 2

@@ -5,7 +5,7 @@ trait UsingIndexer {
 
   def createIndexer = Indexer.local
 
-  def indexName = getClass.getSimpleName().toLowerCase
+  def indexName = getClass.getSimpleName.toLowerCase
 
   def indexer_beforeAll = { indexer = createIndexer.start }
 
