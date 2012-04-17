@@ -5,7 +5,7 @@ version := "0.0.2-SNAPSHOT"
 scalaVersion := "2.9.1" 
 
 
-libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.19.1"
+libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.19.2"
 	
 libraryDependencies += "net.liftweb" %% "lift-json" % "2.4"
 	
