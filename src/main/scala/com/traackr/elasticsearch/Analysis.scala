@@ -1,22 +1,20 @@
 package com.traackr.elasticsearch
 
-import scalaz._, Scalaz._
-
 trait Analysis {
   self: Indexer =>
-  def analyze(text: String, index: Option[String] = None, field: Option[String] = None, tokenizer: Option[String] = None, tokenFilters: Seq[String] = Seq(), analyzer: Option[String] = None) = analyze_send(text, index, field, tokenizer, tokenFilters, analyzer).actionGet
-  def analyze_send(text: String, index: Option[String] = None, field: Option[String] = None, tokenizer: Option[String] = None, tokenFilters: Seq[String] = Seq(), analyzer: Option[String] = None) = analyze_prepare(text, index, field, tokenizer, tokenFilters, analyzer).execute
-  def analyze_prepare(text: String, index: Option[String] = None, field: Option[String] = None, tokenizer: Option[String] = None, tokenFilters: Seq[String] = Seq(), analyzer: Option[String] = None) = {
+  def analyze(text: String, index: String = null, field: String = null, tokenizer: String = null, tokenFilters: Seq[String] = Seq(), analyzer: String = null) = analyze_send(text, index, field, tokenizer, tokenFilters, analyzer).actionGet
+  def analyze_send(text: String, index: String = null, field: String = null, tokenizer: String = null, tokenFilters: Seq[String] = Seq(), analyzer: String = null) = analyze_prepare(text, index, field, tokenizer, tokenFilters, analyzer).execute
+  def analyze_prepare(text: String, index: String = null, field: String = null, tokenizer: String = null, tokenFilters: Seq[String] = Seq(), analyzer: String = null) = {
     val request = client.admin.indices.prepareAnalyze(text)
-    index some { that =>
-      request.setIndex(that)
-      field some { request.setField(_) }
+    if (index != null) {
+      request.setIndex(index)
+      if (field != null) request.setField(field)
     }
-    tokenizer some { that =>
-      request.setTokenizer(that)
+    if (tokenizer != null) {
+      request.setTokenizer(tokenizer)
       request.setTokenFilters(tokenFilters.toArray: _*)
     }
-    analyzer some { request.setAnalyzer(_) }
+    if (analyzer != null) request.setAnalyzer(analyzer)
     request
   }
 }

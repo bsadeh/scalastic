@@ -75,14 +75,14 @@ class ParentChildQueryTest extends IndexerBasedTest {
 	    "publishedDate":"2012-01-11T12:27:00"
     }
     """
-    indexer.index(indexName, "post", "1", properties1, parent = "1".some)
+    indexer.index(indexName, "post", "1", properties1, parent = "1")
     val properties2 = """
     {
 	    "content":"Beautiful day in SF today: biked from Fisherman s Warf to Sausalito over the GG Bridge, and had lunch at Cafe Piccolo pic.twitter.com/vyhHOyAd",
 	    "publishedDate":"2012-01-28T18:14:00"
     }
     """
-    indexer.index(indexName, "post", "2", properties2, parent = "1".some)
+    indexer.index(indexName, "post", "2", properties2, parent = "1")
     indexer.refresh()
   }
 }
