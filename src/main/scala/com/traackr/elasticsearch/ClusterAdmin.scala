@@ -34,13 +34,11 @@ trait State {
   def state = state_send.actionGet
   def state_send = state_prepare.execute
   def state_prepare = client.admin.cluster.prepareState
-  def clusterState = state.state
-  def clusterName = state.clusterName
 }
 
 trait Metadata {
   self: State =>
-  def metadata = clusterState.metaData
+  def metadata = state.state.metaData
   def metadataFor(index: String) = metadata.index(index)
   def metadataFor(index: String, `type`: String) = metadata.index(index).mappings().get(`type`)
   def fieldsOf(index: String, `type`: String) = {
