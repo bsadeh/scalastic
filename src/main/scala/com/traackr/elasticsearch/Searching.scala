@@ -71,7 +71,7 @@ trait Search {
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
-//    request.setFilter(filter)
+    if (!filter.isEmpty) request.setFilter(filter)
     for (each <- fields) request.addField(each)
     for ((field, script, parameters) <- scriptFields)
       request.addScriptField(field, script, if (parameters == null) null else parameters)

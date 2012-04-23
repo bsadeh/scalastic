@@ -45,7 +45,7 @@
          <artifactId>scalaz-core_${scala.version}</artifactId>
          <version>6.0.4</version>
       </dependency>
-      
+
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
@@ -60,92 +60,47 @@
       </dependency>
    </dependencies>
 
-   <reporting>
+   <build>
       <plugins>
+         <plugin>
+            <groupId>org.scala-tools</groupId>
+            <artifactId>maven-scala-plugin</artifactId>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>compile</goal>
+                     <goal>testCompile</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-               <includes>
-                  <include>**/*Spec.class</include>
-                  <include>**/*Test.class</include>
-               </includes>
-            </configuration>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.3.1</version>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>test-jar</goal>
+                  </goals>
+               </execution>
+            </executions>
          </plugin>
-      </plugins>
-   </reporting>
-
-   <build>
-      <sourceDirectory>src/main/scala</sourceDirectory>
-      <testSourceDirectory>src/test/scala</testSourceDirectory>
-      <plugins>
          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-               <archive>
-                  <manifest>
-                     <mainClass>com.traackr.indexing.IndexDomainsApp</mainClass>
-                  </manifest>
-               </archive>
-               <descriptorRefs>
-                  <descriptorRef>jar-with-dependencies</descriptorRef>
-               </descriptorRefs>
-            </configuration>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.1.2</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <phase>verify</phase>
+                  <goals>
+                     <goal>jar-no-fork</goal>
+                     <goal>test-jar-no-fork</goal>
+                  </goals>
+               </execution>
+            </executions>
          </plugin>
       </plugins>
-      <pluginManagement>
-         <plugins>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-release-plugin</artifactId>
-               <configuration>
-                  <tagBase>https://traackr.unfuddle.com/svn/tags</tagBase>
-                  <scmCommentPrefix>[sandbox] release:</scmCommentPrefix>
-               </configuration>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <version>2.3.2</version>
-               <configuration>
-                  <compilerVersion>1.6</compilerVersion>
-                  <source>1.6</source>
-                  <target>1.6</target>
-               </configuration>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-source-plugin</artifactId>
-               <version>2.1.2</version>
-               <executions>
-                  <execution>
-                     <id>attach-sources</id>
-                     <phase>verify</phase>
-                     <goals>
-                        <goal>jar-no-fork</goal>
-                        <goal>test-jar-no-fork</goal>
-                     </goals>
-                  </execution>
-               </executions>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-jar-plugin</artifactId>
-               <version>2.3.1</version>
-               <executions>
-                  <execution>
-                     <goals>
-                        <goal>test-jar</goal>
-                     </goals>
-                     <configuration>
-                        <includes>
-                           <include>org/junit/**</include>
-                        </includes>
-                     </configuration>
-                  </execution>
-               </executions>
-            </plugin>
-         </plugins>
-      </pluginManagement>
    </build>
 </project>
