@@ -3,7 +3,7 @@ package com.traackr.elasticsearch
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._
 
-trait IndexCrud extends IndexCreate with IndexDelete with Exists with Aliases
+trait IndexCrud extends IndexCreate with IndexDelete with UpdateSettings with Exists with Aliases
     with Optimize with Flush with Refresh with Status with Stats
     with PutMapping with DeleteMapping {
   self: Indexer =>
@@ -35,6 +35,17 @@ trait IndexDelete {
   def deleteIndex_prepare(indices: String*) = client.admin.indices.prepareDelete(indices.toArray: _*)
 }
 
+trait UpdateSettings {
+  self: Indexer =>
+  def updateSettings(settings: String, indices: String*) = updateSettings_send(settings, indices.toArray: _*).actionGet
+  def updateSettings_send(settings: String, indices: String*) = updateSettings_prepare(settings, indices.toArray: _*).execute
+  def updateSettings_prepare(settings: String, indices: String*) = {
+    val request = client.admin.indices.prepareUpdateSettings(indices.toArray: _*)
+    request.setSettings(settingsBuilder.loadFromSource(settings).build())
+    request
+  }
+}
+
 trait Exists {
   self: Indexer =>
   def exists(indices: String*) = exists_send(indices.toArray: _*).actionGet.exists
@@ -44,11 +55,28 @@ trait Exists {
 
 trait Aliases {
   self: Indexer =>
-  def aliases(indices: Seq[String], alias: String, filter: Map[String, Object] = Map()) = aliases_send(indices, alias, filter).actionGet
-  def aliases_send(indices: Seq[String], alias: String, filter: Map[String, Object] = Map()) = aliases_prepare(indices, alias, filter).execute
-  def aliases_prepare(indices: Seq[String], alias: String, filter: Map[String, Object] = Map()) = {
+
+  def alias(alias: String, indices: String*) = alias_send(alias, indices.toArray: _*).actionGet
+  def alias_send(alias: String, indices: String*) = alias_prepare(alias, indices.toArray: _*).execute
+  def alias_prepare(alias: String, indices: String*) = {
+    val request = client.admin.indices.prepareAliases
+    for (each <- indices) request.addAlias(each, alias)
+    request
+  }
+
+  def alias(alias: String, filter: Map[String, Object], indices: String*) = alias_send(alias, filter, indices.toArray: _*).actionGet
+  def alias_send(alias: String, filter: Map[String, Object], indices: String*) = alias_prepare(alias, filter, indices.toArray: _*).execute
+  def alias_prepare(alias: String, filter: Map[String, Object], indices: String*) = {
     val request = client.admin.indices.prepareAliases
     for (each <- indices) request.addAlias(each, alias, filter)
+    request
+  }
+
+  def unalias(alias: String, indices: String*) = unalias_send(alias, indices.toArray: _*).actionGet
+  def unalias_send(alias: String, indices: String*) = unalias_prepare(alias, indices.toArray: _*).execute
+  def unalias_prepare(alias: String, indices: String*) = {
+    val request = client.admin.indices.prepareAliases
+    for (each <- indices) request.removeAlias(each, alias)
     request
   }
 }
