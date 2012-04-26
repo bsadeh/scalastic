@@ -1,7 +1,7 @@
 package com.traackr.elasticsearch
 
 trait UsingIndexer {
-  var indexer: Indexer = _
+  implicit var indexer: Indexer = _
 
   def createIndexer = Indexer.local
 
