@@ -9,9 +9,12 @@ import scala.collection.JavaConversions._
 object Indexer {
   import org.elasticsearch.common.transport._
 
-  def transport(settings: Map[String, String] = Map(), host: String = "localhost", ports: Seq[Int] = Seq(9300)) = {
+  def transport(settings: Map[String, String], host: String = "localhost", ports: Seq[Int] = Seq(9300)) = {
+    assert(settings.contains("cluster.name"))
+
     val builder = settingsBuilder
     for ((key, value) <- settings) builder.put(key, value)
+    builder.put("client.transport.sniff", true)
     val client = new TransportClient(builder.build)
     for (each <- ports) client.addTransportAddress(new InetSocketTransportAddress(host, each))
     new ClientIndexer(client)
@@ -48,7 +51,6 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
     implicit val formats = DefaultFormats
     import scala.collection._
     
-    //    indexer.alias(alias, indexName)
     // before whole data indexing do:
     //	- memento the original settings ...
     val original = metadataFor(originalIndex).settings
@@ -60,7 +62,7 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
 
     try {
 
-      f(parameters + ("indexName" -> originalIndex), this)
+      f(parameters, this)
 
     } finally {
       // after whole data indexing do:

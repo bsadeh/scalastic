@@ -25,9 +25,8 @@ class SimpleSearchTest extends IndexerBasedTest {
     search("trying to find an exact match").hits.totalHits should be === 2
     search("\"trying to find an exact match\"").hits.totalHits should be === 1
 
-//fixme: these fail in maven
-//    search(textPhraseQuery("field", "trying to find an exact match")).hits.totalHits should be === 1
-//    search(textPhraseQuery("field", "\"trying to find an exact match\"")).hits.totalHits should be === 1
+    search(textPhraseQuery("field", "trying to find an exact match")).hits.totalHits should be === 1
+    search(textPhraseQuery("field", "\"trying to find an exact match\"")).hits.totalHits should be === 1
   }
 
   test("ip tests") {
