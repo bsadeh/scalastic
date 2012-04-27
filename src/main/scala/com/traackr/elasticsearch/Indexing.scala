@@ -38,9 +38,9 @@ trait Index {
 
 trait IndexInBulk {
   self: Indexer =>
-  def bulk(requests: Seq[IndexRequest]) = bulk_send(requests).actionGet
-  def bulk_send(requests: Seq[IndexRequest]) = bulk_prepare(requests).execute
-  def bulk_prepare(requests: Seq[IndexRequest]) = {
+  def bulk(requests: Iterable[IndexRequest]) = bulk_send(requests).actionGet
+  def bulk_send(requests: Iterable[IndexRequest]) = bulk_prepare(requests).execute
+  def bulk_prepare(requests: Iterable[IndexRequest]) = {
     val request = client.prepareBulk
     requests foreach { request.add(_) }
     request
@@ -50,13 +50,13 @@ trait IndexInBulk {
 trait Count {
   self: Indexer =>
 
-  def count(indices: Seq[String] = Seq(), types: Seq[String] = Seq(), query: QueryBuilder = matchAllQuery) =
+  def count(indices: Iterable[String] = Iterable(), types: Iterable[String] = Iterable(), query: QueryBuilder = matchAllQuery) =
     count_send(indices, types, query).actionGet.count
 
-  def count_send(indices: Seq[String] = Seq(), types: Seq[String] = Seq(), query: QueryBuilder = matchAllQuery) =
+  def count_send(indices: Iterable[String] = Iterable(), types: Iterable[String] = Iterable(), query: QueryBuilder = matchAllQuery) =
     count_prepare(indices, types, query).execute
 
-  def count_prepare(indices: Seq[String] = Seq(), types: Seq[String] = Seq(), query: QueryBuilder = matchAllQuery) = {
+  def count_prepare(indices: Iterable[String] = Iterable(), types: Iterable[String] = Iterable(), query: QueryBuilder = matchAllQuery) = {
     client.prepareCount(indices.toArray: _*)
       .setTypes(types.toArray: _*)
       .setQuery(query)
@@ -72,9 +72,9 @@ trait Get {
 
 trait Multiget {
   self: Indexer =>
-  def get(index: String, @Nullable `type`: String, ids: Seq[String]) = get_send(index, `type`, ids).actionGet
-  def get_send(index: String, @Nullable `type`: String, ids: Seq[String]) = get_prepare(index, `type`, ids).execute
-  def get_prepare(index: String, @Nullable `type`: String, ids: Seq[String]) = {
+  def get(index: String, @Nullable `type`: String, ids: Iterable[String]) = get_send(index, `type`, ids).actionGet
+  def get_send(index: String, @Nullable `type`: String, ids: Iterable[String]) = get_prepare(index, `type`, ids).execute
+  def get_prepare(index: String, @Nullable `type`: String, ids: Iterable[String]) = {
     val request = client.prepareMultiGet
     for (each <- ids) request.add(index, `type`, each)
     request
