@@ -50,13 +50,13 @@ trait IndexInBulk {
 trait Count {
   self: Indexer =>
 
-  def count(indices: Iterable[String] = Iterable(), types: Iterable[String] = Iterable(), query: QueryBuilder = matchAllQuery) =
+  def count(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     count_send(indices, types, query).actionGet.count
 
-  def count_send(indices: Iterable[String] = Iterable(), types: Iterable[String] = Iterable(), query: QueryBuilder = matchAllQuery) =
+  def count_send(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     count_prepare(indices, types, query).execute
 
-  def count_prepare(indices: Iterable[String] = Iterable(), types: Iterable[String] = Iterable(), query: QueryBuilder = matchAllQuery) = {
+  def count_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) = {
     client.prepareCount(indices.toArray: _*)
       .setTypes(types.toArray: _*)
       .setQuery(query)

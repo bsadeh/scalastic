@@ -119,7 +119,7 @@ trait Stats {
 trait PutMapping {
   self: Indexer =>
   def putMapping(index: String, `type`: String, json: String) = putMapping_send(index, `type`, json).actionGet
-  def putMapping_send(index: String, `type`: String, json: String) = putMapping_prepare(Iterable(index), `type`, json).execute
+  def putMapping_send(index: String, `type`: String, json: String) = putMapping_prepare(Seq(index), `type`, json).execute
   def putMapping_prepare(indices: Iterable[String], `type`: String, json: String) = {
     client.admin.indices
       .preparePutMapping(indices.toArray: _*)

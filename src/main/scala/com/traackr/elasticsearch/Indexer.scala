@@ -10,7 +10,7 @@ object Indexer {
   import org.elasticsearch.common.transport._
 
   def transport(settings: Map[String, String], host: String = "localhost", ports: Seq[Int] = Seq(9300)) = {
-    assert(settings.contains("cluster.name"))
+    require(settings.contains("cluster.name"))
 
     val builder = settingsBuilder
     for ((key, value) <- settings) builder.put(key, value)
