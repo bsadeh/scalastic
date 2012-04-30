@@ -49,9 +49,8 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   }
 
   def print(response: SearchResponse) = {
-    response.hits.getHits foreach { hit =>
+    for (hit <- response.hits.getHits) 
       println("======= %s =======\n%s".format(hit.getType, hit.getSource.mkString(", ")))
-    }
     println("------------------------------------")
   }
 

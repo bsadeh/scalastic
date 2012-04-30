@@ -40,11 +40,7 @@ trait IndexInBulk {
   self: Indexer =>
   def bulk(requests: Iterable[IndexRequest]) = bulk_send(requests).actionGet
   def bulk_send(requests: Iterable[IndexRequest]) = bulk_prepare(requests).execute
-  def bulk_prepare(requests: Iterable[IndexRequest]) = {
-    val request = client.prepareBulk
-    requests foreach { request.add(_) }
-    request
-  }
+  def bulk_prepare(requests: Iterable[IndexRequest]) = requests.foldLeft(client.prepareBulk)(_.add(_))
 }
 
 trait Count {
