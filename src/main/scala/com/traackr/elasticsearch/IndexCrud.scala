@@ -33,6 +33,10 @@ trait IndexDelete {
   def deleteIndex(indices: String*) = deleteIndex_send(indices.toArray: _*).actionGet
   def deleteIndex_send(indices: String*) = deleteIndex_prepare(indices.toArray: _*).execute
   def deleteIndex_prepare(indices: String*) = client.admin.indices.prepareDelete(indices.toArray: _*)
+
+  def deleteIndexIfExists(indices: String*) = deleteIndexIfExists_send(indices.toArray: _*).actionGet
+  def deleteIndexIfExists_send(indices: String*) = deleteIndexIfExists_prepare(indices.toArray: _*).execute
+  def deleteIndexIfExists_prepare(indices: String*) = client.admin.indices.prepareDelete(indices filter (exists(_)) toArray: _*)
 }
 
 trait UpdateSettings {
