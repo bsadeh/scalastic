@@ -1,4 +1,4 @@
-package com.traackr.elasticsearch
+package com.traackr.scalastic.elasticsearch
 
 trait UsingIndexer {
   implicit val indexer: Indexer = createIndexer

@@ -1,4 +1,4 @@
-package com.traackr.elasticsearch
+package com.traackr.scalastic.elasticsearch
 
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._

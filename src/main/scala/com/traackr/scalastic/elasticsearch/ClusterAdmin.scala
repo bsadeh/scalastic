@@ -1,4 +1,4 @@
-package com.traackr.elasticsearch
+package com.traackr.scalastic.elasticsearch
 
 trait ClusterAdmin extends Health with Nodes with State with Metadata {
   self: Indexer =>

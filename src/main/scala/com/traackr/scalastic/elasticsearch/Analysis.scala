@@ -1,4 +1,4 @@
-package com.traackr.elasticsearch
+package com.traackr.scalastic.elasticsearch
 
 import scalaz._, Scalaz._
 

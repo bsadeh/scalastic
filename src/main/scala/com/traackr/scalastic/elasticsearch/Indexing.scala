@@ -1,4 +1,4 @@
-package com.traackr.elasticsearch
+package com.traackr.scalastic.elasticsearch
 
 import org.elasticsearch.common._
 import org.elasticsearch.index.query._, QueryBuilders._
