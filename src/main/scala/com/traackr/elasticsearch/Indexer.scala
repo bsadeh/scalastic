@@ -45,7 +45,7 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
     }
   }
 
-  def reindexWith[U](alias: String, originalIndex: String, parameters: Map[String, String])(f: (Map[String, String], Indexer) => U) = {
+  def reindexWith[A](alias: String, originalIndex: String, parameters: Map[String, String])(f: (Map[String, String], Indexer) => A) = {
     import org.joda.time._
     import net.liftweb.json._, Extraction._
     implicit val formats = DefaultFormats
