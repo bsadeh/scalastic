@@ -5,7 +5,9 @@
          <pattern>%d [%t] %-5p %logger{25} - %m%n</pattern>
       </encoder>
    </appender>
-   <root level="DEBUG">
+   <logger name="org.elasticsearch" level="WARN" />
+   <logger name="com.traackr.elasticsearch" level="WARN" />
+   <root level="WARN">
       <appender-ref ref="STDOUT" />
    </root>
 </configuration>

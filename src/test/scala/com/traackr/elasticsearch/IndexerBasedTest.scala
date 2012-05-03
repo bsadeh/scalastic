@@ -3,7 +3,6 @@ package com.traackr.elasticsearch
 import org.scalatest._, matchers._
 import scalaz._, Scalaz._
 import org.elasticsearch.action.search._
-import org.elasticsearch.common.logging._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.index.query._, QueryBuilders._
 import scala.collection.JavaConversions._
@@ -11,7 +10,7 @@ import scala.collection.JavaConversions._
 abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
     with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer {
 
-  val logger = Loggers.getLogger(getClass())
+  val logger = org.slf4j.Log.logger
 
   override def beforeAll {
     indexer_beforeAll

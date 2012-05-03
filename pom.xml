@@ -29,7 +29,6 @@
          <groupId>ch.qos.logback</groupId>
          <artifactId>logback-classic</artifactId>
          <version>1.0.2</version>
-         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.elasticsearch</groupId>
