@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
     with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer {
 
-  val logger = org.slf4j.Log.logger
+  val logger = org.slf4j.Log.logger(this)
 
   override def beforeAll {
     indexer_beforeAll
