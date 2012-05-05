@@ -37,9 +37,9 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
   def start: Indexer
   def stop
 
-  def catchUpOn(`type`: String, bar: Int, seed: Int = 1, maxFactor: Int = 64) = {
+  def catchUpOn(indices: Iterable[String] = Nil, `type`: String, bar: Int, seed: Int = 1, maxFactor: Int = 64) = {
     var factor = seed
-    while (factor <= maxFactor && count(types = Seq(`type`)) < bar) {
+    while (factor <= maxFactor && count(indices, types = Seq(`type`)) < bar) {
       info(this, "catching up on {} to bar {} in {} sec ...", `type`, bar, factor)
       Thread sleep factor * 1000
       factor *= 2
@@ -48,11 +48,11 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
       """failed to catch up while indexing %s after %s seconds""".format(`type`, maxFactor))
   }
 
-  /** reindexing using a supplied <reindexing> function 
-   * the reindexing has sole control over how to retrieve the data to be indexed in <targetIndex>.
-   * it can retrieve it from an external data source, from <sourceIndex>, etc. 
-   * however, don't forget to consider where the function is invoked (here), which might be 
-   * very different from where it was called (as in different module and/or jvm ).
+  /** reindexing using a supplied <reindexing> function
+   *  the reindexing has sole control over how to retrieve the data to be indexed in <targetIndex>.
+   *  it can retrieve it from an external data source, from <sourceIndex>, etc.
+   *  however, don't forget to consider where the function is invoked (here), which might be
+   *  very different from where it was called (as in different module and/or jvm ).
    */
   def reindexWith[A](sourceIndex: String, targetIndex: String)(reindexing: (Indexer, String) => A) = {
     // before whole data indexing do:
@@ -75,8 +75,8 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
       updateSettings("""{"number_of_replicas": %s}""".format(sourceSettings.get("index.number_of_replicas")), targetIndex)
       //	- ... then transfer aliases from sourceIndex to targetIndex
       for (each <- metadataFor(sourceIndex).aliases.values) {
-        alias(each.alias, targetIndex)
         unalias(each.alias, sourceIndex)
+        alias(each.alias, targetIndex)
       }
     }
   }
