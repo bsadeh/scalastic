@@ -3,7 +3,8 @@ package com.traackr.scalastic.elasticsearch
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._
 
-trait IndexCrud extends IndexCreate with IndexDelete with UpdateSettings with Exists with Aliases
+trait IndexCrud extends IndexCreate with IndexDelete with UpdateSettings with Exists
+    with Alias with Unalias
     with Optimize with Flush with Refresh with Status with Stats
     with PutMapping with DeleteMapping {
   self: Indexer =>
@@ -57,9 +58,8 @@ trait Exists {
   def exists_prepare(indices: String*) = client.admin.indices.prepareExists(indices.toArray: _*)
 }
 
-trait Aliases {
+trait Alias {
   self: Indexer =>
-
   def alias(alias: String, indices: String*) = alias_send(alias, indices.toArray: _*).actionGet
   def alias_send(alias: String, indices: String*) = alias_prepare(alias, indices.toArray: _*).execute
   def alias_prepare(alias: String, indices: String*) = {
@@ -67,7 +67,6 @@ trait Aliases {
     for (each <- indices) request.addAlias(each, alias)
     request
   }
-
   def alias(alias: String, filter: Map[String, Object], indices: String*) = alias_send(alias, filter, indices.toArray: _*).actionGet
   def alias_send(alias: String, filter: Map[String, Object], indices: String*) = alias_prepare(alias, filter, indices.toArray: _*).execute
   def alias_prepare(alias: String, filter: Map[String, Object], indices: String*) = {
@@ -75,7 +74,10 @@ trait Aliases {
     for (each <- indices) request.addAlias(each, alias, filter)
     request
   }
+}
 
+trait Unalias {
+  self: Indexer =>
   def unalias(alias: String, indices: String*) = unalias_send(alias, indices.toArray: _*).actionGet
   def unalias_send(alias: String, indices: String*) = unalias_prepare(alias, indices.toArray: _*).execute
   def unalias_prepare(alias: String, indices: String*) = {
