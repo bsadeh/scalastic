@@ -1,6 +1,6 @@
 name := "scalastic"
  
-version := "0.0.2"
+version := "0.0.3-SNAPSHOT"
  
 scalaVersion := "2.9.1" 
 
