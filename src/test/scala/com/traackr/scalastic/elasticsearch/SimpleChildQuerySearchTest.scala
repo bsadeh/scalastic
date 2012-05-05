@@ -197,7 +197,7 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
   test("simple child query with flush and 3 shards") {
     val specialIndex = indexName + "_3_shards"
-    indexer.createIndex(specialIndex, settings="""{"number_of_shards":3}""")
+    indexer.createIndex(specialIndex, settings = Map("number_of_shards" -> "3"))
     indexer.putMapping(specialIndex, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.index(specialIndex, "parent", "p1", """{"p_field" : "p_value1"}""")
     indexer.index(specialIndex, "child", "c1", """{"c_field" : "red"}""", parent = "p1")

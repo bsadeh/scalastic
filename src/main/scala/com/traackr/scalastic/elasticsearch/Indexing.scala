@@ -4,7 +4,7 @@ import org.elasticsearch.common._
 import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.action._, index._, bulk._
 import org.elasticsearch.action.support.replication._
-import net.liftweb.json._
+//import net.liftweb.json._
 import scala.collection._, JavaConversions._
 import scalaz._, Scalaz._
 
@@ -28,7 +28,7 @@ trait Index {
 
   def index_prepare(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
     val request = client.prepareIndex(index, `type`, id)
-    request.setSource(pretty(render(parse(json))))
+    request.setSource(json)
     request.setParent(parent)
     if (ttl > 0) request.setTTL(ttl)
     if (!routing.isEmpty) request.setRouting(routing)
@@ -121,7 +121,8 @@ trait Update {
     percolate some { request.setPercolate(_) }
     replicationType some { request.setReplicationType(_) }
     consistencyLevel some { request.setConsistencyLevel(_) }
-    // revisit: should we do this:
+    // revisit: replicationType & consistencyLevel
+    // should we do this:
     //    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
     //    request.setConsistencyLevel(consistencyLevel some { that => that } none { WriteConsistencyLevel.DEFAULT })
     request
@@ -156,7 +157,8 @@ trait DeleteByQuery {
     request.setQuery(query)
     replicationType some { request.setReplicationType(_) }
     consistencyLevel some { request.setConsistencyLevel(_) }
-    // revisit: should we do this:
+    // revisit: replicationType & consistencyLevel
+    // should we do this:
     //    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
     //    request.setConsistencyLevel(consistencyLevel some { that => that } none { WriteConsistencyLevel.DEFAULT })
     if (!routing.isEmpty) request.setRouting(routing)

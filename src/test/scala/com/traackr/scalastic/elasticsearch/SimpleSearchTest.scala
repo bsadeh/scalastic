@@ -90,7 +90,7 @@ class SimpleSearchTest extends IndexerBasedTest {
   
   test("dateRange with upper inclusive disabled") {
     val specialIndex = indexName + "_with_upper_inclusive_disabled"
-    indexer.createIndex(specialIndex, settings = "{\"index.mapping.date.parse_upper_inclusive\":false}")
+    indexer.createIndex(specialIndex, settings = Map("index.mapping.date.parse_upper_inclusive"->"false"))
     indexer.index(specialIndex, "type1", "1", """{"field":"2010-01-05T02:00"}""")
     indexer.index(specialIndex, "type1", "2", """{"field":"2010-01-06T02:00"}""")
     indexer.refresh()

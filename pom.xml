@@ -14,21 +14,20 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <elasticsearch.version>0.19.2</elasticsearch.version>
       <scala.version>2.9.1</scala.version>
-      <lift.version>2.4</lift.version>
+      <scalaz.version>6.0.4</scalaz.version>
+      <elasticsearch.version>0.19.3</elasticsearch.version>
+      <slf4j.version>1.6.4</slf4j.version>
+      <logback.version>1.0.2</logback.version>
+      <junit.version>4.10</junit.version>
+      <scalatest.version>1.6.1</scalatest.version>
    </properties>
 
    <dependencies>
       <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-api</artifactId>
-         <version>1.6.4</version>
-      </dependency>
-      <dependency>
-         <groupId>ch.qos.logback</groupId>
-         <artifactId>logback-classic</artifactId>
-         <version>1.0.2</version>
+         <groupId>org.scalaz</groupId>
+         <artifactId>scalaz-core_${scala.version}</artifactId>
+         <version>${scalaz.version}</version>
       </dependency>
       <dependency>
          <groupId>org.elasticsearch</groupId>
@@ -36,31 +35,26 @@
          <version>${elasticsearch.version}</version>
       </dependency>
       <dependency>
-         <groupId>net.liftweb</groupId>
-         <artifactId>lift-json_${scala.version}</artifactId>
-         <version>${lift.version}</version>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>${slf4j.version}</version>
       </dependency>
       <dependency>
-         <groupId>net.liftweb</groupId>
-         <artifactId>lift-json-ext_${scala.version}</artifactId>
-         <version>${lift.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.scalaz</groupId>
-         <artifactId>scalaz-core_${scala.version}</artifactId>
-         <version>6.0.4</version>
+         <groupId>ch.qos.logback</groupId>
+         <artifactId>logback-classic</artifactId>
+         <version>${logback.version}</version>
       </dependency>
 
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <version>4.10</version>
+         <version>${junit.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.scalatest</groupId>
          <artifactId>scalatest_${scala.version}</artifactId>
-         <version>1.6.1</version>
+         <version>${scalatest.version}</version>
          <scope>test</scope>
       </dependency>
    </dependencies>

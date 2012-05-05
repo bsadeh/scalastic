@@ -13,17 +13,15 @@ trait IndexCrud extends IndexCreate with IndexDelete with UpdateSettings with Ex
 trait IndexCreate {
   self: Indexer =>
 
-  def createIndex(index: String, settings: String = "", mappings: Map[String, String] = Map()) = {
+  def createIndex(index: String, settings : Map[String, String] = Map(), mappings: Map[String, String] = Map()) = 
     createIndex_send(index, settings, mappings).actionGet
-  }
 
-  def createIndex_send(index: String, settings: String = "", mappings: Map[String, String] = Map()) = {
+  def createIndex_send(index: String, settings : Map[String, String] = Map(), mappings: Map[String, String] = Map()) = 
     createIndex_prepare(index, settings, mappings).execute
-  }
 
-  def createIndex_prepare(index: String, settings: String = "", mappings: Map[String, String] = Map()) = {
+  def createIndex_prepare(index: String, settings : Map[String, String] = Map(), mappings: Map[String, String] = Map()) = {
     val request = client.admin.indices.prepareCreate(index)
-    if (!settings.isEmpty) request.setSettings(settingsBuilder.loadFromSource(settings).build())
+    if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings).build())
     for ((kind, mapping) <- mappings) request.addMapping(kind, mapping)
     request
   }

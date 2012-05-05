@@ -26,7 +26,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   }
 
   def createDefaultIndex() {
-    indexer.createIndex(index = indexName, settings = """{"number_of_shards": 1}""")
+    indexer.createIndex(index = indexName, settings = Map("number_of_shards" -> "1"))
     indexer.waitTillActive()
   }
 
@@ -48,7 +48,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   }
 
   def print(response: SearchResponse) = {
-    for (hit <- response.hits.getHits) 
+    for (hit <- response.hits.getHits)
       println("======= %s =======\n%s".format(hit.getType, hit.getSource.mkString(", ")))
     println("------------------------------------")
   }

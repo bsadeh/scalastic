@@ -48,35 +48,36 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
       """failed to catch up while indexing %s after %s seconds""".format(`type`, maxFactor))
   }
 
-  def reindexWith[A](alias: String, originalIndex: String, parameters: Map[String, String])(f: (Map[String, String], Indexer) => A) = {
-    import org.joda.time._
-    import net.liftweb.json._, Extraction._
-    implicit val formats = DefaultFormats
-    import scala.collection._
-
+  /** reindexing using a supplied <reindexing> function 
+   * the reindexing has sole control over how to retrieve the data to be indexed in <targetIndex>.
+   * it can retrieve it from an external data source, from <sourceIndex>, etc. 
+   * however, don't forget to consider where the function is invoked (here), which might be 
+   * very different from where it was called (as in different module and/or jvm ).
+   */
+  def reindexWith[A](sourceIndex: String, targetIndex: String)(reindexing: (Indexer, String) => A) = {
     // before whole data indexing do:
-    //	- memento the original settings ...
-    val original = metadataFor(originalIndex).settings
-    //	- ... then create a new index based on timestamp, without replication
-    val reindexName = "%s__%s".format(originalIndex, new DateTime toString ("yyyy_MM_dd"))
-    val withoutReplicas = new mutable.HashMap ++ original.getAsMap + ("index.number_of_replicas" -> "0")
-    createIndex(index = reindexName, settings = compact(render(decompose(withoutReplicas.toMap))))
+    //	- record the sourceIndex settings ...
+    val sourceSettings = metadataFor(sourceIndex).settings
+    //	- ... then create the new targetIndex, without replication first (for faster indexing)
+    val withoutReplicas = sourceSettings.getAsMap + ("index.number_of_replicas" -> "0")
+    createIndex(index = targetIndex, settings = withoutReplicas.toMap)
     waitTillActive()
 
     try {
-
-      f(parameters, this)
+      // invoking the function that will create a new targetIndex from scratch
+      reindexing(this, targetIndex)
 
     } finally {
       // after whole data indexing do:
       //	- optimize the newly indexed ...
-      optimize(reindexName)
-      // 	- restore to original settings ...
-      updateSettings("""{"number_of_replicas": %s}""".format(original.get("index.number_of_replicas")), reindexName)
-      //	- unalias original ... 
-      unalias(alias, originalIndex)
-      //	- ... then switch index alias to new index
-      this.alias(alias, reindexName)
+      optimize(targetIndex)
+      // 	- update targetIndex with sourceIndex settings ...
+      updateSettings("""{"number_of_replicas": %s}""".format(sourceSettings.get("index.number_of_replicas")), targetIndex)
+      //	- ... then transfer aliases from sourceIndex to targetIndex
+      for (each <- metadataFor(sourceIndex).aliases.values) {
+        alias(each.alias, targetIndex)
+        unalias(each.alias, sourceIndex)
+      }
     }
   }
 }
