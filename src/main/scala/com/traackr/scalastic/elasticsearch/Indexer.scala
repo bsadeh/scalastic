@@ -5,6 +5,7 @@ import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.node._, NodeBuilder._
 import scala.collection.JavaConversions._
+import org.slf4j.Log._
 
 object Indexer {
   import org.elasticsearch.common.transport._
@@ -36,13 +37,15 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
   def start: Indexer
   def stop
 
-  def catchUpOn(`type`: String, bar: Int, seed: Int = 1) = {
+  def catchUpOn(`type`: String, bar: Int, seed: Int = 1, maxFactor: Int = 64) = {
     var factor = seed
-    while (count(types = Seq(`type`)) < bar) {
-      println("catching up in %s sec ...".format(factor))
+    while (factor <= maxFactor && count(types = Seq(`type`)) < bar) {
+      info(this, "catching up on {} to bar {} in {} sec ...", `type`, bar, factor)
       Thread sleep factor * 1000
       factor *= 2
     }
+    if (factor > maxFactor) throw new RuntimeException(
+      """failed to catch up while indexing %s after %s seconds""".format(`type`, maxFactor))
   }
 
   def reindexWith[A](alias: String, originalIndex: String, parameters: Map[String, String])(f: (Map[String, String], Indexer) => A) = {
@@ -50,12 +53,12 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
     import net.liftweb.json._, Extraction._
     implicit val formats = DefaultFormats
     import scala.collection._
-    
+
     // before whole data indexing do:
     //	- memento the original settings ...
     val original = metadataFor(originalIndex).settings
     //	- ... then create a new index based on timestamp, without replication
-    val reindexName = "%s__%s".format(originalIndex, new DateTime toString("yyyy_MM_dd"))
+    val reindexName = "%s__%s".format(originalIndex, new DateTime toString ("yyyy_MM_dd"))
     val withoutReplicas = new mutable.HashMap ++ original.getAsMap + ("index.number_of_replicas" -> "0")
     createIndex(index = reindexName, settings = compact(render(decompose(withoutReplicas.toMap))))
     waitTillActive()
