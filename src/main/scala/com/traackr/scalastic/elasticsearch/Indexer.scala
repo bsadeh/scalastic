@@ -12,7 +12,6 @@ object Indexer {
 
   def transport(settings: Map[String, String], host: String = "localhost", ports: Seq[Int] = Seq(9300)) = {
     require(settings.contains("cluster.name"))
-
     val builder = settingsBuilder
     for ((key, value) <- settings) builder.put(key, value)
     builder.put("client.transport.sniff", true)
@@ -62,11 +61,9 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
     val withoutReplicas = sourceSettings.getAsMap + ("index.number_of_replicas" -> "0")
     createIndex(index = targetIndex, settings = withoutReplicas.toMap)
     waitTillActive()
-
-    try {
+    try { 
       // invoking the function that will create a new targetIndex from scratch
       reindexing(this, targetIndex)
-
     } finally {
       // after whole data indexing do:
       //	- optimize the newly indexed ...

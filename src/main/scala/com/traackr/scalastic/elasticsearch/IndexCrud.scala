@@ -3,10 +3,20 @@ package com.traackr.scalastic.elasticsearch
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._
 
-trait IndexCrud extends IndexCreate with IndexDelete with UpdateSettings with Exists
-    with Alias with Unalias
-    with Optimize with Flush with Refresh with Status with Stats
-    with PutMapping with DeleteMapping {
+trait IndexCrud 
+	extends IndexCreate 
+	with IndexDelete 
+	with UpdateSettings 
+	with Exists
+    with Alias 
+    with Unalias
+    with Optimize 
+    with Flush 
+    with Refresh 
+    with Status 
+    with Stats
+    with PutMapping 
+    with DeleteMapping {
   self: Indexer =>
 }
 
@@ -124,12 +134,11 @@ trait PutMapping {
   self: Indexer =>
   def putMapping(index: String, `type`: String, json: String) = putMapping_send(index, `type`, json).actionGet
   def putMapping_send(index: String, `type`: String, json: String) = putMapping_prepare(Seq(index), `type`, json).execute
-  def putMapping_prepare(indices: Iterable[String], `type`: String, json: String) = {
+  def putMapping_prepare(indices: Iterable[String], `type`: String, json: String) = 
     client.admin.indices
       .preparePutMapping(indices.toArray: _*)
       .setType(`type`)
       .setSource(json)
-  }
 }
 
 trait DeleteMapping {

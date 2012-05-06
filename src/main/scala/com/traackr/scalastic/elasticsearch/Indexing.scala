@@ -8,24 +8,27 @@ import org.elasticsearch.action.support.replication._
 import scala.collection._, JavaConversions._
 import scalaz._, Scalaz._
 
-trait Indexing extends Index with IndexInBulk
-    with Searching with Count
-    with Get with Multiget
-    with Delete with DeleteByQuery {
+trait Indexing 
+	extends Index 
+	with IndexInBulk
+    with Searching 
+    with Count
+    with Get 
+    with Multiget
+    with Delete 
+    with DeleteByQuery {
   self: Indexer =>
 }
 
 trait Index {
   self: Indexer =>
-
-  def index(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
+    
+  def index(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = 
     index_send(index, `type`, id, json, parent, ttl, routing).actionGet
-  }
-
-  def index_send(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
+    
+  def index_send(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = 
     index_prepare(index, `type`, id, json, parent, ttl, routing).execute
-  }
-
+    
   def index_prepare(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
     val request = client.prepareIndex(index, `type`, id)
     request.setSource(json)
@@ -34,9 +37,6 @@ trait Index {
     if (!routing.isEmpty) request.setRouting(routing)
     request
   }
-
-  def index(builder: IndexRequestBuilder) = index_send(builder).actionGet
-  def index_send(builder: IndexRequestBuilder) = builder.execute
 }
 
 trait IndexInBulk {
@@ -48,18 +48,17 @@ trait IndexInBulk {
 
 trait Count {
   self: Indexer =>
-
+    
   def count(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     count_send(indices, types, query).actionGet.count
-
+    
   def count_send(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     count_prepare(indices, types, query).execute
-
-  def count_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) = {
+    
+  def count_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) = 
     client.prepareCount(indices.toArray: _*)
       .setTypes(types.toArray: _*)
       .setQuery(query)
-  }
 }
 
 trait Get {

@@ -34,8 +34,10 @@ trait Search {
     partialFields: Iterable[PartialField] = Nil,
     facets: Iterable[TermsFacetBuilder] = Nil,
     sorting: Map[String, SortOrder] = Map(),
-    from: Option[Int] = None, size: Option[Int] = None,
-    searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
+    from: Option[Int] = None, 
+    size: Option[Int] = None,
+    searchType: Option[SearchType] = None, 
+    explain: Option[Boolean] = None) = {
     search_send(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).actionGet
   }
 
@@ -49,8 +51,10 @@ trait Search {
     partialFields: Iterable[PartialField] = Nil,
     facets: Iterable[TermsFacetBuilder] = Nil,
     sorting: Map[String, SortOrder] = Map(),
-    from: Option[Int] = None, size: Option[Int] = None,
-    searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
+    from: Option[Int] = None, 
+    size: Option[Int] = None,
+    searchType: Option[SearchType] = None, 
+    explain: Option[Boolean] = None) = {
     search_prepare(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).execute
   }
 
@@ -65,8 +69,10 @@ trait Search {
     //todo: need to allow for includes/excludes, such as: partialFields: Iterable[Tuple3[String, Iterable[String], Iterable[String]]] = Nil,
     facets: Iterable[TermsFacetBuilder] = Nil,
     sorting: Map[String, SortOrder] = Map(),
-    from: Option[Int] = None, size: Option[Int] = None,
-    searchType: Option[SearchType] = None, explain: Option[Boolean] = None) = {
+    from: Option[Int] = None, 
+    size: Option[Int] = None,
+    searchType: Option[SearchType] = None, 
+    explain: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)

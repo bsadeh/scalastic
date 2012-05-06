@@ -41,7 +41,6 @@ trait Metadata {
   def metadata = state.state.metaData
   def metadataFor(index: String) = metadata.index(index)
   def metadataFor(index: String, `type`: String) = metadata.index(index).mappings.get(`type`)
-  def fieldsOf(index: String, `type`: String) = {
+  def fieldsOf(index: String, `type`: String) = 
     metadataFor(index, `type`).sourceAsMap.get("properties").asInstanceOf[Map[String, Object]]
-  }
 }
