@@ -1,11 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<configuration scan="true">
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %message%n</pattern>
-    </encoder>
-  </appender>
-  <root level="WARN">
-    <appender-ref ref="STDOUT"/>
-  </root>
+<configuration>
+   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+         <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+         <outputPatternAsPresentationHeader>false</outputPatternAsPresentationHeader>
+      </encoder>
+   </appender>
+
+   <logger name="org.scalaz" level="WARN" />
+   <logger name="org.elasticsearch" level="WARN" />
+   <logger name="com.traackr.scalastic" level="WARN" />
+   
+   <root level="ERROR">
+      <appender-ref ref="stdout" />
+   </root>
 </configuration>

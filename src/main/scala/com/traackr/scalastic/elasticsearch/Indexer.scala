@@ -2,10 +2,9 @@ package com.traackr.scalastic.elasticsearch
 
 import org.elasticsearch.client._, transport._
 import org.elasticsearch.common.settings.ImmutableSettings._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.node._, NodeBuilder._
 import scala.collection.JavaConversions._
-import org.slf4j.Log._
+import org.slf4j._
 
 object Indexer {
   import org.elasticsearch.common.transport._
@@ -15,7 +14,7 @@ object Indexer {
     val builder = settingsBuilder
     for ((key, value) <- settings) builder.put(key, value)
     builder.put("client.transport.sniff", true)
-    val client = new TransportClient(builder.build)
+    val client = new TransportClient(builder)
     for (each <- ports) client.addTransportAddress(new InetSocketTransportAddress(host, each))
     new ClientIndexer(client)
   }
@@ -31,7 +30,7 @@ object Indexer {
   def at(node: Node) = new NodeIndexer(node)
 }
 
-trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing with Searching {
+trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis with Indexing with Searching {
   val client: Client
   def start: Indexer
   def stop
@@ -39,7 +38,7 @@ trait Indexer extends ClusterAdmin with IndexCrud with Analysis with Indexing wi
   def catchUpOn(indices: Iterable[String] = Nil, `type`: String, bar: Int, seed: Int = 1, maxFactor: Int = 64) = {
     var factor = seed
     while (factor <= maxFactor && count(indices, types = Seq(`type`)) < bar) {
-      info(this, "catching up on {} to bar {} in {} sec ...", `type`, bar, factor)
+      info("catching up on {} to bar {} in {} sec ...", `type`, bar, factor)
       Thread sleep factor * 1000
       factor *= 2
     }

@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.FilterBuilders._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.search.facet._, terms._, FacetBuilders._
 import org.elasticsearch.action.search._
+import org.slf4j.Log._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleChildQuerySearchTest extends IndexerBasedTest {
@@ -78,8 +79,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
     response = search(topChildrenQuery("child", termQuery("c_field", "blue")))
     if (response.failedShards > 0) {
-      logger.warn("Failed shards:")
-      for (shardSearchFailure <- response.shardFailures) logger.warn("-> {}", shardSearchFailure)
+      warn(this, "Failed shards:")
+      for (shardSearchFailure <- response.shardFailures) warn(this, "-> {}", shardSearchFailure)
     }
     response.failedShards should be === (0)
     response.hits.totalHits should be === (1)
@@ -93,8 +94,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
     response = search(hasChildQuery("child", termQuery("c_field", "yellow")))
     if (response.failedShards > 0) {
-      logger.warn("Failed shards:")
-      for (shardSearchFailure <- response.shardFailures) logger.warn("-> {}", shardSearchFailure)
+      warn(this, "Failed shards:")
+      for (shardSearchFailure <- response.shardFailures) warn(this, "-> {}", shardSearchFailure)
     }
     response.failedShards should be === (0)
     response.hits.totalHits should be === (1)
@@ -118,8 +119,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
     response = search(constantScoreQuery(hasChildFilter("child", termQuery("c_field", "blue"))))
     if (response.failedShards > 0) {
-      logger.warn("Failed shards:")
-      for (shardSearchFailure <- response.shardFailures) logger.warn("-> {}", shardSearchFailure)
+      warn(this, "Failed shards:")
+      for (shardSearchFailure <- response.shardFailures) warn(this, "-> {}", shardSearchFailure)
     }
     response.failedShards should be === (0)
     response.hits.totalHits should be === (1)
@@ -149,8 +150,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
     response = search(topChildrenQuery("child", termQuery("c_field", "blue")))
     if (response.failedShards > 0) {
-      logger.warn("Failed shards:")
-      for (shardSearchFailure <- response.shardFailures) logger.warn("-> {}", shardSearchFailure)
+      warn(this, "Failed shards:")
+      for (shardSearchFailure <- response.shardFailures) warn(this, "-> {}", shardSearchFailure)
     }
     response.failedShards should be === (0)
     response.hits.totalHits should be === (1)
@@ -214,8 +215,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
     response = search(topChildrenQuery("child", termQuery("c_field", "blue")))
     if (response.failedShards > 0) {
-      logger.warn("Failed shards:")
-      for (shardSearchFailure <- response.shardFailures) logger.warn("-> {}", shardSearchFailure)
+      warn(this, "Failed shards:")
+      for (shardSearchFailure <- response.shardFailures) warn(this, "-> {}", shardSearchFailure)
     }
     //    shouldHaveNoFailures(response)
     response.hits.totalHits should be === (1)
@@ -299,8 +300,8 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
     var response = search(topChildrenQuery("child", termQuery("c_field", "yellow")))
     if (response.failedShards > 0) {
-      logger.warn("Failed shards:")
-      for (shardSearchFailure <- response.shardFailures) logger.warn("-> {}", shardSearchFailure)
+      warn(this, "Failed shards:")
+      for (shardSearchFailure <- response.shardFailures) warn(this, "-> {}", shardSearchFailure)
     }
     response.failedShards should be === (0)
     response.hits.totalHits should be === (1)

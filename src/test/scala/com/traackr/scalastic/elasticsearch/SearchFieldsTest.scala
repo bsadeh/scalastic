@@ -84,7 +84,6 @@ class SimpleFieldsTest extends IndexerBasedTest {
     indexer.index(indexName, "type1", "3", """{"test": "value beck", "num1": 3.0, "date": "1970-01-01T00:02:00"}""")
     indexer.refresh()
 
-    logger.info("running doc['num1'].value");
     val scripts = Seq(
       ("sNum1", "doc['num1'].value", null),
       ("sNum1_field", "_fields['num1'].value", null),
@@ -106,7 +105,6 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(2).fields.get("sNum1_field").values.get(0) should be === (3.0)
     response.hits.getAt(2).fields.get("date1").values.get(0) should be === (120000)
 
-    logger.info("running doc['num1'].value * factor");
     val params: Map[String, Object]= Map("factor"->new java.lang.Double(2.0))
     response = indexer.search(scriptFields = Seq(Tuple3("sNum1","doc['num1'].value * factor", params)), sorting = Map("num1" -> SortOrder.ASC))
     response.hits.totalHits should be === (3)

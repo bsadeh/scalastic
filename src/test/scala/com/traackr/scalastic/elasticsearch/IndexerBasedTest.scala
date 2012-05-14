@@ -8,10 +8,8 @@ import org.elasticsearch.index.query._, QueryBuilders._
 import scala.collection.JavaConversions._
 
 abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
-    with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer {
-
-  val logger = org.slf4j.Log.logger(this)
-
+    with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer  {
+	
   override def beforeAll {
     indexer_beforeAll
   }

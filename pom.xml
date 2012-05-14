@@ -1,12 +1,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <groupId>com.traackr</groupId>
-   <artifactId>scalastic</artifactId>
    <name>Scalastic</name>
    <description>a scala driver for elasticsearch</description>
+   <url>https://github.com/bsadeh/scalastic</url>
+   
+   <groupId>com.traackr</groupId>
+   <artifactId>scalastic</artifactId>
    <version>0.0.3-SNAPSHOT</version>
    <packaging>jar</packaging>
+
+   <scm>
+      <url>scm:git:git@github.com:bsadeh/scalastic.git</url>
+      <connection>scm:git:git@github.com:bsadeh/scalastic.git</connection>
+      <developerConnection>scm:git:git@github.com:bsadeh/scalastic.git</developerConnection>
+   </scm>
+   
+   <issueManagement>
+      <system>GitHub</system>
+      <url>https://github.com/bsadeh/scalastic/issues/</url>
+   </issueManagement>
+
+   <licenses>
+      <license>
+         <name>The Apache Software License, Version 2.0</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
 
    <prerequisites>
       <maven>3.0.0</maven>
