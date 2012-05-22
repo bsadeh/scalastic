@@ -6,8 +6,8 @@
    <url>https://github.com/bsadeh/scalastic</url>
    
    <groupId>com.traackr</groupId>
-   <artifactId>scalastic</artifactId>
-   <version>0.0.3</version>
+   <artifactId>traackr-scalastic</artifactId>
+   <version>0.0.4-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <scm>
