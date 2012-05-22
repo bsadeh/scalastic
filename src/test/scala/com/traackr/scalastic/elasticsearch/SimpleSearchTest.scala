@@ -71,7 +71,7 @@ class SimpleSearchTest extends IndexerBasedTest {
     indexer.index(indexName, "type", "2", """{"field":"yyy"}""")
     indexer.refresh()
     val queries = List(termQuery("field", "xxx"), termQuery("field", "yyy"), matchAllQuery)
-    val responses = indexer.multisearch(queries).responses
+    val responses = indexer.multisearchByQuery(queries).responses
     responses.length should be === 3
     responses(0).response.hits.totalHits should be === 1
     responses(0).response.hits.getAt(0).id should be === "1"

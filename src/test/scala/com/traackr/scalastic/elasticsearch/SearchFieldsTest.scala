@@ -88,7 +88,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
       ("sNum1", "doc['num1'].value", null),
       ("sNum1_field", "_fields['num1'].value", null),
       ("date1", "doc['date'].date.millis", null))
-    var response = indexer.search(scriptFields = scripts, sorting = Map("num1" -> SortOrder.ASC))
+    var response = indexer.search(scriptFields = scripts, sorting = Seq("num1" -> SortOrder.ASC))
     response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).isSourceEmpty should be(true)
@@ -105,8 +105,8 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(2).fields.get("sNum1_field").values.get(0) should be === (3.0)
     response.hits.getAt(2).fields.get("date1").values.get(0) should be === (120000)
 
-    val params: Map[String, Object]= Map("factor"->new java.lang.Double(2.0))
-    response = indexer.search(scriptFields = Seq(Tuple3("sNum1","doc['num1'].value * factor", params)), sorting = Map("num1" -> SortOrder.ASC))
+    val params: Map[String, Object]= Map("factor" -> new java.lang.Double(2.0))
+    response = indexer.search(scriptFields = Seq(Tuple3("sNum1","doc['num1'].value * factor", params)), sorting = Seq("num1" -> SortOrder.ASC))
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).id should be === ("1")
     response.hits.getAt(0).fields.get("sNum1").values.get(0) should be === (2.0)
@@ -132,7 +132,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
 	"""
     indexer.index(indexName, "type1", "1", json)
     indexer.refresh()
-    val response = indexer.search(partialFields=Seq(("partial1", "obj1.arr1.*", null), ("partial2", null, "obj1.*")))
+    val response = indexer.search(partialFields=Seq(("partial1", Seq("obj1.arr1.*"), null), ("partial2", null, Seq("obj1.*"))))
     response.shardFailures.length should be === (0)
     
     val partial1 = response.hits.getAt(0).field("partial1").value.asInstanceOf[JMap[String, _]]

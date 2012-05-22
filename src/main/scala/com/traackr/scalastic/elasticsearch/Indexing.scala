@@ -80,6 +80,7 @@ trait Multiget {
 }
 
 //todo: add parameters with defaults
+/*
 trait MoreLikeThis {
   self: Indexer =>
   def moreLikeThis(index: String, `type`: String, id: String) = moreLikeThis_send(index, `type`, id).actionGet
@@ -90,6 +91,7 @@ trait MoreLikeThis {
     request
   }
 }
+*/
 
 trait Update {
   self: Indexer =>

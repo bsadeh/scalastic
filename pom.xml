@@ -7,7 +7,7 @@
    
    <groupId>com.traackr</groupId>
    <artifactId>scalastic</artifactId>
-   <version>0.0.3-SNAPSHOT</version>
+   <version>0.0.3</version>
    <packaging>jar</packaging>
 
    <scm>
