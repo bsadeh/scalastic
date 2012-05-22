@@ -132,7 +132,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
 	"""
     indexer.index(indexName, "type1", "1", json)
     indexer.refresh()
-    val response = indexer.search(partialFields=Seq(("partial1", Seq("obj1.arr1.*"), null), ("partial2", null, Seq("obj1.*"))))
+    val response = indexer.search(partialFields=Seq(("partial1", Seq("obj1.arr1.*"), Seq()), ("partial2", Seq(), Seq("obj1.*"))))
     response.shardFailures.length should be === (0)
     
     val partial1 = response.hits.getAt(0).field("partial1").value.asInstanceOf[JMap[String, _]]
