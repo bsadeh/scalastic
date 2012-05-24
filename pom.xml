@@ -123,4 +123,12 @@
          </plugin>
       </plugins>
    </build>
+   <repositories>
+      <repository>
+         <!-- For Elastic Search -->
+         <id>Sonatype</id>
+         <name>Sonatype</name>
+         <url>http://oss.sonatype.org/content/repositories/releases/</url>
+      </repository>
+   </repositories>
 </project>
