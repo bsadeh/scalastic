@@ -38,6 +38,7 @@ using node-based access:
 	val indexer = Indexer.at(node)
 
 using a transport client:
+
 	val indexer = Indexer.transport(settings = Map(...), host = "...")
 
 ## Indexing
@@ -46,22 +47,31 @@ using a transport client:
 	  "type1": {
 	    "properties" : {
 		  "from" : {"type": "ip"},
-    		  "to" : {"type": "ip"}		
+    	  "to" : {"type": "ip"}		
 	    }
 	  }
     }
     """
     indexer.createIndex("index1", settings = """{"number_of_shards":1}""")
     indexer.waitTillActive()
-    indexer.putMapping(indexName, "type9", mapping)
-    indexer.index(indexName, "type9", "1", """{"from":"192.168.0.5", "to":"192.168.0.10"}""")
+    indexer.putMapping(indexName, "type1", mapping)
+    indexer.index(indexName, "type1", "1", """{"from":"192.168.0.5", "to":"192.168.0.10"}""")
     indexer.refresh()
+
+* for an atomic total-reindexing operation, see:
+
+	indexer.reindexWith
+
+* for syncing with indexing operations on a type (index/delete), see the family of methods in the WaitingForGodot trait:
+
+	indexer.waitTillCount[AtLeast | Exactly | AtMost]
 
 ## Searching
     indexer.search(query = boolQuery
       .must(rangeQuery("from") lt "192.168.0.7")
       .must(rangeQuery("to") gt "192.168.0.7"))
 or:
+
     val response = indexer.search(indices=List(index1, indexN), query = some_narly_query, from=100, size=25, etc. etc.)
 
 ## Testing
