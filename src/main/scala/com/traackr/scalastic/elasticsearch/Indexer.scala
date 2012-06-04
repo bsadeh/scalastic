@@ -30,21 +30,11 @@ object Indexer {
   def at(node: Node) = new NodeIndexer(node)
 }
 
-trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis with Indexing with Searching {
+
+trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis with Indexing with Searching with WaitingForGodot {
   val client: Client
   def start: Indexer
   def stop
-
-  def catchUpOn(indices: Iterable[String] = Nil, `type`: String, bar: Int, seed: Int = 1, maxFactor: Int = 64) = {
-    var factor = seed
-    while (factor <= maxFactor && count(indices, types = Seq(`type`)) < bar) {
-      info("catching up on {} to bar {} in {} sec ...", `type`, bar, factor)
-      Thread sleep factor * 1000
-      factor *= 2
-    }
-    if (factor > maxFactor) throw new RuntimeException(
-      """failed to catch up while indexing %s after %s seconds""".format(`type`, maxFactor))
-  }
 
   /** reindexing using a supplied <reindexing> function
    *  the reindexing has sole control over how to retrieve the data to be indexed in <targetIndex>.
@@ -60,7 +50,7 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
     val withoutReplicas = sourceSettings.getAsMap + ("index.number_of_replicas" -> "0")
     createIndex(index = targetIndex, settings = withoutReplicas.toMap)
     waitTillActive()
-    try { 
+    try {
       // invoking the function that will create a new targetIndex from scratch
       reindexing(this, targetIndex)
     } finally {

@@ -7,7 +7,7 @@
    
    <groupId>com.traackr</groupId>
    <artifactId>traackr-scalastic</artifactId>
-   <version>0.0.4-SNAPSHOT</version>
+   <version>0.0.4</version>
    <packaging>jar</packaging>
 
    <scm>
@@ -43,6 +43,15 @@
       <junit.version>4.10</junit.version>
       <scalatest.version>1.6.1</scalatest.version>
    </properties>
+
+   <repositories>
+      <repository>
+         <!-- For Elastic Search -->
+         <id>Sonatype</id>
+         <name>Sonatype</name>
+         <url>http://oss.sonatype.org/content/repositories/releases/</url>
+      </repository>
+   </repositories>
 
    <dependencies>
       <dependency>
@@ -123,12 +132,4 @@
          </plugin>
       </plugins>
    </build>
-   <repositories>
-      <repository>
-         <!-- For Elastic Search -->
-         <id>Sonatype</id>
-         <name>Sonatype</name>
-         <url>http://oss.sonatype.org/content/repositories/releases/</url>
-      </repository>
-   </repositories>
 </project>

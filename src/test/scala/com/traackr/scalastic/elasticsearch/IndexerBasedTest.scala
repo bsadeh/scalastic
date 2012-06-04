@@ -32,7 +32,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
 
   def search(queryBuilder: QueryBuilder) = indexer.search(query = queryBuilder)
 
-  def catchUpOn(`type`: String, howMany: Int) = indexer.catchUpOn(Seq(indexName), `type`, howMany)
+  def catchUpOn(`type`: String, howMany: Int) = indexer.waitTillCountAtLeast(Seq(indexName), `type`, howMany)
 
   def shouldHaveNoFailures(response: SearchResponse) = {
     response.shardFailures().length should be === 0
