@@ -13,15 +13,15 @@ trait Analysis {
     
   def analyze_prepare(text: String, index: Option[String] = None, field: Option[String] = None, tokenizer: Option[String] = None, tokenFilters: Iterable[String] = Nil, analyzer: Option[String] = None) = {
     val request = client.admin.indices.prepareAnalyze(text)
-    index some { that =>
+    index foreach { that =>
       request.setIndex(that)
-      field some { request.setField(_) }
+      field foreach { request.setField(_) }
     }
-    tokenizer some { that =>
+    tokenizer foreach { that =>
       request.setTokenizer(that)
       request.setTokenFilters(tokenFilters.toArray: _*)
     }
-    analyzer some { request.setAnalyzer(_) }
+    analyzer foreach { request.setAnalyzer(_) }
     request
   }
 }

@@ -113,15 +113,15 @@ trait Update {
     script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
     percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) = {
     val request = client.prepareUpdate(index, `type`, id)
-    parent some { request.setParent(_) }
-    script some { that =>
+    parent foreach { request.setParent(_) }
+    script foreach { that =>
       request.setScript(that)
       request.setScriptParams(scriptParams)
-      scriptLanguage some { request.setScriptLang(_) }
+      scriptLanguage foreach { request.setScriptLang(_) }
     }
-    percolate some { request.setPercolate(_) }
-    replicationType some { request.setReplicationType(_) }
-    consistencyLevel some { request.setConsistencyLevel(_) }
+    percolate foreach { request.setPercolate(_) }
+    replicationType foreach { request.setReplicationType(_) }
+    consistencyLevel foreach { request.setConsistencyLevel(_) }
     // revisit: replicationType & consistencyLevel
     // should we do this:
     //    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
@@ -156,8 +156,8 @@ trait DeleteByQuery {
     val request = client.prepareDeleteByQuery(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
-    replicationType some { request.setReplicationType(_) }
-    consistencyLevel some { request.setConsistencyLevel(_) }
+    replicationType foreach { request.setReplicationType(_) }
+    consistencyLevel foreach { request.setConsistencyLevel(_) }
     // revisit: replicationType & consistencyLevel
     // should we do this:
     //    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
