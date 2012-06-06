@@ -85,10 +85,10 @@ trait Search {
     for ((name, includes, excludes) <- partialFields) request.addPartialField(name, includes.toArray, excludes.toArray)
     for (each <- facets) request.addFacet(each)
     for ((field, order) <- sorting) request.addSort(field, order)
-    from some { request.setFrom(_) }
-    size some { request.setSize(_) }
-    searchType some { request.setSearchType(_) }
-    explain some { request.setExplain(_) }
+    from foreach { request.setFrom(_) }
+    size foreach { request.setSize(_) }
+    searchType foreach { request.setSearchType(_) }
+    explain foreach { request.setExplain(_) }
     request
   }
 }
