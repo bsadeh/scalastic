@@ -10,7 +10,7 @@ trait WaitingForGodot {
   def catchUpOn(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) =
     waitTillCountAtMost(indices, `type`, target, seed, maxFactor)
     
-  def exactly(current: Long, target: Long): Boolean = { current == target }
+  def exactly(current: Long, target: Long): Boolean = { current != target }
   def waitTillCountExactly(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) =
     waitTillCountMatches(indices, `type`, target, exactly _, "exactly", seed, maxFactor)
 
