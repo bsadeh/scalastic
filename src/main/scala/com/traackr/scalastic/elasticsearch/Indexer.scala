@@ -13,7 +13,6 @@ object Indexer {
     require(settings.contains("cluster.name"))
     val builder = settingsBuilder
     for ((key, value) <- settings) builder.put(key, value)
-    builder.put("client.transport.sniff", true)
     val client = new TransportClient(builder)
     for (each <- ports) client.addTransportAddress(new InetSocketTransportAddress(host, each))
     new ClientIndexer(client)
