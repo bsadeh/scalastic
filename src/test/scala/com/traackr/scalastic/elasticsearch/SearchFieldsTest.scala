@@ -88,7 +88,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
       ("sNum1", "doc['num1'].value", null),
       ("sNum1_field", "_fields['num1'].value", null),
       ("date1", "doc['date'].date.millis", null))
-    var response = indexer.search(scriptFields = scripts, sorting = Seq("num1" -> SortOrder.ASC))
+    var response = indexer.search(scriptFields = scripts, sorting = List(FieldSortSpec("num1")))
     response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).isSourceEmpty should be(true)
@@ -106,7 +106,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(2).fields.get("date1").values.get(0) should be === (120000)
 
     val params: Map[String, Object]= Map("factor" -> new java.lang.Double(2.0))
-    response = indexer.search(scriptFields = Seq(Tuple3("sNum1","doc['num1'].value * factor", params)), sorting = Seq("num1" -> SortOrder.ASC))
+    response = indexer.search(scriptFields = Seq(Tuple3("sNum1","doc['num1'].value * factor", params)), sorting = List(FieldSortSpec("num1")))
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).id should be === ("1")
     response.hits.getAt(0).fields.get("sNum1").values.get(0) should be === (2.0)

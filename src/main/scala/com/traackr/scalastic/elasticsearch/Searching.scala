@@ -17,14 +17,21 @@ trait Query {
   def query_prepare(queryString: String) = client.prepareSearch().setQuery(queryString)
 }
 
+sealed trait SortSpec {
+  def missing: Option[Any]
+  def order: SortOrder
+}
+
+case class FieldSortSpec(name: String, order: SortOrder = SortOrder.ASC, missing: Option[Any] = None) extends SortSpec
+
+
 trait Search {
   self: Indexer =>
 
   type ScriptField = Tuple3[String, String, Map[String, Object]]
   type FieldIncludesExcludes = Tuple3[String, Iterable[String], Iterable[String]]
-  type SortSpec = Tuple2[String, SortOrder]
   import highlight.HighlightBuilder.{ Field => HighlightField }
-
+  
   def search(
     indices: Iterable[String] = Nil,
     types: Iterable[String] = Nil,
@@ -164,7 +171,12 @@ trait Search {
     scroll foreach { request.setScroll(_) }
     searchType foreach { request.setSearchType(_) }
     size foreach { request.setSize(_) }
-    sorting foreach { case (field, order) => request.addSort(field, order) }
+    sorting.foreach {
+      case FieldSortSpec(name, order, missing) =>
+        val builder = fieldSort(name).order(order)
+        missing.foreach { builder.missing(_) }
+        request.addSort(builder)
+    }
     source foreach { request.setSource(_) }
     if (!statsGroups.isEmpty) request.setStats(statsGroups.toArray: _*)
     timeout foreach { request.setTimeout(_) }
