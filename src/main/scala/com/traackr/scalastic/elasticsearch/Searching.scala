@@ -24,71 +24,152 @@ trait Search {
   type ScriptField = Tuple3[String, String, Map[String, Object]]
   type FieldIncludesExcludes = Tuple3[String, Iterable[String], Iterable[String]]
   type SortSpec = Tuple2[String, SortOrder]
+  import highlight.HighlightBuilder.{ Field => HighlightField }
 
   def search(
     indices: Iterable[String] = Nil,
     types: Iterable[String] = Nil,
-    filter: Map[String, Object] = Map(),
     query: QueryBuilder = matchAllQuery,
-    fields: Iterable[String] = Nil,
-    scriptFields: Iterable[ScriptField] = Nil,
-    partialFields: Iterable[FieldIncludesExcludes] = Nil,
+    /* the rest ... */
+    explain: Option[Boolean] = None,
+    extraSource: Option[Map[String, Object]] = None,
     facets: Iterable[AbstractFacetBuilder] = Nil,
-    sorting: Iterable[SortSpec] = Nil,
+    fields: Iterable[String] = Nil,
+    filter: Option[Map[String, Object]] = None,
     from: Option[Int] = None,
-    size: Option[Int] = None,
+    highlighterEncoder: Option[String] = None,
+    highLightFields: Iterable[HighlightField] = Nil,
+    highlighterOrder: Option[String] = None,
+    highlighterPostTags: Iterable[String] = Nil,
+    highlighterPreTags: Iterable[String] = Nil,
+    highlighterRequireFieldMatch: Option[Boolean] = None,
+    highlighterTagsSchema: Option[String] = None,
+    indexBoosts: Map[String, Float] = Map(),
+    minScore: Option[Float] = None,
+    operationThreading: Option[SearchOperationThreading] = None,
+    partialFields: Iterable[FieldIncludesExcludes] = Nil,
+    preference: Option[String] = None,
+    queryHint: Option[String] = None,
+    routing: Option[String] = None,
+    scriptFields: Iterable[ScriptField] = Nil,
+    scroll: Option[Scroll] = None,
     searchType: Option[SearchType] = None,
-    explain: Option[Boolean] = None) = {
-    search_send(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).actionGet
+    size: Option[Int] = None,
+    sorting: Iterable[SortSpec] = Nil,
+    source: Option[Map[String, Object]] = None,
+    statsGroups: Iterable[String] = Nil,
+    timeout: Option[String] = None,
+    trackScores: Option[Boolean] = None) = {
+    search_send(indices, types, query, explain, extraSource, facets, fields, filter, from, highlighterEncoder, highLightFields, highlighterOrder, highlighterPostTags, highlighterPreTags, highlighterRequireFieldMatch, highlighterTagsSchema, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sorting, source, statsGroups, timeout, trackScores).actionGet
   }
 
   def search_send(
     indices: Iterable[String] = Nil,
     types: Iterable[String] = Nil,
     query: QueryBuilder = matchAllQuery,
-    filter: Map[String, Object] = Map(),
-    fields: Iterable[String] = Nil,
-    scriptFields: Iterable[ScriptField] = Nil,
-    partialFields: Iterable[FieldIncludesExcludes] = Nil,
+    /* the rest ... */
+    explain: Option[Boolean] = None,
+    extraSource: Option[Map[String, Object]] = None,
     facets: Iterable[AbstractFacetBuilder] = Nil,
-    sorting: Iterable[SortSpec] = Nil,
+    fields: Iterable[String] = Nil,
+    filter: Option[Map[String, Object]] = None,
     from: Option[Int] = None,
-    size: Option[Int] = None,
+    highlighterEncoder: Option[String] = None,
+    highLightFields: Iterable[HighlightField] = Nil,
+    highlighterOrder: Option[String] = None,
+    highlighterPostTags: Iterable[String] = Nil,
+    highlighterPreTags: Iterable[String] = Nil,
+    highlighterRequireFieldMatch: Option[Boolean] = None,
+    highlighterTagsSchema: Option[String] = None,
+    indexBoosts: Map[String, Float] = Map(),
+    minScore: Option[Float] = None,
+    operationThreading: Option[SearchOperationThreading] = None,
+    partialFields: Iterable[FieldIncludesExcludes] = Nil,
+    preference: Option[String] = None,
+    queryHint: Option[String] = None,
+    routing: Option[String] = None,
+    scriptFields: Iterable[ScriptField] = Nil,
+    scroll: Option[Scroll] = None,
     searchType: Option[SearchType] = None,
-    explain: Option[Boolean] = None) = {
-    search_prepare(indices, types, query, filter, fields, scriptFields, partialFields, facets, sorting, from, size, searchType, explain).execute
+    size: Option[Int] = None,
+    sorting: Iterable[SortSpec] = Nil,
+    source: Option[Map[String, Object]] = None,
+    statsGroups: Iterable[String] = Nil,
+    timeout: Option[String] = None,
+    trackScores: Option[Boolean] = None) = {
+    search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlighterEncoder, highLightFields, highlighterOrder, highlighterPostTags, highlighterPreTags, highlighterRequireFieldMatch, highlighterTagsSchema, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sorting, source, statsGroups, timeout, trackScores).execute
   }
 
   def search_prepare(
     indices: Iterable[String] = Nil,
     types: Iterable[String] = Nil,
     query: QueryBuilder = matchAllQuery,
-    filter: Map[String, Object] = Map(),
-    fields: Iterable[String] = Nil,
-    scriptFields: Iterable[ScriptField] = Nil,
-    partialFields: Iterable[FieldIncludesExcludes] = Nil,
+    /* the rest ... */
+    explain: Option[Boolean] = None,
+    extraSource: Option[Map[String, Object]] = None,
     facets: Iterable[AbstractFacetBuilder] = Nil,
-    sorting: Iterable[SortSpec] = Nil,
+    fields: Iterable[String] = Nil,
+    filter: Option[Map[String, Object]] = None,
     from: Option[Int] = None,
-    size: Option[Int] = None,
+    highlighterEncoder: Option[String] = None,
+    highLightFields: Iterable[HighlightField] = Nil,
+    highlighterOrder: Option[String] = None,
+    highlighterPostTags: Iterable[String] = Nil,
+    highlighterPreTags: Iterable[String] = Nil,
+    highlighterRequireFieldMatch: Option[Boolean] = None,
+    highlighterTagsSchema: Option[String] = None,
+    indexBoosts: Map[String, Float] = Map(),
+    minScore: Option[Float] = None,
+    operationThreading: Option[SearchOperationThreading] = None,
+    partialFields: Iterable[FieldIncludesExcludes] = Nil,
+    preference: Option[String] = None,
+    queryHint: Option[String] = None,
+    routing: Option[String] = None,
+    scriptFields: Iterable[ScriptField] = Nil,
+    scroll: Option[Scroll] = None,
     searchType: Option[SearchType] = None,
-    explain: Option[Boolean] = None) = {
+    size: Option[Int] = None,
+    sorting: Iterable[SortSpec] = Nil,
+    source: Option[Map[String, Object]] = None,
+    statsGroups: Iterable[String] = Nil,
+    timeout: Option[String] = None,
+    trackScores: Option[Boolean] = None) = {
+
     /* method body */
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
-    if (!filter.isEmpty) request.setFilter(filter)
-    for (each <- fields) request.addField(each)
-    for ((field, script, parameters) <- scriptFields)
-      if (parameters == null) request.addScriptField(field, script)
-      else request.addScriptField(field, script, parameters)
-    for ((name, includes, excludes) <- partialFields) request.addPartialField(name, includes.toArray, excludes.toArray)
-    for (each <- facets) request.addFacet(each)
-    for ((field, order) <- sorting) request.addSort(field, order)
-    from foreach { request.setFrom(_) }
-    size foreach { request.setSize(_) }
-    searchType foreach { request.setSearchType(_) }
+
     explain foreach { request.setExplain(_) }
+    extraSource foreach { request.setExtraSource(_) }
+    facets foreach { request.addFacet(_) }
+    fields foreach { request.addField(_) }
+    filter foreach { request.setFilter(_) }
+    from foreach { request.setFrom(_) }
+    highlighterEncoder foreach { request.setHighlighterEncoder(_) }
+    highlighterOrder foreach { request.setHighlighterOrder(_) }
+    highLightFields foreach { request.addHighlightedField(_) }
+    if (!highlighterPostTags.isEmpty) request.setHighlighterPostTags(highlighterPostTags.toArray: _*)
+    if (!highlighterPreTags.isEmpty) request.setHighlighterPreTags(highlighterPreTags.toArray: _*)
+    indexBoosts foreach { case (key, value) => request.addIndexBoost(key, value) }
+    minScore foreach { request.setMinScore(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
+    partialFields foreach { case (name, includes, excludes) => request.addPartialField(name, includes.toArray, excludes.toArray) }
+    preference foreach { request.setPreference(_) }
+    queryHint foreach { request.setQueryHint(_) }
+    routing foreach { request.setRouting(_) }
+    scriptFields foreach {
+      case (field, script, null) => request.addScriptField(field, script)
+      case (field, script, parameters) => request.addScriptField(field, script, parameters)
+    }
+    scroll foreach { request.setScroll(_) }
+    searchType foreach { request.setSearchType(_) }
+    size foreach { request.setSize(_) }
+    sorting foreach { case (field, order) => request.addSort(field, order) }
+    source foreach { request.setSource(_) }
+    if (!statsGroups.isEmpty) request.setStats(statsGroups.toArray: _*)
+    timeout foreach { request.setTimeout(_) }
+    trackScores foreach { request.setTrackScores(_) }
     request
   }
 }
