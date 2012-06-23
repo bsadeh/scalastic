@@ -240,15 +240,26 @@ trait Multisearch {
 trait Percolate {
   self: Indexer =>
 
-  def percolate(index: String, `type`: String, docBuilder: XContentBuilder) =
-    percolate_send(index, `type`, docBuilder).actionGet
+  def percolate(index: String, `type`: String,
+    source: Option[Map[String, Object]] = None,
+    operationThreaded: Option[Boolean] = None,
+    preferLocal: Option[Boolean] = None) =
+    percolate_send(index, `type`, source, operationThreaded, preferLocal).actionGet
 
-  def percolate_send(index: String, `type`: String, docBuilder: XContentBuilder) =
-    percolate_prepare(index, `type`, docBuilder).execute
+  def percolate_send(index: String, `type`: String,
+    source: Option[Map[String, Object]] = None,
+    operationThreaded: Option[Boolean] = None,
+    preferLocal: Option[Boolean] = None) =
+    percolate_prepare(index, `type`, source, operationThreaded, preferLocal).execute
 
-  def percolate_prepare(index: String, `type`: String, docBuilder: XContentBuilder) = {
-    client
-      .preparePercolate(index, `type`)
-      .setSource(docBuilder)
+  def percolate_prepare(index: String, `type`: String,
+    source: Option[Map[String, Object]] = None,
+    operationThreaded: Option[Boolean] = None,
+    preferLocal: Option[Boolean] = None) = {
+    val request = client.preparePercolate(index, `type`)
+    source foreach { request.setSource(_) }
+    operationThreaded foreach { request.setOperationThreaded(_) }
+    preferLocal foreach { request.setPreferLocal(_) }
+    request
   }
 }
