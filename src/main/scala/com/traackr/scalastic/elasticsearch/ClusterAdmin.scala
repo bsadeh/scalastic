@@ -7,17 +7,31 @@ trait ClusterAdmin extends Health with Nodes with State with Metadata {
 trait Health {
   self: Indexer =>
 
-  def waitForGreenStatus(indices: String*) =
-    prepareHealth(indices.toArray: _*).setWaitForGreenStatus.execute.actionGet
+  import org.elasticsearch.action.admin.cluster.health._, ClusterHealthStatus._
 
-  def waitForYellowStatus(indices: String*) =
-    prepareHealth(indices.toArray: _*).setWaitForYellowStatus.execute.actionGet
+  def waitForGreenStatus(indices: Iterable[String] = Nil) =
+    waitForStatus(indices, GREEN)
 
-  def waitTillActive(indices: String*) =
-    prepareHealth(indices.toArray: _*).setWaitForActiveShards(1).execute.actionGet
+  def waitForYellowStatus(indices: Iterable[String] = Nil) =
+    waitForStatus(indices, YELLOW)
 
-  def prepareHealth(indices: String*) =
-    client.admin.cluster.prepareHealth(indices.toArray: _*)
+  def waitForStatus(indices: Iterable[String] = Nil, status: ClusterHealthStatus, timeout: String = "30s") =
+    health_prepare(indices, timeout).setWaitForStatus(status).execute.actionGet
+
+  def waitTillActive(indices: Iterable[String] = Nil, howMany: Int = 1) =
+    health_prepare(indices).setWaitForActiveShards(howMany).execute.actionGet
+
+  def waitForRelocating(indices: Iterable[String] = Nil, howMany: Int = 1) =
+    health_prepare(indices).setWaitForRelocatingShards(howMany).execute.actionGet
+
+  def waitForNodes(indices: Iterable[String] = Nil, howMany: String = ">0") =
+    health_prepare(indices).setWaitForNodes(howMany).execute.actionGet
+
+  def health_prepare(indices: Iterable[String] = Nil, timeout: String = "30s") = {
+    val request = client.admin.cluster.prepareHealth(indices.toArray: _*)
+    request.setTimeout(timeout)
+    request
+  }
 }
 
 trait Nodes {
@@ -31,9 +45,30 @@ trait Nodes {
 
 trait State {
   self: Indexer =>
-  def state = state_send.actionGet
-  def state_send = state_prepare.execute
-  def state_prepare = client.admin.cluster.prepareState
+  def state() = state_send().actionGet
+  def state_send() = state_prepare().execute
+  def state_prepare(
+    filterBlocks: Option[Boolean] = None,
+    filterMetaData: Option[Boolean] = None,
+    filter: Option[Boolean] = None,
+    filterIndexTemplates: Iterable[String] = Nil,
+    filterIndices: Iterable[String] = Nil,
+    filterNodes: Option[Boolean] = None,
+    filterRoutingTable: Option[Boolean] = None,
+    local: Option[Boolean] = None,
+    timeout: String = "30s") = {
+    /* method body */
+    val request = client.admin.cluster.prepareState
+    filterBlocks foreach { request.setFilterBlocks(_) }
+    request.setFilterIndexTemplates(filterIndexTemplates.toArray: _*)
+    request.setFilterIndices(filterIndices.toArray: _*)
+    filterMetaData foreach { request.setFilterMetaData(_) }
+    filterNodes foreach { request.setFilterNodes(_) }
+    filterRoutingTable foreach { request.setFilterRoutingTable(_) }
+    local foreach { request.setLocal(_) }
+    request.setMasterNodeTimeout(timeout)
+    request
+  }
 }
 
 trait Metadata {
@@ -41,6 +76,6 @@ trait Metadata {
   def metadata = state.state.metaData
   def metadataFor(index: String) = metadata.index(index)
   def metadataFor(index: String, `type`: String) = metadata.index(index).mappings.get(`type`)
-  def fieldsOf(index: String, `type`: String) = 
+  def fieldsOf(index: String, `type`: String) =
     metadataFor(index, `type`).sourceAsMap.get("properties").asInstanceOf[Map[String, Object]]
 }

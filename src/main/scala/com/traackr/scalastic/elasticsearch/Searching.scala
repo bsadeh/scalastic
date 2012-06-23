@@ -240,19 +240,22 @@ trait Multisearch {
 trait Percolate {
   self: Indexer =>
 
-  def percolate(index: String, `type`: String,
+  def percolate(
+    index: String, `type`: String,
     source: Option[Map[String, Object]] = None,
     operationThreaded: Option[Boolean] = None,
     preferLocal: Option[Boolean] = None) =
     percolate_send(index, `type`, source, operationThreaded, preferLocal).actionGet
 
-  def percolate_send(index: String, `type`: String,
+  def percolate_send(
+    index: String, `type`: String,
     source: Option[Map[String, Object]] = None,
     operationThreaded: Option[Boolean] = None,
     preferLocal: Option[Boolean] = None) =
     percolate_prepare(index, `type`, source, operationThreaded, preferLocal).execute
 
-  def percolate_prepare(index: String, `type`: String,
+  def percolate_prepare(
+    index: String, `type`: String,
     source: Option[Map[String, Object]] = None,
     operationThreaded: Option[Boolean] = None,
     preferLocal: Option[Boolean] = None) = {
