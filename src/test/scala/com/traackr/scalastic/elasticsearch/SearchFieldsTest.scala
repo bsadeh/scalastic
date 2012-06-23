@@ -6,6 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.search._
 import org.elasticsearch.common.collect._
 import org.elasticsearch.search.sort._
+import SearchParameterTypes._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleFieldsTest extends IndexerBasedTest {
@@ -31,26 +32,26 @@ class SimpleFieldsTest extends IndexerBasedTest {
     indexer.putMapping(indexName, "type1", mapping)
     indexer.index(indexName, "type1", "1", """{"field1": "value1","field2": "value2","field3": "value3"}""")
     indexer.refresh()
-    var response = indexer.search(fields = List("field1"))
+    var response = indexer.search(fields = Seq("field1"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
     response.hits.getAt(0).fields.size should be === (1)
     response.hits.getAt(0).fields.get("field1").value.toString should be === ("value1")
 
         // field2 is not stored, check that it gets extracted from source
-    response = indexer.search(fields = List("field2"))
+    response = indexer.search(fields = Seq("field2"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
     response.hits.getAt(0).fields.size should be === (1)
     response.hits.getAt(0).fields.get("field2").value.toString should be === ("value2")
 
-    response = indexer.search(fields = List("field3"))
+    response = indexer.search(fields = Seq("field3"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
     response.hits.getAt(0).fields.size should be === (1)
     response.hits.getAt(0).fields.get("field3").value.toString should be === ("value3")
 
-    response = indexer.search(fields = List("*"))
+    response = indexer.search(fields = Seq("*"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
     response.hits.getAt(0).source should be (null)
@@ -58,7 +59,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(0).fields.get("field1").value.toString should be === ("value1")
     response.hits.getAt(0).fields.get("field3").value.toString should be === ("value3")
 
-    response = indexer.search(fields = List("*", "_source"))
+    response = indexer.search(fields = Seq("*", "_source"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
     response.hits.getAt(0).source should not be (null)
@@ -85,10 +86,10 @@ class SimpleFieldsTest extends IndexerBasedTest {
     indexer.refresh()
 
     val scripts = Seq(
-      ("sNum1", "doc['num1'].value", null),
-      ("sNum1_field", "_fields['num1'].value", null),
-      ("date1", "doc['date'].date.millis", null))
-    var response = indexer.search(scriptFields = scripts, sorting = List(FieldSortSpec("num1")))
+      ScriptField("sNum1", "doc['num1'].value"),
+      ScriptField("sNum1_field", "_fields['num1'].value"),
+      ScriptField("date1", "doc['date'].date.millis"))
+    var response = indexer.search(scriptFields = scripts, sortings = Seq(FieldSort("num1")))
     response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).isSourceEmpty should be(true)
@@ -105,8 +106,8 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(2).fields.get("sNum1_field").values.get(0) should be === (3.0)
     response.hits.getAt(2).fields.get("date1").values.get(0) should be === (120000)
 
-    val params: Map[String, Object]= Map("factor" -> new java.lang.Double(2.0))
-    response = indexer.search(scriptFields = Seq(Tuple3("sNum1","doc['num1'].value * factor", params)), sorting = List(FieldSortSpec("num1")))
+    val parameters: Map[String, Object]= Map("factor" -> new java.lang.Double(2.0))
+    response = indexer.search(scriptFields = Seq(ScriptField("sNum1", "doc['num1'].value * factor", parameters)), sortings = Seq(FieldSort("num1")))
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).id should be === ("1")
     response.hits.getAt(0).fields.get("sNum1").values.get(0) should be === (2.0)
@@ -132,7 +133,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
 	"""
     indexer.index(indexName, "type1", "1", json)
     indexer.refresh()
-    val response = indexer.search(partialFields=Seq(("partial1", Seq("obj1.arr1.*"), Seq()), ("partial2", Seq(), Seq("obj1.*"))))
+    val response = indexer.search(partialFields=Seq(PartialField("partial1", Some("obj1.arr1.*"), None), PartialField("partial2", None, Some("obj1.*"))))
     response.shardFailures.length should be === (0)
     
     val partial1 = response.hits.getAt(0).field("partial1").value.asInstanceOf[JMap[String, _]]
