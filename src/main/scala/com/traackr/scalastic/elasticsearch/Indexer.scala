@@ -55,7 +55,7 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
     } finally {
       // after whole data indexing do:
       //	- optimize the newly indexed ...
-      optimize(targetIndex)
+      optimize(Seq(targetIndex))
       // 	- update targetIndex with sourceIndex settings ...
       updateSettings("""{"number_of_replicas": %s}""".format(sourceSettings.get("index.number_of_replicas")), targetIndex)
       //	- ... then transfer aliases from sourceIndex to targetIndex

@@ -57,7 +57,7 @@ trait State {
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
     timeout: Option[String] = None) = {
-    /* method body */
+		  /* method body */
     val request = client.admin.cluster.prepareState
     filterBlocks foreach { request.setFilterBlocks(_) }
     request.setFilterIndexTemplates(filterIndexTemplates.toArray: _*)

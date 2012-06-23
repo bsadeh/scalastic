@@ -1,5 +1,6 @@
 package com.traackr.scalastic.elasticsearch
 
+import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.common.unit._, TimeValue._
 import scala.collection._, JavaConversions._
@@ -113,16 +114,46 @@ trait Unalias {
 
 trait Optimize {
   self: Indexer =>
-  def optimize(indices: String*) = optimize_send(indices.toArray: _*).actionGet
-  def optimize_send(indices: String*) = optimize_prepare(indices.toArray: _*).execute
-  def optimize_prepare(indices: String*) = client.admin.indices.prepareOptimize(indices.toArray: _*)
-  //setFlush(boolean)
-  //setListenerThreaded(boolean)
-  //setMaxNumSegments(int)
-  //setOnlyExpungeDeletes(boolean)
-  //setOperationThreading(BroadcastOperationThreading)
-  //setRefresh(boolean)
-  //setWaitForMerge(boolean)  
+
+  def optimize(
+    indices: Iterable[String] = Nil,
+    flush: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    maxNumSegments: Option[Int] = None,
+    onlyExpungeDeletes: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    refresh: Option[Boolean] = None, waitForMerge: Option[Boolean] = None) =
+    optimize_send(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, refresh, waitForMerge).actionGet
+
+  def optimize_send(
+    indices: Iterable[String] = Nil,
+    flush: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    maxNumSegments: Option[Int] = None,
+    onlyExpungeDeletes: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    refresh: Option[Boolean] = None, waitForMerge: Option[Boolean] = None) =
+    optimize_prepare(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, refresh, waitForMerge).execute
+
+  def optimize_prepare(
+    indices: Iterable[String] = Nil,
+    flush: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    maxNumSegments: Option[Int] = None,
+    onlyExpungeDeletes: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    refresh: Option[Boolean] = None, waitForMerge: Option[Boolean] = None) = {
+		  /* method body */
+    val request = client.admin.indices.prepareOptimize(indices.toArray: _*)
+    flush foreach { request.setFlush(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    maxNumSegments foreach { request.setMaxNumSegments(_) }
+    onlyExpungeDeletes foreach { request.setOnlyExpungeDeletes(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
+    refresh foreach { request.setRefresh(_) }
+    waitForMerge foreach { request.setWaitForMerge(_) }
+    request
+  }
 }
 
 trait Flush {
@@ -139,8 +170,6 @@ trait Flush {
 
 trait Refresh {
   self: Indexer =>
-  import org.elasticsearch.action.support.broadcast._
-
   def refresh(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = refresh_send(indices, listenerThreaded, operationThreading, waitForOperations).actionGet
   def refresh_send(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = refresh_prepare(indices, listenerThreaded, operationThreading, waitForOperations).execute
   def refresh_prepare(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = {
@@ -154,35 +183,82 @@ trait Refresh {
 
 trait Status {
   self: Indexer =>
-  def status(indices: String*) = status_send(indices.toArray: _*).actionGet
-  def status_send(indices: String*) = status_prepare(indices.toArray: _*).execute
-  def status_prepare(indices: String*) = client.admin.indices.prepareStatus(indices.toArray: _*)
-  //setRecovery(boolean)
-  //setSnapshot(boolean)
+  def status(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = status_send(indices, recovery, snapshot).actionGet
+  def status_send(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = status_prepare(indices, recovery, snapshot).execute
+  def status_prepare(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = {
+    val request = client.admin.indices.prepareStatus(indices.toArray: _*)
+    recovery foreach { request.setRecovery(_) }
+    snapshot foreach { request.setSnapshot(_) }
+    request
+  }
 }
 
 trait Stats {
   self: Indexer =>
-  def stats(indices: String*) = stats_send(indices.toArray: _*).actionGet
-  def stats_send(indices: String*) = stats_prepare(indices.toArray: _*).execute
-  def stats_prepare(indices: String*) = client.admin.indices.prepareStats(indices.toArray: _*)
-  //setDocs(boolean)
-  //setFlush(boolean)
-  //setGet(boolean)
-  //setGroups(String...)
-  //setIndexing(boolean)
-  //setMerge(boolean)
-  //setRefresh(boolean)
-  //setSearch(boolean)
-  //setStore(boolean)
-  //setTypes(String...)
+    
+  def stats(
+    indices: Iterable[String] = Nil,
+    docs: Option[Boolean] = None,
+    flush: Option[Boolean] = None,
+    get: Option[Boolean] = None,
+    groups: Iterable[String] = Nil,
+    indexing: Option[Boolean] = None,
+    merge: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    search: Option[Boolean] = None,
+    store: Option[Boolean] = None,
+    types: Iterable[String] = Nil) = stats_send(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).actionGet
+    
+  def stats_send(
+    indices: Iterable[String] = Nil,
+    docs: Option[Boolean] = None,
+    flush: Option[Boolean] = None,
+    get: Option[Boolean] = None,
+    groups: Iterable[String] = Nil,
+    indexing: Option[Boolean] = None,
+    merge: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    search: Option[Boolean] = None,
+    store: Option[Boolean] = None,
+    types: Iterable[String] = Nil) = stats_prepare(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).execute
+    
+  def stats_prepare(
+    indices: Iterable[String] = Nil,
+    docs: Option[Boolean] = None,
+    flush: Option[Boolean] = None,
+    get: Option[Boolean] = None,
+    groups: Iterable[String] = Nil,
+    indexing: Option[Boolean] = None,
+    merge: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    search: Option[Boolean] = None,
+    store: Option[Boolean] = None,
+    types: Iterable[String] = Nil) = {
+		  /* method body */
+    val request = client.admin.indices.prepareStats(indices.toArray: _*)
+    docs foreach { request.setDocs(_) }
+    flush foreach { request.setFlush(_) }
+    get foreach { request.setGet(_) }
+    request.setGroups(groups.toArray: _*)
+    indexing foreach { request.setIndexing(_) }
+    merge foreach { request.setMerge(_) }
+    refresh foreach { request.setRefresh(_) }
+    search foreach { request.setSearch(_) }
+    store foreach { request.setStore(_) }
+    request.setTypes(types.toArray: _*)
+    request
+  }
 }
 
 trait PutMapping {
   self: Indexer =>
-  def putMapping(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMapping_send(index, `type`, json, ignoreConflicts, timeout).actionGet
-  def putMapping_send(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMapping_prepare(Seq(index), `type`, json, ignoreConflicts, timeout).execute
-  def putMapping_prepare(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = {
+  def putMapping(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll(Seq(index), `type`, json, ignoreConflicts, timeout)
+  def putMapping_send(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_send(Seq(index), `type`, json, ignoreConflicts, timeout)
+  def putMapping_prepare(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_prepare(Seq(index), `type`, json, ignoreConflicts, timeout)
+
+  def putMappingForAll(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_send(indices, `type`, json, ignoreConflicts, timeout).actionGet
+  def putMappingForAll_send(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_prepare(indices, `type`, json, ignoreConflicts, timeout).execute
+  def putMappingForAll_prepare(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = {
     val request = client.admin.indices.preparePutMapping(indices.toArray: _*)
     request.setType(`type`)
     request.setSource(json)

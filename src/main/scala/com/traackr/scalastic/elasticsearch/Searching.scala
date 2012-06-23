@@ -116,9 +116,8 @@ trait Search {
     source: Option[Map[String, Object]] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = {
+    trackScores: Option[Boolean] = None) =
     search_send(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).actionGet
-  }
 
   def search_send(
     indices: Iterable[String] = Nil,
@@ -147,9 +146,8 @@ trait Search {
     source: Option[Map[String, Object]] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = {
+    trackScores: Option[Boolean] = None) =
     search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
-  }
 
   def search_prepare(
     indices: Iterable[String] = Nil,
@@ -179,12 +177,12 @@ trait Search {
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
     trackScores: Option[Boolean] = None) = {
-
-    /* essentials ... */
+		  /* method body */
+    // ... essentials
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
-    /* ... and the rest */
+    // ... and the rest
     explain foreach { request.setExplain(_) }
     extraSource foreach { request.setExtraSource(_) }
     facets foreach { request.addFacet(_) }
