@@ -15,7 +15,7 @@ trait Health {
   def waitForYellowStatus(indices: Iterable[String] = Nil) =
     waitForStatus(indices, YELLOW)
 
-  def waitForStatus(indices: Iterable[String] = Nil, status: ClusterHealthStatus, timeout: String = "30s") =
+  def waitForStatus(indices: Iterable[String] = Nil, status: ClusterHealthStatus, timeout: Option[String] = None) =
     health_prepare(indices, timeout).setWaitForStatus(status).execute.actionGet
 
   def waitTillActive(indices: Iterable[String] = Nil, howMany: Int = 1) =
@@ -27,9 +27,9 @@ trait Health {
   def waitForNodes(indices: Iterable[String] = Nil, howMany: String = ">0") =
     health_prepare(indices).setWaitForNodes(howMany).execute.actionGet
 
-  def health_prepare(indices: Iterable[String] = Nil, timeout: String = "30s") = {
+  def health_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = {
     val request = client.admin.cluster.prepareHealth(indices.toArray: _*)
-    request.setTimeout(timeout)
+    timeout foreach { request.setTimeout(_) }
     request
   }
 }
@@ -56,7 +56,7 @@ trait State {
     filterNodes: Option[Boolean] = None,
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
-    timeout: String = "30s") = {
+    timeout: Option[String] = None) = {
     /* method body */
     val request = client.admin.cluster.prepareState
     filterBlocks foreach { request.setFilterBlocks(_) }
@@ -66,7 +66,7 @@ trait State {
     filterNodes foreach { request.setFilterNodes(_) }
     filterRoutingTable foreach { request.setFilterRoutingTable(_) }
     local foreach { request.setLocal(_) }
-    request.setMasterNodeTimeout(timeout)
+    timeout foreach { request.setMasterNodeTimeout(_) }
     request
   }
 }

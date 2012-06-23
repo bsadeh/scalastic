@@ -60,8 +60,8 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
       updateSettings("""{"number_of_replicas": %s}""".format(sourceSettings.get("index.number_of_replicas")), targetIndex)
       //	- ... then transfer aliases from sourceIndex to targetIndex
       for (each <- metadataFor(sourceIndex).aliases.values) {
-        unalias(each.alias, sourceIndex)
-        alias(each.alias, targetIndex)
+        unalias(Seq(sourceIndex), each.alias)
+        alias(Seq(targetIndex), each.alias)
       }
     }
   }
