@@ -1,12 +1,13 @@
 package com.traackr.scalastic.elasticsearch
 
 import org.elasticsearch.action.search._
+import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.common.xcontent._
 import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._
 import scala.collection._, JavaConversions._
 
-trait Searching extends Query with Search with Multisearch with Percolate {
+trait Searching extends Query with Search with Multisearch with Percolate with ValidateQuery {
   self: Indexer =>
 }
 
@@ -261,6 +262,45 @@ trait Percolate {
     source foreach { request.setSource(_) }
     operationThreaded foreach { request.setOperationThreaded(_) }
     preferLocal foreach { request.setPreferLocal(_) }
+    request
+  }
+}
+
+trait ValidateQuery {
+  self: Indexer =>
+
+  def validateQuery(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    explain: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) =
+    validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
+
+  def validateQuery_send(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    explain: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) =
+    validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
+
+  def validateQuery_prepare(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    explain: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) = {
+		  /* method body */
+    val request = client.admin.indices.prepareValidateQuery(indices.toArray: _*)
+    request.setTypes(types.toArray: _*)
+    request.setQuery(query)
+    explain foreach { request.setExplain(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
     request
   }
 }

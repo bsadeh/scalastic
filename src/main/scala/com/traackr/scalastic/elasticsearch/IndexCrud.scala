@@ -21,7 +21,6 @@ trait IndexCrud
     with Segments
     with Status
     with Stats
-    with ValidateQuery
     with UpdateSettings {
   self: Indexer =>
 }
@@ -199,7 +198,8 @@ trait Stats {
     refresh: Option[Boolean] = None,
     search: Option[Boolean] = None,
     store: Option[Boolean] = None,
-    types: Iterable[String] = Nil) = stats_send(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).actionGet
+    types: Iterable[String] = Nil) =
+    stats_send(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).actionGet
 
   def stats_send(
     indices: Iterable[String] = Nil,
@@ -212,7 +212,8 @@ trait Stats {
     refresh: Option[Boolean] = None,
     search: Option[Boolean] = None,
     store: Option[Boolean] = None,
-    types: Iterable[String] = Nil) = stats_prepare(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).execute
+    types: Iterable[String] = Nil) =
+    stats_prepare(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).execute
 
   def stats_prepare(
     indices: Iterable[String] = Nil,
@@ -289,7 +290,8 @@ trait PutTemplate {
     cause: Option[String] = None,
     create: Option[Boolean] = None,
     order: Option[Int] = None,
-    timeout: Option[String] = None) = putTemplate_send(name, settings, mappings, cause, create, order, timeout).actionGet
+    timeout: Option[String] = None) =
+    putTemplate_send(name, settings, mappings, cause, create, order, timeout).actionGet
 
   def putTemplate_send(
     name: String,
@@ -298,7 +300,8 @@ trait PutTemplate {
     cause: Option[String] = None,
     create: Option[Boolean] = None,
     order: Option[Int] = None,
-    timeout: Option[String] = None) = putTemplate_prepare(name, settings, mappings, cause, create, order, timeout).execute
+    timeout: Option[String] = None) =
+    putTemplate_prepare(name, settings, mappings, cause, create, order, timeout).execute
 
   def putTemplate_prepare(
     name: String,
@@ -408,45 +411,6 @@ trait ClearCache {
     fieldDataCache foreach { request.setFieldDataCache(_) }
     filterCache foreach { request.setFilterCache(_) }
     idCache foreach { request.setIdCache(_) }
-    listenerThreaded foreach { request.setListenerThreaded(_) }
-    operationThreading foreach { request.setOperationThreading(_) }
-    request
-  }
-}
-
-trait ValidateQuery {
-  self: Indexer =>
-
-  def validateQuery(
-    indices: Iterable[String] = Nil,
-    types: Iterable[String] = Nil,
-    query: QueryBuilder = matchAllQuery,
-    explain: Option[Boolean] = None,
-    listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) =
-    validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
-
-  def validateQuery_send(
-    indices: Iterable[String] = Nil,
-    types: Iterable[String] = Nil,
-    query: QueryBuilder = matchAllQuery,
-    explain: Option[Boolean] = None,
-    listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) =
-    validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
-
-  def validateQuery_prepare(
-    indices: Iterable[String] = Nil,
-    types: Iterable[String] = Nil,
-    query: QueryBuilder = matchAllQuery,
-    explain: Option[Boolean] = None,
-    listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = {
-		  /* method body */
-    val request = client.admin.indices.prepareValidateQuery(indices.toArray: _*)
-    request.setTypes(types.toArray: _*)
-    request.setQuery(query)
-    explain foreach { request.setExplain(_) }
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
     request
