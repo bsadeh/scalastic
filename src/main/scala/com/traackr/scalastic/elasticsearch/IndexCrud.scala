@@ -2,37 +2,27 @@ package com.traackr.scalastic.elasticsearch
 
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.common.settings.ImmutableSettings._
+import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.common.unit._, TimeValue._
 import scala.collection._, JavaConversions._
 
-/*
-fixme: add these api traits:
-
-prepareOpen(String)
-prepareClose(String)
-
-preparePutTemplate(String)
-prepareDeleteTemplate(String)
-
-prepareClearCache(String...)
-prepareGatewaySnapshot(String...)
-prepareSegments(String...)
-prepareValidateQuery(String...)
- */
 trait IndexCrud
-    extends IndexCreate
-    with IndexDelete
-    with UpdateSettings
-    with Exists
-    with Alias
-    with Unalias
-    with Optimize
+    extends Exists
+    with IndexCreate with IndexDelete
+    with Open with Close
+    with Alias with Unalias
+    with PutMapping with DeleteMapping
+    with PutTemplate with DeleteTemplate
+    with ClearCache
     with Flush
     with Refresh
+    with Optimize
+    with GatewaySnapshot
+    with Segments
     with Status
     with Stats
-    with PutMapping
-    with DeleteMapping {
+    with ValidateQuery
+    with UpdateSettings {
   self: Indexer =>
 }
 
@@ -170,8 +160,10 @@ trait Flush {
 
 trait Refresh {
   self: Indexer =>
-  def refresh(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = refresh_send(indices, listenerThreaded, operationThreading, waitForOperations).actionGet
-  def refresh_send(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = refresh_prepare(indices, listenerThreaded, operationThreading, waitForOperations).execute
+  def refresh(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) =
+    refresh_send(indices, listenerThreaded, operationThreading, waitForOperations).actionGet
+  def refresh_send(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) =
+    refresh_prepare(indices, listenerThreaded, operationThreading, waitForOperations).execute
   def refresh_prepare(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = {
     val request = client.admin.indices.prepareRefresh(indices.toArray: _*)
     listenerThreaded foreach { request.setListenerThreaded(_) }
@@ -195,7 +187,7 @@ trait Status {
 
 trait Stats {
   self: Indexer =>
-    
+
   def stats(
     indices: Iterable[String] = Nil,
     docs: Option[Boolean] = None,
@@ -208,7 +200,7 @@ trait Stats {
     search: Option[Boolean] = None,
     store: Option[Boolean] = None,
     types: Iterable[String] = Nil) = stats_send(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).actionGet
-    
+
   def stats_send(
     indices: Iterable[String] = Nil,
     docs: Option[Boolean] = None,
@@ -221,7 +213,7 @@ trait Stats {
     search: Option[Boolean] = None,
     store: Option[Boolean] = None,
     types: Iterable[String] = Nil) = stats_prepare(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).execute
-    
+
   def stats_prepare(
     indices: Iterable[String] = Nil,
     docs: Option[Boolean] = None,
@@ -252,12 +244,17 @@ trait Stats {
 
 trait PutMapping {
   self: Indexer =>
-  def putMapping(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll(Seq(index), `type`, json, ignoreConflicts, timeout)
-  def putMapping_send(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_send(Seq(index), `type`, json, ignoreConflicts, timeout)
-  def putMapping_prepare(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_prepare(Seq(index), `type`, json, ignoreConflicts, timeout)
+  def putMapping(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll(Seq(index), `type`, json, ignoreConflicts, timeout)
+  def putMapping_send(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_send(Seq(index), `type`, json, ignoreConflicts, timeout)
+  def putMapping_prepare(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_prepare(Seq(index), `type`, json, ignoreConflicts, timeout)
 
-  def putMappingForAll(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_send(indices, `type`, json, ignoreConflicts, timeout).actionGet
-  def putMappingForAll_send(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = putMappingForAll_prepare(indices, `type`, json, ignoreConflicts, timeout).execute
+  def putMappingForAll(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_send(indices, `type`, json, ignoreConflicts, timeout).actionGet
+  def putMappingForAll_send(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_prepare(indices, `type`, json, ignoreConflicts, timeout).execute
   def putMappingForAll_prepare(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = {
     val request = client.admin.indices.preparePutMapping(indices.toArray: _*)
     request.setType(`type`)
@@ -270,12 +267,188 @@ trait PutMapping {
 
 trait DeleteMapping {
   self: Indexer =>
-  def deleteMapping(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = deleteMapping_send(indices, `type`, timeout).actionGet
-  def deleteMapping_send(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = deleteMapping_prepare(indices, `type`, timeout).execute
+  def deleteMapping(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = 
+    deleteMapping_send(indices, `type`, timeout).actionGet
+  def deleteMapping_send(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = 
+    deleteMapping_prepare(indices, `type`, timeout).execute
   def deleteMapping_prepare(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = {
     val request = client.admin.indices.prepareDeleteMapping(indices.toArray: _*)
     `type` foreach { request.setType(_) }
     timeout foreach { each => request.setMasterNodeTimeout(parseTimeValue(each, null)) }
+    request
+  }
+}
+
+trait PutTemplate {
+  self: Indexer =>
+
+  def putTemplate(
+    name: String,
+    settings: Map[String, String] = Map(),
+    mappings: Map[String, String] = Map(),
+    cause: Option[String] = None,
+    create: Option[Boolean] = None,
+    order: Option[Int] = None,
+    timeout: Option[String] = None) = putTemplate_send(name, settings, mappings, cause, create, order, timeout).actionGet
+
+  def putTemplate_send(
+    name: String,
+    settings: Map[String, String] = Map(),
+    mappings: Map[String, String] = Map(),
+    cause: Option[String] = None,
+    create: Option[Boolean] = None,
+    order: Option[Int] = None,
+    timeout: Option[String] = None) = putTemplate_prepare(name, settings, mappings, cause, create, order, timeout).execute
+
+  def putTemplate_prepare(
+    name: String,
+    settings: Map[String, String] = Map(),
+    mappings: Map[String, String] = Map(),
+    cause: Option[String] = None,
+    create: Option[Boolean] = None,
+    order: Option[Int] = None,
+    timeout: Option[String] = None) = {
+		  /* method body */
+    val request = client.admin.indices.preparePutTemplate(name)
+    if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings).build())
+    mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
+    cause foreach { request.cause(_) }
+    create foreach { request.setCreate(_) }
+    order foreach { request.setOrder(_) }
+    timeout foreach { request.setTimeout(_) }
+    request
+  }
+}
+
+trait DeleteTemplate {
+  self: Indexer =>
+  def deleteTemplate(name: String, timeout: Option[String] = None) = deleteTemplate_send(name, timeout).actionGet
+  def deleteTemplate_send(name: String, timeout: Option[String] = None) = deleteTemplate_prepare(name, timeout).execute
+  def deleteTemplate_prepare(name: String, timeout: Option[String] = None) = {
+    val request = client.admin.indices.prepareDeleteTemplate(name)
+    timeout foreach { request.setTimeout(_) }
+    request
+  }
+}
+
+trait Open {
+  self: Indexer =>
+  def openIndex(index: String, timeout: Option[String] = None) = openIndex_send(index, timeout).actionGet
+  def openIndex_send(index: String, timeout: Option[String] = None) = openIndex_prepare(index, timeout).execute
+  def openIndex_prepare(index: String, timeout: Option[String] = None) = {
+    val request = client.admin.indices.prepareOpen(index)
+    timeout foreach { request.setTimeout(_) }
+    request
+  }
+}
+
+trait Close {
+  self: Indexer =>
+  def closeIndex(index: String, timeout: Option[String] = None) = closeIndex_send(index, timeout).actionGet
+  def closeIndex_send(index: String, timeout: Option[String] = None) = closeIndex_prepare(index, timeout).execute
+  def closeIndex_prepare(index: String, timeout: Option[String] = None) = {
+    val request = client.admin.indices.prepareClose(index)
+    timeout foreach { request.setTimeout(_) }
+    request
+  }
+}
+
+trait GatewaySnapshot {
+  self: Indexer =>
+  def gatewaySnapshot(indices: String*) = gatewaySnapshot_send(indices.toArray: _*).actionGet
+  def gatewaySnapshot_send(indices: String*) = gatewaySnapshot_prepare(indices.toArray: _*).execute
+  def gatewaySnapshot_prepare(indices: String*) = client.admin.indices.prepareGatewaySnapshot(indices.toArray: _*)
+}
+
+trait Segments {
+  self: Indexer =>
+  def segments(indices: String*) = segments_send(indices.toArray: _*).actionGet
+  def segments_send(indices: String*) = segments_prepare(indices.toArray: _*).execute
+  def segments_prepare(indices: String*) = client.admin.indices.prepareSegments(indices.toArray: _*)
+}
+
+trait ClearCache {
+  self: Indexer =>
+    
+  def clearCache(
+    indices: Iterable[String] = Nil,
+    fields: Iterable[String] = Nil,
+    bloomCache: Option[Boolean] = None,
+    fieldDataCache: Option[Boolean] = None,
+    filterCache: Option[Boolean] = None,
+    idCache: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) =
+    clearCache_send(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).actionGet
+    
+  def clearCache_send(
+    indices: Iterable[String] = Nil,
+    fields: Iterable[String] = Nil,
+    bloomCache: Option[Boolean] = None,
+    fieldDataCache: Option[Boolean] = None,
+    filterCache: Option[Boolean] = None,
+    idCache: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) =
+    clearCache_prepare(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).execute
+    
+  def clearCache_prepare(
+    indices: Iterable[String] = Nil,
+    fields: Iterable[String] = Nil,
+    bloomCache: Option[Boolean] = None,
+    fieldDataCache: Option[Boolean] = None,
+    filterCache: Option[Boolean] = None,
+    idCache: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) = {
+		  /* method body */
+    val request = client.admin.indices.prepareClearCache(indices.toArray: _*)
+    request.setFields(fields.toArray: _*)
+    bloomCache foreach { request.setBloomCache(_) }
+    fieldDataCache foreach { request.setFieldDataCache(_) }
+    filterCache foreach { request.setFilterCache(_) }
+    idCache foreach { request.setIdCache(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
+    request
+  }
+}
+
+trait ValidateQuery {
+  self: Indexer =>
+
+  def validateQuery(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    explain: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) =
+    validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
+
+  def validateQuery_send(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    explain: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) =
+    validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
+
+  def validateQuery_prepare(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    explain: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None) = {
+		  /* method body */
+    val request = client.admin.indices.prepareValidateQuery(indices.toArray: _*)
+    request.setTypes(types.toArray: _*)
+    request.setQuery(query)
+    explain foreach { request.setExplain(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
     request
   }
 }
