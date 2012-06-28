@@ -37,7 +37,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <scala.version>2.9.1</scala.version>
       <scalaz.version>6.0.4</scalaz.version>
-      <elasticsearch.version>0.19.6</elasticsearch.version>
+      <elasticsearch.version>0.19.7</elasticsearch.version>
       <slf4j.version>1.6.4</slf4j.version>
       <logback.version>1.0.2</logback.version>
       <junit.version>4.10</junit.version>

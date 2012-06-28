@@ -5,7 +5,7 @@ version := "0.0.6-SNAPSHOT"
 scalaVersion := "2.9.1" 
 
 
-libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.19.6"
+libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.19.7"
 	
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "6.0.4"
 
