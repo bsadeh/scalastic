@@ -28,6 +28,7 @@ trait IndexCrud
 trait IndexCreate {
   self: Indexer =>
 
+//fixme: change settings to  consistently be a map, or a json string
   def createIndex(index: String, settings: Map[String, String] = Map(), mappings: Map[String, String] = Map(), cause: Option[String] = None, timeout: Option[String] = None) =
     createIndex_send(index, settings, mappings, cause, timeout).actionGet
 
@@ -111,7 +112,8 @@ trait Optimize {
     maxNumSegments: Option[Int] = None,
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    refresh: Option[Boolean] = None, waitForMerge: Option[Boolean] = None) =
+    refresh: Option[Boolean] = None, 
+    waitForMerge: Option[Boolean] = None) =
     optimize_send(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, refresh, waitForMerge).actionGet
 
   def optimize_send(
@@ -121,7 +123,8 @@ trait Optimize {
     maxNumSegments: Option[Int] = None,
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    refresh: Option[Boolean] = None, waitForMerge: Option[Boolean] = None) =
+    refresh: Option[Boolean] = None, 
+    waitForMerge: Option[Boolean] = None) =
     optimize_prepare(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, refresh, waitForMerge).execute
 
   def optimize_prepare(
@@ -131,7 +134,8 @@ trait Optimize {
     maxNumSegments: Option[Int] = None,
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    refresh: Option[Boolean] = None, waitForMerge: Option[Boolean] = None) = {
+    refresh: Option[Boolean] = None, 
+    waitForMerge: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.admin.indices.prepareOptimize(indices.toArray: _*)
     flush foreach { request.setFlush(_) }
@@ -245,21 +249,21 @@ trait Stats {
 
 trait PutMapping {
   self: Indexer =>
-  def putMapping(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
-    putMappingForAll(Seq(index), `type`, json, ignoreConflicts, timeout)
-  def putMapping_send(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
-    putMappingForAll_send(Seq(index), `type`, json, ignoreConflicts, timeout)
-  def putMapping_prepare(index: String, `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
-    putMappingForAll_prepare(Seq(index), `type`, json, ignoreConflicts, timeout)
+  def putMapping(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll(Seq(index), `type`, source, ignoreConflicts, timeout)
+  def putMapping_send(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_send(Seq(index), `type`, source, ignoreConflicts, timeout)
+  def putMapping_prepare(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_prepare(Seq(index), `type`, source, ignoreConflicts, timeout)
 
-  def putMappingForAll(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
-    putMappingForAll_send(indices, `type`, json, ignoreConflicts, timeout).actionGet
-  def putMappingForAll_send(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
-    putMappingForAll_prepare(indices, `type`, json, ignoreConflicts, timeout).execute
-  def putMappingForAll_prepare(indices: Iterable[String], `type`: String, json: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = {
+  def putMappingForAll(indices: Iterable[String], `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_send(indices, `type`, source, ignoreConflicts, timeout).actionGet
+  def putMappingForAll_send(indices: Iterable[String], `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
+    putMappingForAll_prepare(indices, `type`, source, ignoreConflicts, timeout).execute
+  def putMappingForAll_prepare(indices: Iterable[String], `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = {
     val request = client.admin.indices.preparePutMapping(indices.toArray: _*)
     request.setType(`type`)
-    request.setSource(json)
+    request.setSource(source)
     ignoreConflicts foreach { request.setIgnoreConflicts(_) }
     timeout foreach { request.setTimeout(_) }
     request

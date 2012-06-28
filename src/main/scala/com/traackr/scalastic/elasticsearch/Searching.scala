@@ -197,7 +197,8 @@ trait Search {
     partialFields foreach { each => request.addPartialField(each.name, each.includes.toArray, each.excludes.toArray) }
     preference foreach { request.setPreference(_) }
     queryHint foreach { request.setQueryHint(_) }
-    routing foreach { request.setRouting(_) }
+    //fixme: use 1 for-comprehension, and adjust routing in all other api
+    routing foreach {each => for(routing <- each.split(",")) request.setRouting(routing) }
     scriptFields foreach { each => request.addScriptField(each.name, each.lang getOrElse (null), each.script, each.parameters) }
     scroll foreach { request.setScroll(_) }
     searchType foreach { request.setSearchType(_) }

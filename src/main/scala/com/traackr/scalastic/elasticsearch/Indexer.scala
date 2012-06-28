@@ -45,8 +45,8 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
     // before whole data indexing do:
     //	- record the sourceIndex settings ...
     val sourceSettings = metadataFor(sourceIndex).settings
-    //	- ... then create the new targetIndex, without replication first (for faster indexing)
-    val withoutReplicas = sourceSettings.getAsMap + ("index.number_of_replicas" -> "0")
+    //	- ... then create the new targetIndex without replication & refresh (for faster indexing)
+    val withoutReplicas = sourceSettings.getAsMap + ("index.number_of_replicas" -> "0") + ("index.refresh_interval" -> "-1")
     createIndex(index = targetIndex, settings = withoutReplicas.toMap)
     waitTillActive()
     try {
@@ -57,7 +57,9 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
       //	- optimize the newly indexed ...
       optimize(Seq(targetIndex))
       // 	- update targetIndex with sourceIndex settings ...
-      updateSettings("""{"number_of_replicas": %s}""".format(sourceSettings.get("index.number_of_replicas")), targetIndex)
+      updateSettings("""{"number_of_replicas": %s, "refresh_interval": %s}""".format(
+        sourceSettings.get("index.number_of_replicas"), sourceSettings.get("index.refresh_interval")),
+        targetIndex)
       //	- ... then transfer aliases from sourceIndex to targetIndex
       for (each <- metadataFor(sourceIndex).aliases.values) {
         unalias(Seq(sourceIndex), each.alias)
@@ -67,13 +69,13 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
   }
 }
 
-private[elasticsearch] class NodeIndexer(node: Node) extends Indexer {
+class NodeIndexer(val node: Node) extends Indexer {
   val client = node.client
   def start(): Indexer = { node.start; waitForYellowStatus(); this }
   def stop() = node.close
 }
 
-private[elasticsearch] class ClientIndexer(val client: Client) extends Indexer {
+class ClientIndexer(val client: Client) extends Indexer {
   def start(): Indexer = { waitForYellowStatus(); this }
   def stop() = client.close
 }

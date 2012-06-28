@@ -4,34 +4,33 @@ import org.elasticsearch.common._
 import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.action._, index._, bulk._
 import org.elasticsearch.action.support.replication._
-//import net.liftweb.json._
 import scala.collection._, JavaConversions._
 import scalaz._, Scalaz._
 
-trait Indexing 
-	extends Index 
-	with IndexInBulk
-    with Searching 
+trait Indexing
+    extends Index
+    with IndexInBulk
+    with Searching
     with Count
-    with Get 
+    with Get
     with Multiget
-    with Delete 
+    with Delete
     with DeleteByQuery {
   self: Indexer =>
 }
 
 trait Index {
   self: Indexer =>
-    
-  def index(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = 
-    index_send(index, `type`, id, json, parent, ttl, routing).actionGet
-    
-  def index_send(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = 
-    index_prepare(index, `type`, id, json, parent, ttl, routing).execute
-    
-  def index_prepare(index: String, `type`: String, id: String, json: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
+
+  def index(index: String, `type`: String, id: String, source: String, parent: String = null, ttl: Long = 0, routing: String = "") =
+    index_send(index, `type`, id, source, parent, ttl, routing).actionGet
+
+  def index_send(index: String, `type`: String, id: String, source: String, parent: String = null, ttl: Long = 0, routing: String = "") =
+    index_prepare(index, `type`, id, source, parent, ttl, routing).execute
+
+  def index_prepare(index: String, `type`: String, id: String, source: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
     val request = client.prepareIndex(index, `type`, id)
-    request.setSource(json)
+    request.setSource(source)
     request.setParent(parent)
     if (ttl > 0) request.setTTL(ttl)
     if (!routing.isEmpty) request.setRouting(routing)
@@ -48,14 +47,14 @@ trait IndexInBulk {
 
 trait Count {
   self: Indexer =>
-    
+
   def count(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     count_send(indices, types, query).actionGet.count
-    
+
   def count_send(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     count_prepare(indices, types, query).execute
-    
-  def count_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) = 
+
+  def count_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
     client.prepareCount(indices.toArray: _*)
       .setTypes(types.toArray: _*)
       .setQuery(query)
@@ -63,18 +62,93 @@ trait Count {
 
 trait Get {
   self: Indexer =>
-  def get(index: String, @Nullable `type`: String, id: String) = get_send(index, `type`, id).actionGet
-  def get_send(index: String, @Nullable `type`: String, id: String) = get_prepare(index, `type`, id).execute
-  def get_prepare(index: String, @Nullable `type`: String, id: String) = client.prepareGet(index, `type`, id)
+  def get(
+    index: String,
+    @Nullable `type`: String,
+    id: String,
+    fields: Iterable[String] = Nil,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    preference: Option[String] = None,
+    realtime: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    routing: Option[String] = None) = 
+      get_send(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).actionGet
+      
+  def get_send(
+    index: String,
+    @Nullable `type`: String,
+    id: String,
+    fields: Iterable[String] = Nil,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    preference: Option[String] = None,
+    realtime: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    routing: Option[String] = None) = 
+      get_prepare(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).execute
+      
+  def get_prepare(
+    index: String,
+    @Nullable `type`: String,
+    id: String,
+    fields: Iterable[String] = Nil,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    preference: Option[String] = None,
+    realtime: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    routing: Option[String] = None) = {
+		  /* method body */
+    val request = client.prepareGet(index, `type`, id)
+    if (!fields.isEmpty) request.setFields(fields.toArray: _*)
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    operationThreaded foreach { request.setOperationThreaded(_) }
+    preference foreach { request.setPreference(_) }
+    realtime foreach { request.setRealtime(_) }
+    refresh foreach { request.setRefresh(_) }
+    routing foreach { request.setRouting(_) }
+    request
+  }
 }
 
 trait Multiget {
   self: Indexer =>
-  def get(index: String, @Nullable `type`: String, ids: Iterable[String]) = get_send(index, `type`, ids).actionGet
-  def get_send(index: String, @Nullable `type`: String, ids: Iterable[String]) = get_prepare(index, `type`, ids).execute
-  def get_prepare(index: String, @Nullable `type`: String, ids: Iterable[String]) = {
+  def multiget(
+    index: String,
+    @Nullable `type`: String,
+    ids: Iterable[String],
+    listenerThreaded: Option[Boolean] = None,
+    preference: Option[String] = None,
+    realtime: Option[Boolean] = None,
+    refresh: Option[Boolean] = None) = 
+    multiget_send(index, `type`, ids, listenerThreaded, preference, realtime, refresh).actionGet
+    
+  def multiget_send(
+    index: String,
+    @Nullable `type`: String,
+    ids: Iterable[String],
+    listenerThreaded: Option[Boolean] = None,
+    preference: Option[String] = None,
+    realtime: Option[Boolean] = None,
+    refresh: Option[Boolean] = None) = 
+    multiget_prepare(index, `type`, ids, listenerThreaded, preference, realtime, refresh).execute
+    
+  def multiget_prepare(
+    index: String,
+    @Nullable `type`: String,
+    ids: Iterable[String],
+    listenerThreaded: Option[Boolean] = None,
+    preference: Option[String] = None,
+    realtime: Option[Boolean] = None,
+    refresh: Option[Boolean] = None) = {
+		  /* method body */
     val request = client.prepareMultiGet
     for (each <- ids) request.add(index, `type`, each)
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    preference foreach { request.setPreference(_) }
+    realtime foreach { request.setRealtime(_) }
+    refresh foreach { request.setRefresh(_) }
     request
   }
 }

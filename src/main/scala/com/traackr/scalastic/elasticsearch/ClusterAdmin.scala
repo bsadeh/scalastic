@@ -45,8 +45,30 @@ trait Nodes {
 
 trait State {
   self: Indexer =>
-  def state() = state_send().actionGet
-  def state_send() = state_prepare().execute
+  def state(
+    filterBlocks: Option[Boolean] = None,
+    filterMetaData: Option[Boolean] = None,
+    filter: Option[Boolean] = None,
+    filterIndexTemplates: Iterable[String] = Nil,
+    filterIndices: Iterable[String] = Nil,
+    filterNodes: Option[Boolean] = None,
+    filterRoutingTable: Option[Boolean] = None,
+    local: Option[Boolean] = None,
+    timeout: Option[String] = None) = 
+      	state_send(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).actionGet
+      	
+  def state_send(
+    filterBlocks: Option[Boolean] = None,
+    filterMetaData: Option[Boolean] = None,
+    filter: Option[Boolean] = None,
+    filterIndexTemplates: Iterable[String] = Nil,
+    filterIndices: Iterable[String] = Nil,
+    filterNodes: Option[Boolean] = None,
+    filterRoutingTable: Option[Boolean] = None,
+    local: Option[Boolean] = None,
+    timeout: Option[String] = None) = 
+      	state_prepare(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).execute
+      	
   def state_prepare(
     filterBlocks: Option[Boolean] = None,
     filterMetaData: Option[Boolean] = None,
@@ -73,7 +95,7 @@ trait State {
 
 trait Metadata {
   self: State =>
-  def metadata = state.state.metaData
+  def metadata = state().state.metaData
   def metadataFor(index: String) = metadata.index(index)
   def metadataFor(index: String, `type`: String) = metadata.index(index).mappings.get(`type`)
   def fieldsOf(index: String, `type`: String) =
