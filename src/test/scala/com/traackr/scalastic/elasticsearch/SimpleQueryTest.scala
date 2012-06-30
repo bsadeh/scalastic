@@ -48,11 +48,11 @@ class SimpleQueryTest extends IndexerBasedTest {
     indexer.index(indexName, "type2", "3", """{"field1": "value1"}""")
     indexer.refresh()
     
-    indexer.count(query = filteredQuery(matchAllQuery, typeFilter("type1"))) should be === (2)
-    indexer.count(query = filteredQuery(matchAllQuery, typeFilter("type2"))) should be === (3)
-    indexer.count(types = Seq("type1")) should be === (2)
-    indexer.count(types = Seq("type2")) should be === (3)
-    indexer.count(types = Seq("type1", "type2")) should be === (5)
+    indexer.count(query = filteredQuery(matchAllQuery, typeFilter("type1"))).count should be === (2)
+    indexer.count(query = filteredQuery(matchAllQuery, typeFilter("type2"))).count should be === (3)
+    indexer.count(types = Seq("type1")).count should be === (2)
+    indexer.count(types = Seq("type2")).count should be === (3)
+    indexer.count(types = Seq("type1", "type2")).count should be === (5)
   }
 
   test("limitFilter") {
