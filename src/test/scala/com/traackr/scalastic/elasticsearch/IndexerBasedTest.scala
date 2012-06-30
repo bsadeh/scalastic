@@ -16,7 +16,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
 
   override def beforeEach {
     indexer_beforeEach
-    indexer.count() should be === 0
+    indexer.count().count should be === 0
   }
 
   override def afterAll {
