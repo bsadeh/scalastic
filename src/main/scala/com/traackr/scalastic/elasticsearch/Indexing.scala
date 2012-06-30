@@ -1,8 +1,10 @@
 package com.traackr.scalastic.elasticsearch
 
-import org.elasticsearch.common._
+import org.elasticsearch.common._, xcontent._
+import org.elasticsearch.index.VersionType
 import org.elasticsearch.index.query._, QueryBuilders._
-import org.elasticsearch.action._, index._, bulk._
+import org.elasticsearch.action._, get._, index._, bulk._
+import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.action.support.replication._
 import scala.collection._, JavaConversions._
 import scalaz._, Scalaz._
@@ -22,18 +24,90 @@ trait Indexing
 trait Index {
   self: Indexer =>
 
-  def index(index: String, `type`: String, id: String, source: String, parent: String = null, ttl: Long = 0, routing: String = "") =
-    index_send(index, `type`, id, source, parent, ttl, routing).actionGet
+  def index(
+    index: String,
+    `type`: String,
+    @Nullable id: String,
+    source: String,
+    parent: String = null,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    contentType: Option[XContentType] = None,
+    create: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    opType: Option[IndexRequest.OpType] = None,
+    percolate: Option[String] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None,
+    routing: Option[String] = None,
+    timeout: Option[String] = None,
+    timestamp: Option[String] = None,
+    ttl: Option[Long] = None,
+    version: Option[Long] = None,
+    versionType: Option[VersionType] = None) = index_send(index, `type`, id, source, parent, consistencyLevel, contentType, create, listenerThreaded, operationThreaded, opType, percolate, refresh, replicationType, routing, timeout, timestamp, ttl, version, versionType).actionGet
+    
+  def index_send(
+    index: String,
+    `type`: String,
+    @Nullable id: String,
+    source: String,
+    parent: String = null,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    contentType: Option[XContentType] = None,
+    create: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    opType: Option[IndexRequest.OpType] = None,
+    percolate: Option[String] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None,
+    routing: Option[String] = None,
+    timeout: Option[String] = None,
+    timestamp: Option[String] = None,
+    ttl: Option[Long] = None,
+    version: Option[Long] = None,
+    versionType: Option[VersionType] = None) = index_prepare(index, `type`, id, source, parent, consistencyLevel, contentType, create, listenerThreaded, operationThreaded, opType, percolate, refresh, replicationType, routing, timeout, timestamp, ttl, version, versionType).execute
 
-  def index_send(index: String, `type`: String, id: String, source: String, parent: String = null, ttl: Long = 0, routing: String = "") =
-    index_prepare(index, `type`, id, source, parent, ttl, routing).execute
-
-  def index_prepare(index: String, `type`: String, id: String, source: String, parent: String = null, ttl: Long = 0, routing: String = "") = {
+  def index_prepare(
+    index: String,
+    `type`: String,
+    @Nullable id: String,
+    source: String,
+    parent: String = null,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    contentType: Option[XContentType] = None,
+    create: Option[Boolean] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    opType: Option[IndexRequest.OpType] = None,
+    percolate: Option[String] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None,
+    routing: Option[String] = None,
+    timeout: Option[String] = None,
+    timestamp: Option[String] = None,
+    ttl: Option[Long] = None,
+    version: Option[Long] = None,
+    versionType: Option[VersionType] = None) = {
+		  /* method body */
     val request = client.prepareIndex(index, `type`, id)
     request.setSource(source)
     request.setParent(parent)
-    if (ttl > 0) request.setTTL(ttl)
-    if (!routing.isEmpty) request.setRouting(routing)
+    consistencyLevel foreach { request.setConsistencyLevel(_) }
+    contentType foreach { request.setContentType(_) }
+    create foreach { request.setCreate(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    operationThreaded foreach { request.setOperationThreaded(_) }
+    opType foreach { request.setOpType(_) }
+    percolate foreach { request.setPercolate(_) }
+    refresh foreach { request.setRefresh(_) }
+    replicationType foreach { request.setReplicationType(_) }
+    routing foreach { request.setRouting(_) }
+    timeout foreach { request.setTimeout(_) }
+    timestamp foreach { request.setTimestamp(_) }
+    ttl foreach { request.setTTL(_) }
+    version foreach { request.setVersion(_) }
+    versionType foreach { request.setVersionType(_) }
     request
   }
 }
@@ -48,16 +122,46 @@ trait IndexInBulk {
 trait Count {
   self: Indexer =>
 
-  def count(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
-    count_send(indices, types, query).actionGet.count
+  def count(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    listenerThreaded: Option[Boolean] = None,
+    minScore: Option[Float] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    queryHint: Option[String] = None,
+    routing: Option[String] = None) = count_send(indices, types, query, listenerThreaded, minScore, operationThreading, queryHint, routing).actionGet
 
-  def count_send(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
-    count_prepare(indices, types, query).execute
+  def count_send(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    listenerThreaded: Option[Boolean] = None,
+    minScore: Option[Float] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    queryHint: Option[String] = None,
+    routing: Option[String] = None) = count_prepare(indices, types, query, listenerThreaded, minScore, operationThreading, queryHint, routing).execute
 
-  def count_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery) =
-    client.prepareCount(indices.toArray: _*)
+  def count_prepare(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    listenerThreaded: Option[Boolean] = None,
+    minScore: Option[Float] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    queryHint: Option[String] = None,
+    routing: Option[String] = None) = {
+		  /* method body */
+    val request = client.prepareCount(indices.toArray: _*)
       .setTypes(types.toArray: _*)
       .setQuery(query)
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    minScore foreach { request.setMinScore(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
+    queryHint foreach { request.setQueryHint(_) }
+    routing foreach { request.setRouting(_) }
+    request
+  }
 }
 
 trait Get {
@@ -72,8 +176,7 @@ trait Get {
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None,
-    routing: Option[String] = None) = 
-      get_send(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).actionGet
+    routing: Option[String] = None) = get_send(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).actionGet
       
   def get_send(
     index: String,
@@ -85,8 +188,7 @@ trait Get {
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None,
-    routing: Option[String] = None) = 
-      get_prepare(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).execute
+    routing: Option[String] = None) = get_prepare(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).execute
       
   def get_prepare(
     index: String,
@@ -118,33 +220,38 @@ trait Multiget {
     index: String,
     @Nullable `type`: String,
     ids: Iterable[String],
+    fields: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
-    refresh: Option[Boolean] = None) = 
-    multiget_send(index, `type`, ids, listenerThreaded, preference, realtime, refresh).actionGet
+    refresh: Option[Boolean] = None) = multiget_send(index, `type`, ids, fields, listenerThreaded, preference, realtime, refresh).actionGet
     
   def multiget_send(
     index: String,
     @Nullable `type`: String,
     ids: Iterable[String],
+    fields: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
-    refresh: Option[Boolean] = None) = 
-    multiget_prepare(index, `type`, ids, listenerThreaded, preference, realtime, refresh).execute
+    refresh: Option[Boolean] = None) = multiget_prepare(index, `type`, ids, fields, listenerThreaded, preference, realtime, refresh).execute
     
   def multiget_prepare(
     index: String,
     @Nullable `type`: String,
     ids: Iterable[String],
+    fields: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.prepareMultiGet
-    for (each <- ids) request.add(index, `type`, each)
+    for (each <- ids) {
+      val item = new MultiGetRequest.Item(index, `type`, each)
+      if (!fields.isEmpty) item.fields(fields.toArray: _*)
+      request.add(item)
+    }
     listenerThreaded foreach { request.setListenerThreaded(_) }
     preference foreach { request.setPreference(_) }
     realtime foreach { request.setRealtime(_) }
@@ -171,21 +278,41 @@ trait Update {
   self: Indexer =>
 
   def update(
-    index: String, `type`: String, id: String, parent: Option[String] = None,
-    script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
-    percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) =
-    update_send(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).actionGet
+    index: String, 
+    `type`: String, 
+    id: String, 
+    parent: Option[String] = None,
+    script: Option[String] = None, 
+    scriptLanguage: Option[String] = None, 
+    scriptParams: Map[String, Object] = Map(),
+    percolate: Option[String] = None, 
+    replicationType: Option[ReplicationType] = None, 
+    consistencyLevel: Option[WriteConsistencyLevel] = None) = update_send(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).actionGet
 
   def update_send(
-    index: String, `type`: String, id: String, parent: Option[String] = None,
-    script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
-    percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) =
-    update_prepare(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).execute
+    index: String, 
+    `type`: String, 
+    id: String, 
+    parent: Option[String] = None,
+    script: Option[String] = None, 
+    scriptLanguage: Option[String] = None, 
+    scriptParams: Map[String, Object] = Map(),
+    percolate: Option[String] = None, 
+    replicationType: Option[ReplicationType] = None, 
+    consistencyLevel: Option[WriteConsistencyLevel] = None) = update_prepare(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).execute
 
   def update_prepare(
-    index: String, `type`: String, id: String, parent: Option[String] = None,
-    script: Option[String] = None, scriptLanguage: Option[String] = None, scriptParams: Map[String, Object] = Map(),
-    percolate: Option[String] = None, replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None) = {
+    index: String, 
+    `type`: String, 
+    id: String, 
+    parent: Option[String] = None,
+    script: Option[String] = None, 
+    scriptLanguage: Option[String] = None, 
+    scriptParams: Map[String, Object] = Map(),
+    percolate: Option[String] = None, 
+    replicationType: Option[ReplicationType] = None, 
+    consistencyLevel: Option[WriteConsistencyLevel] = None) = {
+		  /* method body */
     val request = client.prepareUpdate(index, `type`, id)
     parent foreach { request.setParent(_) }
     script foreach { that =>
@@ -196,48 +323,106 @@ trait Update {
     percolate foreach { request.setPercolate(_) }
     replicationType foreach { request.setReplicationType(_) }
     consistencyLevel foreach { request.setConsistencyLevel(_) }
-    // revisit: replicationType & consistencyLevel
-    // should we do this:
-    //    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
-    //    request.setConsistencyLevel(consistencyLevel some { that => that } none { WriteConsistencyLevel.DEFAULT })
     request
   }
 }
 
 trait Delete {
   self: Indexer =>
-  def delete(index: String, `type`: String, id: String) = delete_send(index, `type`, id).actionGet
-  def delete_send(index: String, `type`: String, id: String) = delete_prepare(index, `type`, id).execute
-  def delete_prepare(index: String, `type`: String, id: String) = client.prepareDelete(index, `type`, id)
+    
+  def delete(
+    index: String,
+    `type`: String,
+    id: String,
+    parent: String = null,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None,
+    routing: Option[String] = None,
+    version: Option[Long] = None,
+    versionType: Option[VersionType] = None) = delete_send(index, `type`, id, parent, consistencyLevel, listenerThreaded, operationThreaded, refresh, replicationType, routing, version, versionType).actionGet
+  
+  def delete_send(
+    index: String,
+    `type`: String,
+    id: String,
+    parent: String = null,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None,
+    routing: Option[String] = None,
+    version: Option[Long] = None,
+    versionType: Option[VersionType] = None) = delete_prepare(index, `type`, id, parent, consistencyLevel, listenerThreaded, operationThreaded, refresh, replicationType, routing, version, versionType).execute
+  
+  def delete_prepare(
+    index: String,
+    `type`: String,
+    id: String,
+    parent: String = null,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreaded: Option[Boolean] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None,
+    routing: Option[String] = None,
+    version: Option[Long] = None,
+    versionType: Option[VersionType] = None) = {
+		  /* method body */
+    val request = client.prepareDelete(index, `type`, id)
+    request.setParent(parent)
+    consistencyLevel foreach { request.setConsistencyLevel(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
+    operationThreaded foreach { request.setOperationThreaded(_) }
+    refresh foreach { request.setRefresh(_) }
+    replicationType foreach { request.setReplicationType(_) }
+    routing foreach { request.setRouting(_) }
+    version foreach { request.setVersion(_) }
+    versionType foreach { request.setVersionType(_) }
+    request
+  }
 }
 
 trait DeleteByQuery {
   self: Indexer =>
 
-  def deleteByQuery(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery,
-    replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None,
-    routing: String = "", timeout: String = "") =
-    deleteByQuery_send(indices, types, query, replicationType, consistencyLevel, routing, timeout).actionGet
+  def deleteByQuery(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    replicationType: Option[ReplicationType] = None,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    routing: Option[String] = None,
+    timeout: Option[String] = None) = deleteByQuery_send(indices, types, query, replicationType, consistencyLevel, routing, timeout).actionGet
 
-  def deleteByQuery_send(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery,
-    replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None,
-    routing: String = "", timeout: String = "") =
-    deleteByQuery_prepare(indices, types, query, replicationType, consistencyLevel, routing, timeout).execute
+  def deleteByQuery_send(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    replicationType: Option[ReplicationType] = None,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    routing: Option[String] = None,
+    timeout: Option[String] = None) = deleteByQuery_prepare(indices, types, query, replicationType, consistencyLevel, routing, timeout).execute
 
-  def deleteByQuery_prepare(indices: Iterable[String] = Nil, types: Iterable[String] = Nil, query: QueryBuilder = matchAllQuery,
-    replicationType: Option[ReplicationType] = None, consistencyLevel: Option[WriteConsistencyLevel] = None,
-    routing: String = "", timeout: String = "") = {
+  def deleteByQuery_prepare(
+    indices: Iterable[String] = Nil,
+    types: Iterable[String] = Nil,
+    query: QueryBuilder = matchAllQuery,
+    replicationType: Option[ReplicationType] = None,
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    routing: Option[String] = None,
+    timeout: Option[String] = None) = {
+		  /* method body */
     val request = client.prepareDeleteByQuery(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
     replicationType foreach { request.setReplicationType(_) }
     consistencyLevel foreach { request.setConsistencyLevel(_) }
-    // revisit: replicationType & consistencyLevel
-    // should we do this:
-    //    request.setReplicationType(replicationType some { that => that } none { ReplicationType.DEFAULT })
-    //    request.setConsistencyLevel(consistencyLevel some { that => that } none { WriteConsistencyLevel.DEFAULT })
-    if (!routing.isEmpty) request.setRouting(routing)
-    if (!timeout.isEmpty) request.setTimeout(timeout)
+    routing foreach { request.setRouting(_) }
+    timeout foreach { request.setTimeout(_) }
     request
   }
 }

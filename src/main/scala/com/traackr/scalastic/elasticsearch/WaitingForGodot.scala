@@ -24,7 +24,7 @@ trait WaitingForGodot {
 
   def waitTillCountMatches(indices: Iterable[String] = Nil, `type`: String, target: Int, f: (Long, Long) => Boolean, criteriaDescription: String, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) = {
     var factor = seed
-    while (factor <= maxFactor && f(count(indices, types = Seq(`type`)), target)) {
+    while (factor <= maxFactor && f(count(indices, types = Seq(`type`)).count, target)) {
       info("waiting on {} to count {} {} in {} sec ...", `type`, criteriaDescription, target, factor)
       Thread sleep factor * 1000
       factor *= 2

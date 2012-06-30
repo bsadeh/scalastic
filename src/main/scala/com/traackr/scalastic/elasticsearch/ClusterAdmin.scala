@@ -54,8 +54,7 @@ trait State {
     filterNodes: Option[Boolean] = None,
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
-    timeout: Option[String] = None) = 
-      	state_send(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).actionGet
+    timeout: Option[String] = None) = state_send(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).actionGet
       	
   def state_send(
     filterBlocks: Option[Boolean] = None,
@@ -66,8 +65,7 @@ trait State {
     filterNodes: Option[Boolean] = None,
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
-    timeout: Option[String] = None) = 
-      	state_prepare(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).execute
+    timeout: Option[String] = None) = state_prepare(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).execute
       	
   def state_prepare(
     filterBlocks: Option[Boolean] = None,
@@ -98,6 +96,5 @@ trait Metadata {
   def metadata = state().state.metaData
   def metadataFor(index: String) = metadata.index(index)
   def metadataFor(index: String, `type`: String) = metadata.index(index).mappings.get(`type`)
-  def fieldsOf(index: String, `type`: String) =
-    metadataFor(index, `type`).sourceAsMap.get("properties").asInstanceOf[Map[String, Object]]
+  def fieldsOf(index: String, `type`: String) = metadataFor(index, `type`).sourceAsMap.get("properties").asInstanceOf[Map[String, Object]]
 }

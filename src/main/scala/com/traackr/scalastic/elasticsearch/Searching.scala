@@ -99,7 +99,7 @@ trait Search {
     extraSource: Option[Map[String, Object]] = None,
     facets: Iterable[AbstractFacetBuilder] = Nil,
     fields: Iterable[String] = Nil,
-    filter: Option[Map[String, Object]] = None,
+    filter: Option[FilterBuilder] = None,
     from: Option[Int] = None,
     highlight: Highlight = Highlight(),
     indexBoosts: Map[String, Float] = Map(),
@@ -117,8 +117,7 @@ trait Search {
     source: Option[Map[String, Object]] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) =
-    search_send(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).actionGet
+    trackScores: Option[Boolean] = None) = search_send(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).actionGet
 
   def search_send(
     indices: Iterable[String] = Nil,
@@ -129,7 +128,7 @@ trait Search {
     extraSource: Option[Map[String, Object]] = None,
     facets: Iterable[AbstractFacetBuilder] = Nil,
     fields: Iterable[String] = Nil,
-    filter: Option[Map[String, Object]] = None,
+    filter: Option[FilterBuilder] = None,
     from: Option[Int] = None,
     highlight: Highlight = Highlight(),
     indexBoosts: Map[String, Float] = Map(),
@@ -147,8 +146,7 @@ trait Search {
     source: Option[Map[String, Object]] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) =
-    search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
+    trackScores: Option[Boolean] = None) = search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
 
   def search_prepare(
     indices: Iterable[String] = Nil,
@@ -159,7 +157,7 @@ trait Search {
     extraSource: Option[Map[String, Object]] = None,
     facets: Iterable[AbstractFacetBuilder] = Nil,
     fields: Iterable[String] = Nil,
-    filter: Option[Map[String, Object]] = None,
+    filter: Option[FilterBuilder] = None,
     from: Option[Int] = None,
     highlight: Highlight = Highlight(),
     indexBoosts: Map[String, Float] = Map(),
@@ -197,8 +195,7 @@ trait Search {
     partialFields foreach { each => request.addPartialField(each.name, each.includes.toArray, each.excludes.toArray) }
     preference foreach { request.setPreference(_) }
     queryHint foreach { request.setQueryHint(_) }
-    //fixme: use 1 for-comprehension, and adjust routing in all other api
-    routing foreach {each => for(routing <- each.split(",")) request.setRouting(routing) }
+    routing foreach { request.setRouting(_) }
     scriptFields foreach { each => request.addScriptField(each.name, each.lang getOrElse (null), each.script, each.parameters) }
     scroll foreach { request.setScroll(_) }
     searchType foreach { request.setSearchType(_) }
@@ -215,26 +212,17 @@ trait Search {
 trait Multisearch {
   self: Indexer =>
 
-  def multisearch(requests: Iterable[SearchRequestBuilder] = Seq(search_prepare())) =
-    multisearch_send(requests = requests).actionGet
-
-  def multisearch_send(requests: Iterable[SearchRequestBuilder] = Seq(search_prepare())) =
-    multisearch_prepare(requests = requests).execute
-
+  def multisearch(requests: Iterable[SearchRequestBuilder] = Seq(search_prepare())) = multisearch_send(requests = requests).actionGet
+  def multisearch_send(requests: Iterable[SearchRequestBuilder] = Seq(search_prepare())) = multisearch_prepare(requests = requests).execute
   def multisearch_prepare(requests: Iterable[SearchRequestBuilder] = Seq(search_prepare())) = {
     val request = client.prepareMultiSearch
     for (each <- requests) request.add(each)
     request
   }
 
-  def multisearchByQuery(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) =
-    multisearchByQuery_send(queries = queries).actionGet
-
-  def multisearchByQuery_send(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) =
-    multisearchByQuery_prepare(queries = queries).execute
-
-  def multisearchByQuery_prepare(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) =
-    multisearch_prepare(queries map (each => search_prepare(query = each)))
+  def multisearchByQuery(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) = multisearchByQuery_send(queries = queries).actionGet
+  def multisearchByQuery_send(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) = multisearchByQuery_prepare(queries = queries).execute
+  def multisearchByQuery_prepare(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) = multisearch_prepare(queries map (each => search_prepare(query = each)))
 }
 
 trait Percolate {
@@ -244,21 +232,20 @@ trait Percolate {
     index: String, `type`: String,
     source: Option[Map[String, Object]] = None,
     operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None) =
-    percolate_send(index, `type`, source, operationThreaded, preferLocal).actionGet
+    preferLocal: Option[Boolean] = None) = percolate_send(index, `type`, source, operationThreaded, preferLocal).actionGet
 
   def percolate_send(
     index: String, `type`: String,
     source: Option[Map[String, Object]] = None,
     operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None) =
-    percolate_prepare(index, `type`, source, operationThreaded, preferLocal).execute
+    preferLocal: Option[Boolean] = None) = percolate_prepare(index, `type`, source, operationThreaded, preferLocal).execute
 
   def percolate_prepare(
     index: String, `type`: String,
     source: Option[Map[String, Object]] = None,
     operationThreaded: Option[Boolean] = None,
     preferLocal: Option[Boolean] = None) = {
+		  /* method body */
     val request = client.preparePercolate(index, `type`)
     source foreach { request.setSource(_) }
     operationThreaded foreach { request.setOperationThreaded(_) }
@@ -276,8 +263,7 @@ trait ValidateQuery {
     query: QueryBuilder = matchAllQuery,
     explain: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) =
-    validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
+    operationThreading: Option[BroadcastOperationThreading] = None) = validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
 
   def validateQuery_send(
     indices: Iterable[String] = Nil,
@@ -285,8 +271,7 @@ trait ValidateQuery {
     query: QueryBuilder = matchAllQuery,
     explain: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) =
-    validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
+    operationThreading: Option[BroadcastOperationThreading] = None) = validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
 
   def validateQuery_prepare(
     indices: Iterable[String] = Nil,

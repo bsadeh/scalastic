@@ -28,14 +28,28 @@ trait IndexCrud
 trait IndexCreate {
   self: Indexer =>
 
+  def createIndex(
+    index: String,
 //fixme: change settings to  consistently be a map, or a json string
-  def createIndex(index: String, settings: Map[String, String] = Map(), mappings: Map[String, String] = Map(), cause: Option[String] = None, timeout: Option[String] = None) =
-    createIndex_send(index, settings, mappings, cause, timeout).actionGet
+    settings: Map[String, String] = Map(),
+    mappings: Map[String, String] = Map(),
+    cause: Option[String] = None,
+    timeout: Option[String] = None) = createIndex_send(index, settings, mappings, cause, timeout).actionGet
 
-  def createIndex_send(index: String, settings: Map[String, String] = Map(), mappings: Map[String, String] = Map(), cause: Option[String] = None, timeout: Option[String] = None) =
-    createIndex_prepare(index, settings, mappings, cause, timeout).execute
+  def createIndex_send(
+    index: String,
+    settings: Map[String, String] = Map(),
+    mappings: Map[String, String] = Map(),
+    cause: Option[String] = None,
+    timeout: Option[String] = None) = createIndex_prepare(index, settings, mappings, cause, timeout).execute
 
-  def createIndex_prepare(index: String, settings: Map[String, String] = Map(), mappings: Map[String, String] = Map(), cause: Option[String] = None, timeout: Option[String] = None) = {
+  def createIndex_prepare(
+    index: String,
+    settings: Map[String, String] = Map(),
+    mappings: Map[String, String] = Map(),
+    cause: Option[String] = None,
+    timeout: Option[String] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareCreate(index)
     if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings).build())
     mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
@@ -57,7 +71,7 @@ trait IndexDelete {
 
   def deleteIndexIfExists(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndexIfExists_send(indices, timeout).actionGet
   def deleteIndexIfExists_send(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndexIfExists_prepare(indices, timeout).execute
-  def deleteIndexIfExists_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_prepare(indices filter (exists(_)), timeout)
+  def deleteIndexIfExists_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_prepare(indices filter (exists(_).exists), timeout)
 }
 
 trait UpdateSettings {
@@ -73,18 +87,38 @@ trait UpdateSettings {
 
 trait Exists {
   self: Indexer =>
-  def exists(indices: String*) = exists_send(indices.toArray: _*).actionGet.exists
+  def exists(indices: String*) = exists_send(indices.toArray: _*).actionGet
   def exists_send(indices: String*) = exists_prepare(indices.toArray: _*).execute
   def exists_prepare(indices: String*) = client.admin.indices.prepareExists(indices.toArray: _*)
 }
 
 trait Alias {
   self: Indexer =>
-  def alias(indices: Iterable[String], alias: String, filter: Map[String, Object] = Map(), timeout: Option[String] = None) = alias_send(indices, alias, filter, timeout).actionGet
-  def alias_send(indices: Iterable[String], alias: String, filter: Map[String, Object] = Map(), timeout: Option[String] = None) = alias_prepare(indices, alias, filter, timeout).execute
-  def alias_prepare(indices: Iterable[String], alias: String, filter: Map[String, Object] = Map(), timeout: Option[String] = None) = {
+    
+  def alias(
+    indices: Iterable[String],
+    alias: String,
+    filter: Option[FilterBuilder] = None,
+    timeout: Option[String] = None) = alias_send(indices, alias, filter, timeout).actionGet
+    
+  def alias_send(
+    indices: Iterable[String],
+    alias: String,
+    filter: Option[FilterBuilder] = None,
+    timeout: Option[String] = None) = alias_prepare(indices, alias, filter, timeout).execute
+    
+  def alias_prepare(
+    indices: Iterable[String],
+    alias: String,
+    filter: Option[FilterBuilder] = None,
+    timeout: Option[String] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareAliases
-    indices foreach { request.addAlias(_, alias, filter) }
+    indices foreach { filter match {
+        case Some(builder) => request.addAlias(_, alias, builder)
+        case None => request.addAlias(_, alias)
+      }
+    }
     timeout foreach { each => request.setTimeout(parseTimeValue(each, null)) }
     request
   }
@@ -92,9 +126,22 @@ trait Alias {
 
 trait Unalias {
   self: Indexer =>
-  def unalias(indices: Iterable[String], alias: String, timeout: Option[String] = None) = unalias_send(indices, alias, timeout).actionGet
-  def unalias_send(indices: Iterable[String], alias: String, timeout: Option[String] = None) = unalias_prepare(indices, alias, timeout).execute
-  def unalias_prepare(indices: Iterable[String], alias: String, timeout: Option[String] = None) = {
+    
+  def unalias(
+    indices: Iterable[String],
+    alias: String,
+    timeout: Option[String] = None) = unalias_send(indices, alias, timeout).actionGet
+    
+  def unalias_send(
+    indices: Iterable[String],
+    alias: String,
+    timeout: Option[String] = None) = unalias_prepare(indices, alias, timeout).execute
+    
+  def unalias_prepare(
+    indices: Iterable[String],
+    alias: String,
+    timeout: Option[String] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareAliases
     indices foreach { request.removeAlias(_, alias) }
     timeout foreach { each => request.setTimeout(parseTimeValue(each, null)) }
@@ -151,9 +198,22 @@ trait Optimize {
 
 trait Flush {
   self: Indexer =>
-  def flush(indices: Iterable[String] = Nil, full: Option[Boolean] = None, refresh: Option[Boolean] = None) = flush_send(indices, full, refresh).actionGet
-  def flush_send(indices: Iterable[String] = Nil, full: Option[Boolean] = None, refresh: Option[Boolean] = None) = flush_prepare(indices, full, refresh).execute
-  def flush_prepare(indices: Iterable[String] = Nil, full: Option[Boolean] = None, refresh: Option[Boolean] = None) = {
+    
+  def flush(
+    indices: Iterable[String] = Nil,
+    full: Option[Boolean] = None,
+    refresh: Option[Boolean] = None) = flush_send(indices, full, refresh).actionGet
+    
+  def flush_send(
+    indices: Iterable[String] = Nil,
+    full: Option[Boolean] = None,
+    refresh: Option[Boolean] = None) = flush_prepare(indices, full, refresh).execute
+    
+  def flush_prepare(
+    indices: Iterable[String] = Nil,
+    full: Option[Boolean] = None,
+    refresh: Option[Boolean] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareFlush(indices.toArray: _*)
     full foreach { request.setFull(_) }
     refresh foreach { request.setRefresh(_) }
@@ -163,11 +223,25 @@ trait Flush {
 
 trait Refresh {
   self: Indexer =>
-  def refresh(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) =
-    refresh_send(indices, listenerThreaded, operationThreading, waitForOperations).actionGet
-  def refresh_send(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) =
-    refresh_prepare(indices, listenerThreaded, operationThreading, waitForOperations).execute
-  def refresh_prepare(indices: Iterable[String] = Nil, listenerThreaded: Option[Boolean] = None, operationThreading: Option[BroadcastOperationThreading] = None, waitForOperations: Option[Boolean] = None) = {
+    
+  def refresh(
+    indices: Iterable[String] = Nil,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    waitForOperations: Option[Boolean] = None) = refresh_send(indices, listenerThreaded, operationThreading, waitForOperations).actionGet
+    
+  def refresh_send(
+    indices: Iterable[String] = Nil,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    waitForOperations: Option[Boolean] = None) = refresh_prepare(indices, listenerThreaded, operationThreading, waitForOperations).execute
+    
+  def refresh_prepare(
+    indices: Iterable[String] = Nil,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[BroadcastOperationThreading] = None,
+    waitForOperations: Option[Boolean] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareRefresh(indices.toArray: _*)
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
@@ -181,6 +255,7 @@ trait Status {
   def status(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = status_send(indices, recovery, snapshot).actionGet
   def status_send(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = status_prepare(indices, recovery, snapshot).execute
   def status_prepare(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareStatus(indices.toArray: _*)
     recovery foreach { request.setRecovery(_) }
     snapshot foreach { request.setSnapshot(_) }
@@ -202,8 +277,7 @@ trait Stats {
     refresh: Option[Boolean] = None,
     search: Option[Boolean] = None,
     store: Option[Boolean] = None,
-    types: Iterable[String] = Nil) =
-    stats_send(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).actionGet
+    types: Iterable[String] = Nil) = stats_send(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).actionGet
 
   def stats_send(
     indices: Iterable[String] = Nil,
@@ -216,8 +290,7 @@ trait Stats {
     refresh: Option[Boolean] = None,
     search: Option[Boolean] = None,
     store: Option[Boolean] = None,
-    types: Iterable[String] = Nil) =
-    stats_prepare(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).execute
+    types: Iterable[String] = Nil) = stats_prepare(indices, docs, flush, get, groups, indexing, merge, refresh, search, store, types).execute
 
   def stats_prepare(
     indices: Iterable[String] = Nil,
@@ -249,6 +322,7 @@ trait Stats {
 
 trait PutMapping {
   self: Indexer =>
+    
   def putMapping(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
     putMappingForAll(Seq(index), `type`, source, ignoreConflicts, timeout)
   def putMapping_send(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
@@ -272,11 +346,22 @@ trait PutMapping {
 
 trait DeleteMapping {
   self: Indexer =>
-  def deleteMapping(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = 
-    deleteMapping_send(indices, `type`, timeout).actionGet
-  def deleteMapping_send(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = 
-    deleteMapping_prepare(indices, `type`, timeout).execute
-  def deleteMapping_prepare(indices: Iterable[String], `type`: Option[String] = None, timeout: Option[String] = None) = {
+    
+  def deleteMapping(
+    indices: Iterable[String],
+    `type`: Option[String] = None,
+    timeout: Option[String] = None) =  deleteMapping_send(indices, `type`, timeout).actionGet
+    
+  def deleteMapping_send(
+    indices: Iterable[String],
+    `type`: Option[String] = None,
+    timeout: Option[String] = None) = deleteMapping_prepare(indices, `type`, timeout).execute
+    
+  def deleteMapping_prepare(
+    indices: Iterable[String],
+    `type`: Option[String] = None,
+    timeout: Option[String] = None) = {
+		  /* method body */
     val request = client.admin.indices.prepareDeleteMapping(indices.toArray: _*)
     `type` foreach { request.setType(_) }
     timeout foreach { each => request.setMasterNodeTimeout(parseTimeValue(each, null)) }
@@ -385,8 +470,7 @@ trait ClearCache {
     filterCache: Option[Boolean] = None,
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) =
-    clearCache_send(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).actionGet
+    operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_send(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).actionGet
     
   def clearCache_send(
     indices: Iterable[String] = Nil,
@@ -396,8 +480,7 @@ trait ClearCache {
     filterCache: Option[Boolean] = None,
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) =
-    clearCache_prepare(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).execute
+    operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_prepare(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).execute
     
   def clearCache_prepare(
     indices: Iterable[String] = Nil,

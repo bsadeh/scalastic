@@ -22,7 +22,7 @@ class SimpleChildQuerySearchTest extends IndexerBasedTest {
     indexer.putMapping(indexName, "grandchild", """{"type" : {"_parent" : {"type" : "child"}}}""")
     indexer.index(indexName, "parent", "p1", """{"p_field" : "p_value1"}""")
     indexer.index(indexName, "child", "c1", """{"c_field" : "c_value1"}""", parent = "p1")
-    indexer.index(indexName, "grandchild", "gc1", """{"gc_field": "gc_value1"}""", parent = "c1", routing = "gc1")
+    indexer.index(indexName, "grandchild", "gc1", """{"gc_field": "gc_value1"}""", parent = "c1", routing = Some("gc1"))
     indexer.refresh()
     val filtered = filteredQuery(
       matchAllQuery,
