@@ -7,7 +7,13 @@ import org.elasticsearch.common.xcontent._
 import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._
 import scala.collection._, JavaConversions._
 
-trait Searching extends Query with Search with Multisearch with Percolate with ValidateQuery {
+trait Searching 
+	extends Query 
+	with Search 
+    with MoreLikeThis
+	with Multisearch 
+	with Percolate 
+	with ValidateQuery {
   self: Indexer =>
 }
 
@@ -223,6 +229,97 @@ trait Multisearch {
   def multisearchByQuery(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) = multisearchByQuery_send(queries = queries).actionGet
   def multisearchByQuery_send(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) = multisearchByQuery_prepare(queries = queries).execute
   def multisearchByQuery_prepare(queries: Iterable[QueryBuilder] = Seq(matchAllQuery)) = multisearch_prepare(queries map (each => search_prepare(query = each)))
+}
+
+trait MoreLikeThis {
+  self: Indexer =>
+    
+  def moreLikeThis(
+    index: String,
+    `type`: String,
+    id: String,
+    boostTerms: Option[Float] = None,
+    fields: Iterable[String] = Nil,
+    maxDocFreq: Option[Int] = None,
+    maxQueryTerms: Option[Int] = None,
+    maxWordLen: Option[Int] = None,
+    minDocFreq: Option[Int] = None,
+    minTermFreq: Option[Int] = None,
+    minWordLen: Option[Int] = None,
+    percentTermsToMatch: Option[Float] = None,
+    from: Option[Int] = None,
+    searchIndices: Iterable[String] = Nil,
+    searchScroll: Option[Scroll] = None,
+    searchSize: Option[Int] = None,
+    searchSource: Option[Map[String, Object]] = None,
+    searchType: Option[SearchType] = None,
+    searchTypes: Iterable[String] = Nil,
+    stopwords: Iterable[String] = Nil) = moreLikeThis_send(index, `type`, id, boostTerms, fields, maxDocFreq, maxQueryTerms, maxWordLen, minDocFreq, minTermFreq, minWordLen, percentTermsToMatch, from, searchIndices, searchScroll, searchSize, searchSource, searchType, searchTypes, stopwords).actionGet
+  
+  def moreLikeThis_send(
+    index: String,
+    `type`: String,
+    id: String,
+    boostTerms: Option[Float] = None,
+    fields: Iterable[String] = Nil,
+    maxDocFreq: Option[Int] = None,
+    maxQueryTerms: Option[Int] = None,
+    maxWordLen: Option[Int] = None,
+    minDocFreq: Option[Int] = None,
+    minTermFreq: Option[Int] = None,
+    minWordLen: Option[Int] = None,
+    percentTermsToMatch: Option[Float] = None,
+    from: Option[Int] = None,
+    searchIndices: Iterable[String] = Nil,
+    searchScroll: Option[Scroll] = None,
+    searchSize: Option[Int] = None,
+    searchSource: Option[Map[String, Object]] = None,
+    searchType: Option[SearchType] = None,
+    searchTypes: Iterable[String] = Nil,
+    stopwords: Iterable[String] = Nil) = moreLikeThis_prepare(index, `type`, id, boostTerms, fields, maxDocFreq, maxQueryTerms, maxWordLen, minDocFreq, minTermFreq, minWordLen, percentTermsToMatch, from, searchIndices, searchScroll, searchSize, searchSource, searchType, searchTypes, stopwords).execute
+  
+  def moreLikeThis_prepare(
+    index: String,
+    `type`: String,
+    id: String,
+    boostTerms: Option[Float] = None,
+    fields: Iterable[String] = Nil,
+    maxDocFreq: Option[Int] = None,
+    maxQueryTerms: Option[Int] = None,
+    maxWordLen: Option[Int] = None,
+    minDocFreq: Option[Int] = None,
+    minTermFreq: Option[Int] = None,
+    minWordLen: Option[Int] = None,
+    percentTermsToMatch: Option[Float] = None,
+    from: Option[Int] = None,
+    searchIndices: Iterable[String] = Nil,
+    searchScroll: Option[Scroll] = None,
+    searchSize: Option[Int] = None,
+    searchSource: Option[Map[String, Object]] = None,
+    searchType: Option[SearchType] = None,
+    searchTypes: Iterable[String] = Nil,
+    stopwords: Iterable[String] = Nil) = {
+		  /* method body */
+    val request = client.prepareMoreLikeThis(index, `type`, id)
+    boostTerms foreach { request.setBoostTerms(_) }
+    if (!fields.isEmpty) request.setField(fields.toArray: _*)
+    maxDocFreq foreach { request.setMaxDocFreq(_) }
+    maxQueryTerms foreach { request.maxQueryTerms(_) }
+    maxWordLen foreach { request.setMaxWordLen(_) }
+    minDocFreq foreach { request.setMinDocFreq(_) }
+    minTermFreq foreach { request.setMinTermFreq(_) }
+    minWordLen foreach { request.setMinWordLen(_) }
+    percentTermsToMatch foreach { request.setPercentTermsToMatch(_) }
+    from foreach { request.setSearchFrom(_) }
+    if (!searchIndices.isEmpty) request.setSearchIndices(searchIndices.toArray: _*)
+    searchScroll foreach { request.setSearchScroll(_) }
+    searchSize foreach { request.setSearchSize(_) }
+    searchSource foreach { request.setSearchSource(_) }
+    searchType foreach { request.setSearchType(_) }
+    if (!searchTypes.isEmpty) request.setSearchTypes(searchTypes.toArray: _*)
+    if (!stopwords.isEmpty) request.setStopWords(stopwords.toArray: _*)
+    request
+  }
 }
 
 trait Percolate {

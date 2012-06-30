@@ -260,20 +260,6 @@ trait Multiget {
   }
 }
 
-//todo: add parameters with defaults
-/*
-trait MoreLikeThis {
-  self: Indexer =>
-  def moreLikeThis(index: String, `type`: String, id: String) = moreLikeThis_send(index, `type`, id).actionGet
-  def moreLikeThis_send(index: String, `type`: String, id: String) = moreLikeThis_prepare(index, `type`, id).execute
-  def moreLikeThis_prepare(index: String, `type`: String, id: String) = {
-    val request = client.prepareMoreLikeThis(index, `type`, id)
-    //    request.set
-    request
-  }
-}
-*/
-
 trait Update {
   self: Indexer =>
 
