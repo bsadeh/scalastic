@@ -114,14 +114,37 @@ trait Index {
 
 trait IndexInBulk {
   self: Indexer =>
-  def bulk[A <: ActionRequest](requests: Iterable[A]) = bulk_send(requests).actionGet
-  def bulk_send[A <: ActionRequest](requests: Iterable[A]) = bulk_prepare(requests).execute
-  def bulk_prepare[A <: ActionRequest](requests: Iterable[A]) = requests.foldLeft(client.prepareBulk) {(result, each) =>
-    each match {
-      case indexing: IndexRequest => result.add(indexing)
-      case deleting: DeleteRequest => result.add(deleting)
-      case other => throw new IllegalArgumentException("%s type can not be bulk-indexed".format(other.getClass))
+
+  def bulk[A <: ActionRequest](
+    requests: Iterable[A],
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None) = bulk_send(requests, consistencyLevel, refresh, replicationType).actionGet
+    
+  def bulk_send[A <: ActionRequest](
+    requests: Iterable[A],
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None) = bulk_prepare(requests, consistencyLevel, refresh, replicationType).execute
+    
+  def bulk_prepare[A <: ActionRequest](
+    requests: Iterable[A],
+    consistencyLevel: Option[WriteConsistencyLevel] = None,
+    refresh: Option[Boolean] = None,
+    replicationType: Option[ReplicationType] = None) = {
+		  /* method body */
+    val request = client.prepareBulk
+    consistencyLevel foreach { request.setConsistencyLevel(_) }
+    refresh foreach { request.setRefresh(_) }
+    replicationType foreach { request.setReplicationType(_) }
+    requests.foldLeft(request) { (result, each) =>
+      each match {
+        case indexing: IndexRequest => result.add(indexing)
+        case deleting: DeleteRequest => result.add(deleting)
+        case other => throw new IllegalArgumentException("%s type can not be bulk-indexed".format(other.getClass))
+      }
     }
+    request
   }
 }
 
