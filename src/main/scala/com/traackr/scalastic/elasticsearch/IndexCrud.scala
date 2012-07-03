@@ -8,7 +8,7 @@ import scala.collection._, JavaConversions._
 
 trait IndexCrud
     extends Exists
-    with IndexCreate with IndexDelete
+    with CreateIndex with DeleteIndex
     with Open with Close
     with Alias with Unalias
     with PutMapping with DeleteMapping
@@ -25,7 +25,7 @@ trait IndexCrud
   self: Indexer =>
 }
 
-trait IndexCreate {
+trait CreateIndex {
   self: Indexer =>
 
   def createIndex(
@@ -59,7 +59,7 @@ trait IndexCreate {
   }
 }
 
-trait IndexDelete {
+trait DeleteIndex {
   self: Indexer =>
   def deleteIndex(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_send(indices, timeout).actionGet
   def deleteIndex_send(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_prepare(indices, timeout).execute

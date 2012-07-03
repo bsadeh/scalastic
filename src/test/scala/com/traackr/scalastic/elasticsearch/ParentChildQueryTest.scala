@@ -18,7 +18,7 @@ class ParentChildQueryTest extends IndexerBasedTest {
   test("normalSearch") {
     var response = indexer.search(query = filteredQuery(matchAllQuery, typeFilter("influencer")))
     response.hits.totalHits should be === 1
-    response = indexer.search(indices = Seq(indexName), types = Seq("post"), query = matchAllQuery)
+    response = indexer.search(indices = Seq(indexName), types = Seq("post"))
     response.hits.totalHits should be === 2
     response = indexer.search(query = queryString("content:Beautiful"), fields = List("*"))
     response.hits.totalHits should be === 1

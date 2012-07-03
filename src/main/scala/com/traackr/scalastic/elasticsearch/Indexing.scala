@@ -3,7 +3,7 @@ package com.traackr.scalastic.elasticsearch
 import org.elasticsearch.common._, xcontent._
 import org.elasticsearch.index.VersionType
 import org.elasticsearch.index.query._, QueryBuilders._
-import org.elasticsearch.action._, get._, index._, bulk._
+import org.elasticsearch.action._, get._, index._, bulk._, delete._
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.action.support.replication._
 import scala.collection._, JavaConversions._
@@ -114,9 +114,15 @@ trait Index {
 
 trait IndexInBulk {
   self: Indexer =>
-  def bulk(requests: Iterable[IndexRequest]) = bulk_send(requests).actionGet
-  def bulk_send(requests: Iterable[IndexRequest]) = bulk_prepare(requests).execute
-  def bulk_prepare(requests: Iterable[IndexRequest]) = requests.foldLeft(client.prepareBulk)(_.add(_))
+  def bulk[A <: ActionRequest](requests: Iterable[A]) = bulk_send(requests).actionGet
+  def bulk_send[A <: ActionRequest](requests: Iterable[A]) = bulk_prepare(requests).execute
+  def bulk_prepare[A <: ActionRequest](requests: Iterable[A]) = requests.foldLeft(client.prepareBulk) {(result, each) =>
+    each match {
+      case indexing: IndexRequest => result.add(indexing)
+      case deleting: DeleteRequest => result.add(deleting)
+      case other => throw new IllegalArgumentException("%s type can not be bulk-indexed".format(other.getClass))
+    }
+  }
 }
 
 trait Count {
