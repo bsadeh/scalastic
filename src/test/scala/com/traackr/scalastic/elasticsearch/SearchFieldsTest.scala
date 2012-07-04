@@ -11,11 +11,6 @@ import SearchParameterTypes._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleFieldsTest extends IndexerBasedTest {
 
-  override def beforeEach {
-    super.beforeEach
-    createDefaultIndex
-  }
-
   test("stored fields") {
     val mapping =
     """

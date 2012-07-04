@@ -4,12 +4,13 @@ import org.elasticsearch.action.search._
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.common.xcontent._
-import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._
+import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import scala.collection._, JavaConversions._
 
 trait Searching 
 	extends Query 
 	with Search 
+	with SearchScroll 
     with MoreLikeThis
 	with Multisearch 
 	with Percolate 
@@ -91,6 +92,35 @@ object SearchParameterTypes {
   }
 }
 
+trait SearchScroll {
+	self: Indexer =>
+	  
+  def searchScroll(
+    scrollId: String,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[SearchOperationThreading] = None,
+    scroll: Option[String] = None) = searchScroll_send(scrollId, listenerThreaded, operationThreading, scroll).actionGet
+    
+  def searchScroll_send(
+    scrollId: String,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[SearchOperationThreading] = None,
+    scroll: Option[String] = None) = searchScroll_prepare(scrollId, listenerThreaded, operationThreading, scroll).execute
+    
+  def searchScroll_prepare(
+    scrollId: String,
+    listenerThreaded: Option[Boolean] = None,
+    operationThreading: Option[SearchOperationThreading] = None,
+    scroll: Option[String] = None) = {
+		  /* method body */
+    val request = client.prepareSearchScroll(scrollId)
+    listenerThreaded foreach { request.listenerThreaded(_) }
+    operationThreading foreach { request.setOperationThreading(_) }
+    scroll foreach { request.setScroll(_) }
+    request
+  }
+}
+
 trait Search {
   self: Indexer =>
 
@@ -109,6 +139,7 @@ trait Search {
     from: Option[Int] = None,
     highlight: Highlight = Highlight(),
     indexBoosts: Map[String, Float] = Map(),
+    internalBuilder: Option[SearchSourceBuilder] = None,
     minScore: Option[Float] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     partialFields: Iterable[PartialField] = Nil,
@@ -116,14 +147,14 @@ trait Search {
     queryHint: Option[String] = None,
     routing: Option[String] = None,
     scriptFields: Iterable[ScriptField] = Nil,
-    scroll: Option[Scroll] = None,
+    scroll: Option[String] = None,
     searchType: Option[SearchType] = None,
     size: Option[Int] = None,
     sortings: Iterable[Sorting] = Nil,
-    source: Option[Map[String, Object]] = None,
+    source: Option[String] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = search_send(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).actionGet
+    trackScores: Option[Boolean] = None) = search_send(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, internalBuilder, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).actionGet
 
   def search_send(
     indices: Iterable[String] = Nil,
@@ -138,6 +169,7 @@ trait Search {
     from: Option[Int] = None,
     highlight: Highlight = Highlight(),
     indexBoosts: Map[String, Float] = Map(),
+    internalBuilder: Option[SearchSourceBuilder] = None,
     minScore: Option[Float] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     partialFields: Iterable[PartialField] = Nil,
@@ -145,14 +177,14 @@ trait Search {
     queryHint: Option[String] = None,
     routing: Option[String] = None,
     scriptFields: Iterable[ScriptField] = Nil,
-    scroll: Option[Scroll] = None,
+    scroll: Option[String] = None,
     searchType: Option[SearchType] = None,
     size: Option[Int] = None,
     sortings: Iterable[Sorting] = Nil,
-    source: Option[Map[String, Object]] = None,
+    source: Option[String] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
+    trackScores: Option[Boolean] = None) = search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, internalBuilder, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
 
   def search_prepare(
     indices: Iterable[String] = Nil,
@@ -167,6 +199,7 @@ trait Search {
     from: Option[Int] = None,
     highlight: Highlight = Highlight(),
     indexBoosts: Map[String, Float] = Map(),
+    internalBuilder: Option[SearchSourceBuilder] = None,
     minScore: Option[Float] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     partialFields: Iterable[PartialField] = Nil,
@@ -174,11 +207,11 @@ trait Search {
     queryHint: Option[String] = None,
     routing: Option[String] = None,
     scriptFields: Iterable[ScriptField] = Nil,
-    scroll: Option[Scroll] = None,
+    scroll: Option[String] = None,
     searchType: Option[SearchType] = None,
     size: Option[Int] = None,
     sortings: Iterable[Sorting] = Nil,
-    source: Option[Map[String, Object]] = None,
+    source: Option[String] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
     trackScores: Option[Boolean] = None) = {
@@ -196,6 +229,7 @@ trait Search {
     from foreach { request.setFrom(_) }
     highlight.setIn(request)
     indexBoosts foreach { case (key, value) => request.addIndexBoost(key, value) }
+    internalBuilder foreach { request.internalBuilder(_) }
     minScore foreach { request.setMinScore(_) }
     operationThreading foreach { request.setOperationThreading(_) }
     partialFields foreach { each => request.addPartialField(each.name, each.includes.toArray, each.excludes.toArray) }
@@ -326,27 +360,34 @@ trait Percolate {
   self: Indexer =>
 
   def percolate(
-    index: String, `type`: String,
-    source: Option[Map[String, Object]] = None,
+    index: String,
+    `type`: String,
+    listenerThreaded: Option[Boolean] = None,
     operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None) = percolate_send(index, `type`, source, operationThreaded, preferLocal).actionGet
+    preferLocal: Option[Boolean] = None,
+    source: Option[String] = None) = percolate_send(index, `type`, listenerThreaded, operationThreaded, preferLocal, source).actionGet
 
   def percolate_send(
-    index: String, `type`: String,
-    source: Option[Map[String, Object]] = None,
+    index: String,
+    `type`: String,
+    listenerThreaded: Option[Boolean] = None,
     operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None) = percolate_prepare(index, `type`, source, operationThreaded, preferLocal).execute
+    preferLocal: Option[Boolean] = None,
+    source: Option[String] = None) = percolate_prepare(index, `type`, listenerThreaded, operationThreaded, preferLocal, source).execute
 
   def percolate_prepare(
-    index: String, `type`: String,
-    source: Option[Map[String, Object]] = None,
+    index: String,
+    `type`: String,
+    listenerThreaded: Option[Boolean] = None,
     operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None) = {
+    preferLocal: Option[Boolean] = None,
+    source: Option[String] = None) = {
 		  /* method body */
     val request = client.preparePercolate(index, `type`)
-    source foreach { request.setSource(_) }
+    listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreaded foreach { request.setOperationThreaded(_) }
     preferLocal foreach { request.setPreferLocal(_) }
+    source foreach { request.setSource(_) }
     request
   }
 }

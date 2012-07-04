@@ -11,7 +11,7 @@ import scalaz._, Scalaz._
 
 trait Indexing
     extends Index
-    with IndexInBulk
+    with Bulk
     with Searching
     with Count
     with Get
@@ -112,7 +112,7 @@ trait Index {
   }
 }
 
-trait IndexInBulk {
+trait Bulk {
   self: Indexer =>
 
   def bulk[A <: ActionRequest](

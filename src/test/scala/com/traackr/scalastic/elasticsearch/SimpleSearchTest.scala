@@ -8,11 +8,6 @@ import org.elasticsearch.index.query.QueryBuilders._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleSearchTest extends IndexerBasedTest {
 
-  override def beforeEach {
-    super.beforeEach
-    createDefaultIndex
-  }
-
   test("text search") {
     indexer.index(indexName, "type1", "1", """{"field": "trying to find an exact match"}""")
     indexer.index(indexName, "type1", "2", """{"field": "trying to find, but failing to find, an exact match"}""")
@@ -90,11 +85,11 @@ class SimpleSearchTest extends IndexerBasedTest {
   
   test("dateRange with upper inclusive disabled") {
     val specialIndex = indexName + "_with_upper_inclusive_disabled"
-    indexer.createIndex(specialIndex, settings = Map("index.mapping.date.parse_upper_inclusive"->"false"))
+    indexer.createIndex(specialIndex, settings = Map("mapping.date.parse_upper_inclusive"->"false"))
     indexer.index(specialIndex, "type1", "1", """{"field":"2010-01-05T02:00"}""")
     indexer.index(specialIndex, "type1", "2", """{"field":"2010-01-06T02:00"}""")
     indexer.refresh()
-    indexer.search(indices=List(specialIndex), query = rangeQuery("field").gte("2010-01-05").lte("2010-01-06")).hits.totalHits should be === 1
-    indexer.search(indices=List(specialIndex), query = rangeQuery("field").gte("2010-01-05") lt "2010-01-06").hits.totalHits should be === 1
+    indexer.search(Seq(specialIndex), query = rangeQuery("field").gte("2010-01-05").lte("2010-01-06")).hits.totalHits should be === 1
+    indexer.search(Seq(specialIndex), query = rangeQuery("field").gte("2010-01-05") lt "2010-01-06").hits.totalHits should be === 1
   }
 }

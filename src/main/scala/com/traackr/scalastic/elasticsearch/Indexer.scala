@@ -46,7 +46,7 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
     //	- record the sourceIndex settings ...
     val sourceSettings = metadataFor(sourceIndex).settings
     //	- ... then create the new targetIndex without replication & refresh (for faster indexing)
-    val withoutReplicas = sourceSettings.getAsMap + ("index.number_of_replicas" -> "0") + ("index.refresh_interval" -> "-1")
+    val withoutReplicas = sourceSettings.getAsMap + ("number_of_replicas" -> "0") + ("refresh_interval" -> "-1")
     createIndex(index = targetIndex, settings = withoutReplicas.toMap)
     waitTillActive()
     try {
@@ -58,7 +58,7 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
       optimize(Seq(targetIndex))
       // 	- update targetIndex with sourceIndex settings ...
       updateSettings("""{"number_of_replicas": %s, "refresh_interval": %s}""".format(
-        sourceSettings.get("index.number_of_replicas"), sourceSettings.get("index.refresh_interval")),
+        sourceSettings.get("number_of_replicas"), sourceSettings.get("refresh_interval")),
         targetIndex)
       //	- ... then transfer aliases from sourceIndex to targetIndex
       for (each <- metadataFor(sourceIndex).aliases.values) {

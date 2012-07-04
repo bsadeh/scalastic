@@ -2,6 +2,7 @@ package com.traackr.scalastic.elasticsearch
 
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.common.settings.ImmutableSettings._
+import org.elasticsearch.cluster.metadata._
 import org.elasticsearch.index.query._, QueryBuilders._
 import org.elasticsearch.common.unit._, TimeValue._
 import scala.collection._, JavaConversions._
@@ -98,23 +99,28 @@ trait Alias {
   def alias(
     indices: Iterable[String],
     alias: String,
+    actions: Iterable[AliasAction] = Nil,
     filter: Option[FilterBuilder] = None,
-    timeout: Option[String] = None) = alias_send(indices, alias, filter, timeout).actionGet
+    timeout: Option[String] = None) = alias_send(indices, alias, actions, filter, timeout).actionGet
     
   def alias_send(
     indices: Iterable[String],
     alias: String,
+    actions: Iterable[AliasAction] = Nil,
     filter: Option[FilterBuilder] = None,
-    timeout: Option[String] = None) = alias_prepare(indices, alias, filter, timeout).execute
+    timeout: Option[String] = None) = alias_prepare(indices, alias, actions, filter, timeout).execute
     
   def alias_prepare(
     indices: Iterable[String],
     alias: String,
+    actions: Iterable[AliasAction] = Nil,
     filter: Option[FilterBuilder] = None,
     timeout: Option[String] = None) = {
 		  /* method body */
     val request = client.admin.indices.prepareAliases
-    indices foreach { filter match {
+    actions foreach { request.addAliasAction(_) }
+    indices foreach {
+      filter match {
         case Some(builder) => request.addAlias(_, alias, builder)
         case None => request.addAlias(_, alias)
       }
@@ -348,17 +354,17 @@ trait DeleteMapping {
   self: Indexer =>
     
   def deleteMapping(
-    indices: Iterable[String],
+    indices: Iterable[String] = Nil,
     `type`: Option[String] = None,
     timeout: Option[String] = None) =  deleteMapping_send(indices, `type`, timeout).actionGet
     
   def deleteMapping_send(
-    indices: Iterable[String],
+    indices: Iterable[String] = Nil,
     `type`: Option[String] = None,
     timeout: Option[String] = None) = deleteMapping_prepare(indices, `type`, timeout).execute
     
   def deleteMapping_prepare(
-    indices: Iterable[String],
+    indices: Iterable[String] = Nil,
     `type`: Option[String] = None,
     timeout: Option[String] = None) = {
 		  /* method body */
@@ -371,7 +377,7 @@ trait DeleteMapping {
 
 trait PutTemplate {
   self: Indexer =>
-
+    
   def putTemplate(
     name: String,
     settings: Map[String, String] = Map(),
@@ -379,8 +385,10 @@ trait PutTemplate {
     cause: Option[String] = None,
     create: Option[Boolean] = None,
     order: Option[Int] = None,
+    source: Option[String] = None,
+    template: Option[String] = None,
     timeout: Option[String] = None) =
-    putTemplate_send(name, settings, mappings, cause, create, order, timeout).actionGet
+    putTemplate_send(name, settings, mappings, cause, create, order, source, template, timeout).actionGet
 
   def putTemplate_send(
     name: String,
@@ -389,8 +397,10 @@ trait PutTemplate {
     cause: Option[String] = None,
     create: Option[Boolean] = None,
     order: Option[Int] = None,
+    source: Option[String] = None,
+    template: Option[String] = None,
     timeout: Option[String] = None) =
-    putTemplate_prepare(name, settings, mappings, cause, create, order, timeout).execute
+    putTemplate_prepare(name, settings, mappings, cause, create, order, source, template, timeout).execute
 
   def putTemplate_prepare(
     name: String,
@@ -399,6 +409,8 @@ trait PutTemplate {
     cause: Option[String] = None,
     create: Option[Boolean] = None,
     order: Option[Int] = None,
+    source: Option[String] = None,
+    template: Option[String] = None,
     timeout: Option[String] = None) = {
 		  /* method body */
     val request = client.admin.indices.preparePutTemplate(name)
@@ -407,6 +419,8 @@ trait PutTemplate {
     cause foreach { request.cause(_) }
     create foreach { request.setCreate(_) }
     order foreach { request.setOrder(_) }
+    source foreach { request.setSource(_) }
+    template foreach { request.setTemplate(_) }
     timeout foreach { request.setTimeout(_) }
     request
   }

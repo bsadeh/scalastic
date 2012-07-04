@@ -9,11 +9,6 @@ import org.elasticsearch.index.query._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleQueryTest extends IndexerBasedTest {
 
-  override def beforeEach {
-    super.beforeEach
-    createDefaultIndex
-  }
-
   test("pass query as string") {
     indexer.index(indexName, "type1", "1", """{"field1": "value1_1", "field2": "value2_1"}""")
     indexer.refresh()

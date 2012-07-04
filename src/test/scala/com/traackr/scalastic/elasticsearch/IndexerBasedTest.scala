@@ -8,8 +8,8 @@ import org.elasticsearch.index.query._, QueryBuilders._
 import scala.collection.JavaConversions._
 
 abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
-    with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer  {
-	
+    with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer {
+
   override def beforeAll {
     indexer_beforeAll
   }
@@ -17,14 +17,19 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   override def beforeEach {
     indexer_beforeEach
     indexer.count().count should be === 0
+    createDefaultIndex
   }
 
-  override def afterAll {
-    indexer_afterAll
-  }
+  override def afterAll = indexer_afterAll
 
+  def indexSettings = Map("number_of_shards" -> "1")
   def createDefaultIndex() {
-    indexer.createIndex(index = indexName, settings = Map("number_of_shards" -> "1"))
+    indexer.createIndex(index = indexName, settings = indexSettings)
+    //      indexer.createIndex(index = indexName, settings = Seq(
+    //    		  ("number_of_shards" -> "1"),
+    //    		  ("node.local" -> "true"),
+    //    		  ("store.type" -> "memory"),
+    //    		  ("store.fs.memory.enabled" -> "true")).toMap)
     indexer.waitTillActive()
   }
 

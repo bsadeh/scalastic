@@ -12,11 +12,6 @@ import org.slf4j.Log._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleChildQuerySearchTest extends IndexerBasedTest {
 
-  override def beforeEach {
-    super.beforeEach
-    createDefaultIndex
-  }
-
   test("multilevel child") {
     indexer.putMapping(indexName, "child", """{"type" : {"_parent" : {"type" : "parent"}}}""")
     indexer.putMapping(indexName, "grandchild", """{"type" : {"_parent" : {"type" : "child"}}}""")

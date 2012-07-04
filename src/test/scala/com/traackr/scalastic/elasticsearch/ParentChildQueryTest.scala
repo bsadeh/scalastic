@@ -11,7 +11,6 @@ class ParentChildQueryTest extends IndexerBasedTest {
 
   override def beforeEach = {
     super.beforeEach
-    createDefaultIndex
     indexData
   }
 
