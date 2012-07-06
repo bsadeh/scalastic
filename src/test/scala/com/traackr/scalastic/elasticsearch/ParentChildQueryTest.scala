@@ -55,7 +55,7 @@ class ParentChildQueryTest extends IndexerBasedTest {
 
   private def indexData = {
     val mapping =
-      """
+    """
 	{
 	  "type":{
 	    "_parent":{"type":"influencer"},
@@ -68,14 +68,16 @@ class ParentChildQueryTest extends IndexerBasedTest {
     """
     indexer.putMapping(indexName, "post", mapping)
     indexer.index(indexName, "influencer", "1", """{"name":"John Doe"}""")
-    val properties1 = """
+    val properties1 = 
+    """
     {
 	    "content":"@traackr to uncover who the leading voices at #CES2012 are: sn.im/ces2012 (#CESinfluence ), Sausalito",
 	    "publishedDate":"2012-01-11T12:27:00"
     }
     """
     indexer.index(indexName, "post", "1", properties1, parent = "1")
-    val properties2 = """
+    val properties2 = 
+    """
     {
 	    "content":"Beautiful day in SF today: biked from Fisherman s Warf to Sausalito over the GG Bridge, and had lunch at Cafe Piccolo pic.twitter.com/vyhHOyAd",
 	    "publishedDate":"2012-01-28T18:14:00"

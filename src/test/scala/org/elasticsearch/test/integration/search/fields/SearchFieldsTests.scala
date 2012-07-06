@@ -1,17 +1,15 @@
-package com.traackr.scalastic.elasticsearch
+package org.elasticsearch.test.integration.search.fields
 
-import org.scalatest._, matchers._
-import org.elasticsearch.common.xcontent.XContentFactory._
 import org.elasticsearch.index.query.QueryBuilders._
-import org.elasticsearch.action.search._
-import org.elasticsearch.common.collect._
-import org.elasticsearch.search.sort._
-import SearchParameterTypes._
+import org.scalatest._, matchers._
+import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._
+import scala.collection.JavaConversions._
+import java.util.{ Map => JMap, List => JList }
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class SimpleFieldsTest extends IndexerBasedTest {
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
+class SearchFieldsTests extends IndexerBasedTest {
 
-  test("stored fields") {
+  test("testStoredFields") {
     val mapping =
     """
 	{
@@ -33,7 +31,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(0).fields.size should be === (1)
     response.hits.getAt(0).fields.get("field1").value.toString should be === ("value1")
 
-        // field2 is not stored, check that it gets extracted from source
+    // field2 is not stored, check that it gets extracted from source
     response = indexer.search(fields = Seq("field2"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
@@ -49,7 +47,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response = indexer.search(fields = Seq("*"))
     response.hits.getTotalHits should be === (1)
     response.hits.hits.length should be === (1)
-    response.hits.getAt(0).source should be (null)
+    response.hits.getAt(0).source should be(null)
     response.hits.getAt(0).fields.size should be === (2)
     response.hits.getAt(0).fields.get("field1").value.toString should be === ("value1")
     response.hits.getAt(0).fields.get("field3").value.toString should be === ("value3")
@@ -63,9 +61,9 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(0).fields.get("field3").value.toString should be === ("value3")
   }
 
-  test("script doc & fields") {
+  test("testScriptDocAndFields") {
     val mapping =
-      """
+    """
 	{
 	  "type":{
 	    "properties":{
@@ -101,7 +99,7 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(2).fields.get("sNum1_field").values.get(0) should be === (3.0)
     response.hits.getAt(2).fields.get("date1").values.get(0) should be === (120000)
 
-    val parameters: Map[String, Object]= Map("factor" -> new java.lang.Double(2.0))
+    val parameters = Map("factor" -> new java.lang.Double(2.0))
     response = indexer.search(scriptFields = Seq(ScriptField("sNum1", "doc['num1'].value * factor", parameters)), sortings = Seq(FieldSort("num1")))
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).id should be === ("1")
@@ -112,10 +110,43 @@ class SimpleFieldsTest extends IndexerBasedTest {
     response.hits.getAt(2).fields.get("sNum1").values.get(0) should be === (6.0)
   }
 
-  test("partial fields") {
-    import java.util.{ Map => JMap, List => JList }
-    val json = 
-	"""
+  test("testScriptFieldUsingSource") {
+    indexer.index(indexName, "type1", "1", """{"obj1": {"test": "something"}, obj2: {"arr2": ["arr_value1", "arr_value2"]}, "arr3": [{"arr3_field1": "arr3_value1"}] }""")
+    indexer.refresh()
+
+    val response = indexer.search_prepare().setQuery(matchAllQuery).addField("_source.obj1")
+      .addScriptField("s_obj1", "_source.obj1")
+      .addScriptField("s_obj1_test", "_source.obj1.test")
+      .addScriptField("s_obj2", "_source.obj2")
+      .addScriptField("s_obj2_arr2", "_source.obj2.arr2")
+      .addScriptField("s_arr3", "_source.arr3")
+      .execute()
+      .actionGet()
+    response.shardFailures().length should be === (0)
+    
+    var sObj1 = response.hits.getAt(0).field("_source.obj1").value.asInstanceOf[JMap[String, _]]
+    sObj1.get("test").toString should be === ("something")
+    response.hits.getAt(0).field("s_obj1_test").value().toString should be === ("something")
+    sObj1 = response.hits.getAt(0).field("s_obj1").value()
+    sObj1.get("test").toString should be === ("something")
+    response.hits.getAt(0).field("s_obj1_test").value().toString should be === ("something")
+
+    val sObj2 = response.hits.getAt(0).field("s_obj2").value.asInstanceOf[JMap[String, _]]
+    var sObj2Arr2 = sObj2.get("arr2").asInstanceOf[JList[_]]
+    sObj2Arr2.size should be === (2)
+    sObj2Arr2.get(0).toString should be === ("arr_value1")
+    sObj2Arr2.get(1).toString should be === ("arr_value2")
+    sObj2Arr2 = response.hits.getAt(0).field("s_obj2_arr2").value().asInstanceOf[JList[_]]
+    sObj2Arr2.size should be === (2)
+    sObj2Arr2.get(0).toString should be === ("arr_value1")
+    sObj2Arr2.get(1).toString should be === ("arr_value2")
+    val sObj2Arr3 = response.hits.getAt(0).field("s_arr3").value().asInstanceOf[JList[_]]
+    sObj2Arr3.get(0).asInstanceOf[JMap[String, _]].get("arr3_field1").toString should be === ("arr3_value1")
+  }
+
+  test("testPartialFields") {
+    val json =
+    """
 	{
 	   "field1":"value1",
 	   "obj1":{
@@ -128,16 +159,16 @@ class SimpleFieldsTest extends IndexerBasedTest {
 	"""
     indexer.index(indexName, "type1", "1", json)
     indexer.refresh()
-    val response = indexer.search(partialFields=Seq(PartialField("partial1", Some("obj1.arr1.*"), None), PartialField("partial2", None, Some("obj1.*"))))
+    val response = indexer.search(partialFields = Seq(PartialField("partial1", Some("obj1.arr1.*"), None), PartialField("partial2", None, Some("obj1.*"))))
     response.shardFailures.length should be === (0)
-    
+
     val partial1 = response.hits.getAt(0).field("partial1").value.asInstanceOf[JMap[String, _]]
-    partial1 should not contain key ("field1")
+    partial1 should not contain key("field1")
     partial1 should contain key ("obj1")
     partial1.get("obj1").asInstanceOf[JMap[String, _]].get("arr1").asInstanceOf[JList[_]] should not be ('empty)
-    
+
     val partial2 = response.hits.getAt(0).field("partial2").value.asInstanceOf[JMap[String, _]]
-    partial2 should not contain key ("obj1")
+    partial2 should not contain key("obj1")
     partial2 should contain key ("field1")
   }
 }

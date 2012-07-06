@@ -102,6 +102,13 @@
                   </goals>
                </execution>
             </executions>
+            <configuration>
+               <jvmArgs>
+                  <jvmArg>-Xms2g</jvmArg>
+                  <jvmArg>-Xmx2g</jvmArg>
+                  <jvmArg>-XX:MaxPermSize=512m</jvmArg>
+               </jvmArgs>
+            </configuration>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
