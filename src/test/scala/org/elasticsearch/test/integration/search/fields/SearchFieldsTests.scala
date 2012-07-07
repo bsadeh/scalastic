@@ -119,10 +119,8 @@ class SearchFieldsTests extends IndexerBasedTest {
       .addScriptField("s_obj1_test", "_source.obj1.test")
       .addScriptField("s_obj2", "_source.obj2")
       .addScriptField("s_obj2_arr2", "_source.obj2.arr2")
-      .addScriptField("s_arr3", "_source.arr3")
-      .execute()
-      .actionGet()
-    response.shardFailures().length should be === (0)
+      .addScriptField("s_arr3", "_source.arr3").execute.actionGet
+    response.shardFailures.length should be === (0)
     
     var sObj1 = response.hits.getAt(0).field("_source.obj1").value.asInstanceOf[JMap[String, _]]
     sObj1.get("test").toString should be === ("something")

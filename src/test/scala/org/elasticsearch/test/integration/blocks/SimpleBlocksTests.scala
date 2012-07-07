@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.blocks
 
-import org.elasticsearch.common.settings.ImmutableSettings._
 import org.scalatest._, matchers._
+import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._
 import org.elasticsearch.client._
 import org.elasticsearch.cluster.block._
@@ -45,14 +45,10 @@ class SimpleBlocksTests extends IndexerBasedTest {
     canCreateIndex(client, "test1")
     canIndexDocument(client, "test1")
     client.admin().indices().prepareUpdateSettings("test1")
-      .setSettings(settingsBuilder().put(IndexMetaData.SETTING_BLOCKS_WRITE, true))
-      .execute()
-      .actionGet()
+      .setSettings(settingsBuilder().put(IndexMetaData.SETTING_BLOCKS_WRITE, true)).execute.actionGet
     canNotIndexDocument(client, "test1")
     client.admin().indices().prepareUpdateSettings("test1")
-      .setSettings(settingsBuilder().put(IndexMetaData.SETTING_BLOCKS_WRITE, false))
-      .execute()
-      .actionGet()
+      .setSettings(settingsBuilder().put(IndexMetaData.SETTING_BLOCKS_WRITE, false)).execute.actionGet
     canIndexDocument(client, "test1")
   }
 
@@ -77,7 +73,7 @@ class SimpleBlocksTests extends IndexerBasedTest {
     try {
       val builder = client.prepareIndex(index, "zzz")
       builder.setSource("""{"foo": "bar"}""")
-      val r = builder.execute().actionGet()
+      val r = builder.execute.actionGet
       r should not be (null)
     } catch {
       case e: ClusterBlockException => fail
@@ -88,7 +84,7 @@ class SimpleBlocksTests extends IndexerBasedTest {
     try {
       val builder = client.prepareIndex(index, "zzz")
       builder.setSource("""{"foo": "bar"}""")
-      builder.execute().actionGet()
+      builder.execute.actionGet
       fail
     } catch {
       case e: ClusterBlockException =>
@@ -117,7 +113,7 @@ class SimpleBlocksTests extends IndexerBasedTest {
     newSettings.put(MetaData.SETTING_READ_ONLY, value)
     val settingsRequest = client.admin().cluster().prepareUpdateSettings()
     settingsRequest.setTransientSettings(newSettings)
-    val settingsResponse = settingsRequest.execute().actionGet()
+    val settingsResponse = settingsRequest.execute.actionGet
     settingsResponse should not be (null)
   }
 
@@ -126,7 +122,7 @@ class SimpleBlocksTests extends IndexerBasedTest {
     newSettings.put(IndexMetaData.SETTING_READ_ONLY, value)
     val settingsRequest = client.admin().indices().prepareUpdateSettings(index)
     settingsRequest.setSettings(newSettings)
-    val settingsResponse = settingsRequest.execute().actionGet()
+    val settingsResponse = settingsRequest.execute.actionGet
     settingsResponse should not be (null)
   }
 }

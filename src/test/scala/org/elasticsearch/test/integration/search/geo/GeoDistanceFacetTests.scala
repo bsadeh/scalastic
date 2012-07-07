@@ -1,16 +1,11 @@
 package org.elasticsearch.test.integration.search.geo
 
-import org.elasticsearch.common.xcontent.XContentFactory._
+import org.scalatest._, matchers._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.search.facet.FacetBuilders._
 import org.elasticsearch.search.facet.geodistance._
-import org.scalatest._, matchers._
 import org.elasticsearch.action.search._
-import org.elasticsearch.client._
 import org.elasticsearch.common.unit._
-import org.elasticsearch.common.xcontent._
-import org.elasticsearch.search.facet.geodistance._
-import org.elasticsearch.test.integration._
 import com.traackr.scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
@@ -33,9 +28,7 @@ class GeoDistanceFacetTests extends IndexerBasedTest {
       .addUnboundedFrom(2)
       .addRange(0, 1)
       .addRange(0.5, 2.5)
-      .addUnboundedTo(1))
-      .execute()
-      .actionGet()
+      .addUnboundedTo(1)).execute.actionGet
     response.hits.totalHits should be === (7)
     var facet: GeoDistanceFacet = response.facets().facet("geo1")
     facet.entries().size should be === (4)
@@ -60,9 +53,7 @@ class GeoDistanceFacetTests extends IndexerBasedTest {
       .addUnboundedFrom(2)
       .addRange(0, 1)
       .addRange(0.5, 2.5)
-      .addUnboundedTo(1))
-      .execute()
-      .actionGet()
+      .addUnboundedTo(1)).execute.actionGet
     response.hits.totalHits should be === (7)
     facet = response.facets().facet("geo1")
     facet.entries().size should be === (4)
@@ -87,9 +78,7 @@ class GeoDistanceFacetTests extends IndexerBasedTest {
       .addUnboundedFrom(2)
       .addRange(0, 1)
       .addRange(0.5, 2.5)
-      .addUnboundedTo(1))
-      .execute()
-      .actionGet()
+      .addUnboundedTo(1)).execute.actionGet
     response.hits.totalHits should be === (7)
     facet = response.facets().facet("geo1")
     facet.entries().size should be === (4)
@@ -118,9 +107,7 @@ class GeoDistanceFacetTests extends IndexerBasedTest {
       -74.0059731)
       .unit(DistanceUnit.KILOMETERS)
       .addRange(0, 2)
-      .addRange(2, 10))
-      .execute()
-      .actionGet()
+      .addRange(2, 10)).execute.actionGet
 
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (2)

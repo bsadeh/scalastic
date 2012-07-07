@@ -1,8 +1,7 @@
 package org.elasticsearch.test.integration.search.matchedfilters
 
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import scala.collection.JavaConversions._
 import com.traackr.scalastic.elasticsearch._
 

@@ -3,7 +3,6 @@ package org.elasticsearch.test.integration.indices.analyze
 import org.scalatest._, matchers._
 import org.elasticsearch.action.admin.indices.analyze._
 import org.elasticsearch.client._
-import org.elasticsearch.test.integration._
 import com.traackr.scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 

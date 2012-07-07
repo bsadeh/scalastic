@@ -1,28 +1,23 @@
 package org.elasticsearch.test.integration.routing
 
-import org.elasticsearch.cluster.metadata.AliasAction._
 import org.scalatest._, matchers._
+import org.elasticsearch.cluster.metadata.AliasAction._
 import java.util._
 import org.elasticsearch._
 import org.elasticsearch.client._
 import org.elasticsearch.cluster._
 import org.elasticsearch.node.internal._
-import org.elasticsearch.test.integration._
 import scala.collection.JavaConversions._
 import com.traackr.scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class AliasResolveRoutingTests extends IndexerBasedTest {
 
+   override def shouldCreateDefaultIndex = false
+
   test("testResolveIndexRouting") {
-    try {
-      indexer.deleteIndex(Seq("test1"))
-      indexer.deleteIndex(Seq("test2"))
-    } catch {
-      case e: Exception =>
-    }
     indexer.createIndex("test1")
     indexer.createIndex("test2")
-    indexer.waitForGreenStatus()
+    indexer.waitForYellowStatus()
     indexer.alias(Seq("test1"), "alias", actions = Seq(
       newAddAliasAction("test1", "alias10").routing("0"),
       newAddAliasAction("test1", "alias110").searchRouting("1,0"),
@@ -40,28 +35,22 @@ import com.traackr.scalastic.elasticsearch._
     indexer.metadata.resolveIndexRouting("0", "alias10") should be === ("0")
     try {
       indexer.metadata.resolveIndexRouting("1", "alias10")
-      fail("should fail")
+      fail
     } catch {
       case e: ElasticSearchIllegalArgumentException =>
     }
     try {
       indexer.metadata.resolveIndexRouting(null, "alias0")
-      fail("should fail")
+      fail
     } catch {
       case ex: ElasticSearchIllegalArgumentException =>
     }
   }
 
   test("testResolveSearchRouting") {
-    try {
-      indexer.deleteIndex(Seq("test1"))
-      indexer.deleteIndex(Seq("test2"))
-    } catch {
-      case e: Exception =>
-    }
     indexer.createIndex("test1")
     indexer.createIndex("test2")
-    indexer.waitForGreenStatus()
+    indexer.waitForYellowStatus()
     indexer.alias(Seq("test1"), "alias", actions = Seq(
       newAddAliasAction("test1", "alias10").routing("0"),
       newAddAliasAction("test2", "alias20").routing("0"),

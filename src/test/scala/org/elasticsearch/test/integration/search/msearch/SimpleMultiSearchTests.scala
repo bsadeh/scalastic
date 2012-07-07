@@ -1,13 +1,13 @@
 package org.elasticsearch.test.integration.search.msearch
 
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.scalatest._, matchers._
 import com.traackr.scalastic.elasticsearch._
 
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleMultiSearchTests extends IndexerBasedTest {
 
-  override def indexSettings = Map("number_of_shards" -> "3", "number_of_replicas" -> "0")
+  override def defaultSettings = Map("number_of_shards" -> "3", "number_of_replicas" -> "0")
 
   test("simpleMultiSearch") {
     indexer.index(indexName, "type", "1", """{"field": "xxx"}""")

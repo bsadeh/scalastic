@@ -1,8 +1,7 @@
 package org.elasticsearch.test.integration.search.query
 
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.index.query._
 import com.traackr.scalastic.elasticsearch._
 
@@ -136,7 +135,7 @@ class SimpleQueryTests extends IndexerBasedTest {
     indexer.search(query = wrapper).hits.totalHits should be === (1)
     
     val wrapperFilter = new WrapperFilterBuilder("{ \"term\" : { \"field1\" : \"value1_1\" } }")
-    indexer.search_prepare().setFilter(wrapperFilter).execute().actionGet().hits.totalHits should be === (1)
+    indexer.search_prepare().setFilter(wrapperFilter).execute.actionGet.hits.totalHits should be === (1)
   }
 
   test("filtersWithCustomCacheKey") {
@@ -144,19 +143,19 @@ class SimpleQueryTests extends IndexerBasedTest {
     indexer.refresh()
 
     var response = indexer.search(Seq(indexName), query = constantScoreQuery(termsFilter("field1", "value1").cacheKey("test1")))
-    response.shardFailures().length should be === (0)
+    response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (1)
 
     response = indexer.search(Seq(indexName), query = constantScoreQuery(termsFilter("field1", "value1").cacheKey("test1")))
-    response.shardFailures().length should be === (0)
+    response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (1)
 
     response = indexer.search(Seq(indexName), query = constantScoreQuery(termsFilter("field1", "value1")))
-    response.shardFailures().length should be === (0)
+    response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (1)
 
     response = indexer.search(Seq(indexName), query = constantScoreQuery(termsFilter("field1", "value1")))
-    response.shardFailures().length should be === (0)
+    response.shardFailures.length should be === (0)
     response.hits.totalHits should be === (1)
   }
 }

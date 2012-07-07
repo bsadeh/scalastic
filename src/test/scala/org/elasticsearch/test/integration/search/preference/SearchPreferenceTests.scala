@@ -1,12 +1,10 @@
 package org.elasticsearch.test.integration.search.preference
 
-import org.elasticsearch.common.settings.ImmutableSettings._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.search._
 import org.elasticsearch.client._
-import org.elasticsearch.common.settings._
-import org.elasticsearch.test.integration._
+import org.elasticsearch.common.settings._, ImmutableSettings._
 import com.traackr.scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SearchPreferenceTests extends IndexerBasedTest {

@@ -1,8 +1,7 @@
 package org.elasticsearch.test.integration.search.customscore
 
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.search._
 import com.traackr.scalastic.elasticsearch._
 
@@ -70,9 +69,7 @@ import com.traackr.scalastic.elasticsearch._
     var response = indexer.search_prepare(Seq(indexName)).setQuery(customFiltersScoreQuery(matchAllQuery).add(termFilter("field",
       "value4"), "2")
       .add(termFilter("field", "value2"), "3"))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("2")
@@ -88,9 +85,7 @@ import com.traackr.scalastic.elasticsearch._
     response = indexer.search_prepare(Seq(indexName)).setQuery(customFiltersScoreQuery(matchAllQuery).add(termFilter("field",
       "value4"), 2)
       .add(termFilter("field", "value2"), 3))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("2")
@@ -107,9 +102,7 @@ import com.traackr.scalastic.elasticsearch._
       .add(termFilter("field", "value4"), 2)
       .add(termFilter("field", "value1"), 3)
       .add(termFilter("color", "red"), 5))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("1")
@@ -120,9 +113,7 @@ import com.traackr.scalastic.elasticsearch._
       .add(termFilter("field", "value4"), 2)
       .add(termFilter("field", "value1"), 3)
       .add(termFilter("color", "red"), 5))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("1")
@@ -133,9 +124,7 @@ import com.traackr.scalastic.elasticsearch._
       .add(termFilter("field", "value4"), 2)
       .add(termFilter("field", "value1"), 3)
       .add(termFilter("color", "red"), 5))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("3")
@@ -149,9 +138,7 @@ import com.traackr.scalastic.elasticsearch._
       .add(termFilter("field", "value4"), 2)
       .add(termFilter("field", "value1"), 3)
       .add(termFilter("color", "red"), 5))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("3")
@@ -168,9 +155,7 @@ import com.traackr.scalastic.elasticsearch._
       .add(termFilter("field", "value4"), 2)
       .add(termFilter("field", "value1"), 3)
       .add(termFilter("color", "red"), 5))
-      .setExplain(true)
-      .execute()
-      .actionGet()
+      .setExplain(true).execute.actionGet
     response.failedShards() should be === (0)
     response.hits.totalHits should be === (4)
     response.hits.getAt(0).id should be === ("1")

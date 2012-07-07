@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.search.facet
 
-import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.search._
 import java.util.concurrent._
 import org.elasticsearch.common.unit._
@@ -18,7 +18,7 @@ import com.traackr.scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SimpleFacetsTests extends IndexerBasedTest {
 	
-  override def indexSettings = Map("number_of_shards" -> "%s".format(numberOfShards()), "number_of_replicas" -> "0")
+  override def defaultSettings = Map("number_of_shards" -> "%s".format(numberOfShards()), "number_of_replicas" -> "0")
 
   protected def numberOfShards(): Int = 1
 
@@ -391,7 +391,7 @@ import com.traackr.scalastic.elasticsearch._
           statisticalScriptFacet("stats3").script("doc['num'].value * 2")))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -449,7 +449,7 @@ import com.traackr.scalastic.elasticsearch._
       val response = indexer.search(facets=Seq(histogramFacet("facet1").field("num").valueField("num").interval(100)))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -490,7 +490,7 @@ import com.traackr.scalastic.elasticsearch._
         histogramFacet("stats14").field("num").valueField("num").bounds(1056, 1176).interval(100)))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -686,7 +686,7 @@ import com.traackr.scalastic.elasticsearch._
         rangeFacet("range6").field("date").addUnboundedFrom("1970-01-01T00:00:26").addRange("1970-01-01T00:00:15", "1970-01-01T00:00:53").addUnboundedTo("1970-01-01T00:00:26")))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -806,7 +806,7 @@ import com.traackr.scalastic.elasticsearch._
         dateHistogramFacet("stats7").field("date").interval("quarter")))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -888,7 +888,7 @@ import com.traackr.scalastic.elasticsearch._
         termsStatsFacet("stats13").keyField("field").valueScript("doc['num'].value * 2")))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -1020,7 +1020,7 @@ import com.traackr.scalastic.elasticsearch._
       val response = indexer.search(facets = Seq(termsStatsFacet("stats1").keyField("lField").valueField("num"), termsStatsFacet("stats2").keyField("dField").valueField("num")))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }
@@ -1061,7 +1061,7 @@ import com.traackr.scalastic.elasticsearch._
 	      termsStatsFacet("stats2").keyField("num").valueScript("doc.score").order(TermsStatsFacet.ComparatorType.TOTAL)))
       if (response.failedShards() > 0) {
         //logger.warn("Failed shards:")
-        for (shardSearchFailure <- response.shardFailures()) {
+        for (shardSearchFailure <- response.shardFailures) {
           //logger.warn("-> {}", shardSearchFailure)
         }
       }

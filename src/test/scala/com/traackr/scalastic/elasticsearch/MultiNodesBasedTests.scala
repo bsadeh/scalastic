@@ -1,0 +1,52 @@
+package com.traackr.scalastic.elasticsearch
+
+import org.scalatest._, matchers._
+import org.elasticsearch.common.settings.ImmutableSettings._, Builder._
+import org.elasticsearch.node.NodeBuilder._
+import org.elasticsearch.common.network._
+import org.elasticsearch.common.settings._
+import org.elasticsearch.node._
+import scala.collection.JavaConversions._
+import com.traackr.scalastic.elasticsearch._
+
+abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with BeforeAndAfterEach with BeforeAndAfterAll {
+
+  def indexName = getClass.getSimpleName.toLowerCase
+
+  def defaultSettings = Map("cluster.name" -> "test-cluster-%s".format(NetworkUtils.getLocalAddress.getHostName))
+
+  private val indexers = new java.util.HashMap[String, Indexer]
+  def indexer(id: String) = indexers.get(id)
+  def node(id: String): Node = indexers.get(id).asInstanceOf[NodeIndexer].node
+
+  override def beforeEach = indexers.values foreach (_.deleteIndex())
+
+  override def afterAll = closeAllNodes
+  def closeAllNodes() = {
+    indexers.values foreach (_.stop)
+    indexers.clear
+  }
+  def closeNode(id: String) = indexers.remove(id).stop
+
+  def startNode(id: String): Node = buildNode(id).start()
+  def startNode(id: String, settings: Settings.Builder): Node = startNode(id, settings.build())
+  def startNode(id: String, settings: Settings): Node = buildNode(id, settings).start()
+
+  def buildNode(id: String): Node = buildNode(id, EMPTY_SETTINGS)
+  def buildNode(id: String, settings: Settings.Builder): Node = buildNode(id, settings.build())
+  def buildNode(id: String, settings: Settings): Node = {
+    val settingsSource = getClass.getName.replace('.', '/') + ".yml"
+    var finalSettings = settingsBuilder().loadFromClasspath(settingsSource)
+      .put(defaultSettings)
+      .put(settings)
+      .put("name", id)
+      .build()
+    if (finalSettings.get("gateway.type") == null)
+      finalSettings = settingsBuilder().put(finalSettings).put("gateway.type", "none").build()
+    if (finalSettings.get("cluster.routing.schedule") != null)
+      finalSettings = settingsBuilder().put(finalSettings).put("cluster.routing.schedule", "50ms").build()
+    val node = nodeBuilder().settings(finalSettings).build()
+    indexers.put(id, Indexer.at(node))
+    node
+  }
+}

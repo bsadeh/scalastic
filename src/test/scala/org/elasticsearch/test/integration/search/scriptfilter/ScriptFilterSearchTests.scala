@@ -1,14 +1,14 @@
 package org.elasticsearch.test.integration.search.scriptfilter
 
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.search.sort._
 import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._
 
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class ScriptFilterSearchTests extends IndexerBasedTest {
 
-  override def indexSettings = Map("number_of_shards" -> "1", "number_of_replicas" -> "0")
+  override def defaultSettings = Map("number_of_shards" -> "1", "number_of_replicas" -> "0")
 
   test("customScriptBoost") {
     indexer.index(indexName, "type1", "1", """{"test": "value beck", "num1": 1.0}""")
@@ -31,9 +31,7 @@ class ScriptFilterSearchTests extends IndexerBasedTest {
     response = indexer.search_prepare().setQuery(filteredQuery(matchAllQuery, scriptFilter("doc['num1'].value > param1").addParam("param1",
       2)))
       .addSort("num1", SortOrder.ASC)
-      .addScriptField("sNum1", "doc['num1'].value")
-      .execute()
-      .actionGet()
+      .addScriptField("sNum1", "doc['num1'].value").execute.actionGet
     response.hits.totalHits should be === (1)
     response.hits.getAt(0).id should be === ("3")
     response.hits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (3.0)
@@ -42,9 +40,7 @@ class ScriptFilterSearchTests extends IndexerBasedTest {
     response = indexer.search_prepare().setQuery(filteredQuery(matchAllQuery, scriptFilter("doc['num1'].value > param1").addParam("param1",
       -1)))
       .addSort("num1", SortOrder.ASC)
-      .addScriptField("sNum1", "doc['num1'].value")
-      .execute()
-      .actionGet()
+      .addScriptField("sNum1", "doc['num1'].value").execute.actionGet
     response.hits.totalHits should be === (3)
     response.hits.getAt(0).id should be === ("1")
     response.hits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (1.0)

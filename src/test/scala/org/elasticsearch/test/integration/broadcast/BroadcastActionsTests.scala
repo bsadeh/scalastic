@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.broadcast
 
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.support.broadcast.BroadcastOperationThreading._
 import scala.collection.JavaConversions._
@@ -53,12 +53,12 @@ class BroadcastActionsTests extends IndexerBasedTest {
     }
     for (i <- 0 until 5) {
       val countResponse = indexer.count(indices = Seq(indexName), query = termQuery("_type", "type1"))
-      //fixme:
+      //fixme: failing
       //      countResponse.count() should be === (0)
       //      countResponse.totalShards() should be === (5)
       //      countResponse.successfulShards() should be === (0)
       //      countResponse.failedShards() should be === (5)
-      for (exp <- countResponse.shardFailures()) {
+      for (exp <- countResponse.shardFailures) {
         exp.reason() should include("QueryParsingException")
       }
     }

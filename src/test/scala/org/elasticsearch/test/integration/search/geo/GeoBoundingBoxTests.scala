@@ -1,8 +1,7 @@
 package org.elasticsearch.test.integration.search.geo
 
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import scala.collection.JavaConversions._
 import com.traackr.scalastic.elasticsearch._
 
@@ -28,9 +27,7 @@ class GeoBoundingBoxTests extends IndexerBasedTest {
     response = indexer.search_prepare().setQuery(filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(40.73,
       -74.1)
       .bottomRight(40.717, -73.99)
-      .`type`("indexed")))
-      .execute()
-      .actionGet()
+      .`type`("indexed"))).execute.actionGet
     response.hits.getTotalHits should be === (2)
     response.hits.hits.length should be === (2)
     for (hit <- response.hits) Set("1", "3", "5") should contain(hit.id)
@@ -101,18 +98,14 @@ class GeoBoundingBoxTests extends IndexerBasedTest {
     response = indexer.search_prepare().setQuery(filteredQuery(termQuery("userid", 880), geoBoundingBoxFilter("location").topLeft(74.579421999999994,
       143.5)
       .bottomRight(-66.668903999999998, 113.96875)
-      .`type`("indexed")))
-      .execute()
-      .actionGet()
+      .`type`("indexed"))).execute.actionGet
     response.hits.totalHits should be === (1)
     response = indexer.search(query = filteredQuery(termQuery("userid", 534), geoBoundingBoxFilter("location").topLeft(74.579421999999994, 143.5).bottomRight(-66.668903999999998, 113.96875)))
     response.hits.totalHits should be === (1)
     response = indexer.search_prepare().setQuery(filteredQuery(termQuery("userid", 534), geoBoundingBoxFilter("location").topLeft(74.579421999999994,
       143.5)
       .bottomRight(-66.668903999999998, 113.96875)
-      .`type`("indexed")))
-      .execute()
-      .actionGet()
+      .`type`("indexed"))).execute.actionGet
     response.hits.totalHits should be === (1)
   }
 }

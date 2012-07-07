@@ -1,10 +1,7 @@
 package com.traackr.scalastic.elasticsearch
 
 import org.scalatest._, matchers._
-import scalaz._, Scalaz._
-import org.elasticsearch.common.xcontent.XContentFactory._
-import org.elasticsearch.index.query.FilterBuilders._
-import org.elasticsearch.index.query.QueryBuilders._
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class ParentChildQueryTest extends IndexerBasedTest {

@@ -7,7 +7,7 @@ import scala.collection.JavaConversions._
 
 abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
     with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer {
-//  protected val logger = org.slf4j.LoggerFactory.getLogger(getClass.getName)
+//  val logger = org.slf4j.LoggerFactory.getLogger(getClass.getName)
 
   override def beforeAll = indexer_beforeAll
 
@@ -21,10 +21,10 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   
   def shouldCreateDefaultIndex = true
 
-  def indexSettings = Map("number_of_shards" -> "1")
+  def defaultSettings = Map("number_of_shards" -> "1")
 
   def createDefaultIndex() {
-    indexer.createIndex(index = indexName, settings = indexSettings)
+    indexer.createIndex(index = indexName, settings = defaultSettings)
     indexer.waitTillActive()
   }
 
@@ -35,7 +35,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   def catchUpOn(`type`: String, howMany: Int) = indexer.waitTillCountAtLeast(Seq(indexName), `type`, howMany)
 
   def shouldHaveNoFailures(response: SearchResponse) = {
-    response.shardFailures().length should be === 0
+    response.shardFailures.length should be === 0
     response.failedShards() should be === 0
   }
 

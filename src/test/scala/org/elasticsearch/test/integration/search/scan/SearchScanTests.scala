@@ -1,15 +1,15 @@
 package org.elasticsearch.test.integration.search.scan
 
-import org.elasticsearch.index.query.QueryBuilders._
 import org.scalatest._, matchers._
+import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.search._
-import org.elasticsearch.test.integration._
 import scala.collection.JavaConversions._
 import com.traackr.scalastic.elasticsearch._
 
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SearchScanTests extends IndexerBasedTest {
 
-  override def indexSettings = Map("number_of_shards" -> "5")
+  override def defaultSettings = Map("number_of_shards" -> "5")
 
   test("narrowingQuery") {
 	import scala.collection.mutable._

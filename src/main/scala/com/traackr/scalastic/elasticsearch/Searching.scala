@@ -3,7 +3,6 @@ package com.traackr.scalastic.elasticsearch
 import org.elasticsearch.action.search._
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.index.query._, QueryBuilders._
-import org.elasticsearch.common.xcontent._
 import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import scala.collection._, JavaConversions._
 
