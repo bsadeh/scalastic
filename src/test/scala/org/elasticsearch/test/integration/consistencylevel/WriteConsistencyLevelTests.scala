@@ -39,5 +39,5 @@ import com.traackr.scalastic.elasticsearch._
     indexer("node1").index(indexName, "type1", "1", source("1", "test"), consistencyLevel = Some(WriteConsistencyLevel.ALL), timeout = Some("1s"))
   }
 
-  private def source(id: String, nameValue: String) = """{type1: {"id" : "%s", "name": "%s"}}""".format(id, nameValue)
+  private def source(id: String, nameValue: String) = """{"type1": {"id": "%s", "name": "%s"}}""".format(id, nameValue)
 }

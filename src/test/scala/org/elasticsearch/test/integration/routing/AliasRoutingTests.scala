@@ -7,7 +7,8 @@ import org.elasticsearch._, action._, client._
 import org.elasticsearch.cluster.metadata.AliasAction._
 import com.traackr.scalastic.elasticsearch._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) class AliasRoutingTests extends MultiNodesBasedTests {
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
+class AliasRoutingTests extends MultiNodesBasedTests {
 
   override def beforeAll() {
     startNode("node1")

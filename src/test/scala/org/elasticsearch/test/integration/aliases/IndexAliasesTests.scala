@@ -361,5 +361,5 @@ import com.traackr.scalastic.elasticsearch._
     (hits.getHits map (_.id) toSet).intersect(ids.toSet) should be === (ids.toSet)
   }
 
-  private def source(id: String, nameValue: String) = """{type1: {"id" : "%s", "name": "%s"}}""".format(id, nameValue)
+  private def source(id: String, nameValue: String) = """{"type1": {"id": "%s", "name": "%s"}}""".format(id, nameValue)
 }

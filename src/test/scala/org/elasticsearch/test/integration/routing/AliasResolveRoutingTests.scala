@@ -2,17 +2,16 @@ package org.elasticsearch.test.integration.routing
 
 import org.scalatest._, matchers._
 import org.elasticsearch.cluster.metadata.AliasAction._
-import java.util._
 import org.elasticsearch._
 import org.elasticsearch.client._
 import org.elasticsearch.cluster._
 import org.elasticsearch.node.internal._
-import scala.collection.JavaConversions._
+import scala.collection._, JavaConversions._
 import com.traackr.scalastic.elasticsearch._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class AliasResolveRoutingTests extends IndexerBasedTest {
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) class AliasResolveRoutingTests extends IndexerBasedTest {
 
-   override def shouldCreateDefaultIndex = false
+  override def shouldCreateDefaultIndex = false
 
   test("testResolveIndexRouting") {
     indexer.createIndex("test1")
@@ -26,8 +25,8 @@ import com.traackr.scalastic.elasticsearch._
       newAddAliasAction("test2", "alias21").routing("1"),
       newAddAliasAction("test1", "alias0").routing("0"),
       newAddAliasAction("test2", "alias0").routing("0")))
-    indexer.metadata.resolveIndexRouting(null, "test1") should be (null)
-    indexer.metadata.resolveIndexRouting(null, "test1") should be (null)
+    indexer.metadata.resolveIndexRouting(null, "test1") should be(null)
+    indexer.metadata.resolveIndexRouting(null, "test1") should be(null)
     indexer.metadata.resolveIndexRouting(null, "alias10") should be === ("0")
     indexer.metadata.resolveIndexRouting(null, "alias20") should be === ("0")
     indexer.metadata.resolveIndexRouting(null, "alias21") should be === ("1")
@@ -57,42 +56,32 @@ import com.traackr.scalastic.elasticsearch._
       newAddAliasAction("test2", "alias21").routing("1"),
       newAddAliasAction("test1", "alias0").routing("0"),
       newAddAliasAction("test2", "alias0").routing("0")))
-    indexer.metadata.resolveSearchRouting(null, "alias") should be (null)
-    indexer.metadata.resolveSearchRouting("0,1", "alias") should be === (newMap("test1",newSet("0", "1")))
-    indexer.metadata.resolveSearchRouting(null, "alias10") should be === (newMap("test1",newSet("0")))
-    indexer.metadata.resolveSearchRouting(null, "alias10") should be === (newMap("test1",newSet("0")))
-    indexer.metadata.resolveSearchRouting("0", "alias10") should be === (newMap("test1",newSet("0")))
-    indexer.metadata.resolveSearchRouting("1", "alias10") should be (null)
-    indexer.metadata.resolveSearchRouting(null, "alias0") should be === (newMap("test1",newSet("0"), "test2", newSet("0")))
-    indexer.metadata.resolveSearchRouting(null, Array("alias10", "alias20")) should be === (newMap("test1", newSet("0"), "test2", newSet("0")))
-    indexer.metadata.resolveSearchRouting(null, Array("alias10", "alias21")) should be === (newMap("test1", newSet("0"), "test2", newSet("1")))
-    indexer.metadata.resolveSearchRouting(null, Array("alias20", "alias21")) should be === (newMap("test2", newSet("0", "1")))
-    indexer.metadata.resolveSearchRouting(null, Array("test1", "alias10")) should be (null)
-    indexer.metadata.resolveSearchRouting(null, Array("alias10", "test1")) should be (null)
-    indexer.metadata.resolveSearchRouting("0", Array("alias10", "alias20")) should be === (newMap("test1", newSet("0"), "test2", newSet("0")))
-    indexer.metadata.resolveSearchRouting("0,1", Array("alias10", "alias20")) should be === (newMap("test1", newSet("0"), "test2", newSet("0")))
-    indexer.metadata.resolveSearchRouting("1", Array("alias10", "alias20")) should be (null)
-    indexer.metadata.resolveSearchRouting("0", Array("alias10", "alias21")) should be === (newMap("test1", newSet("0")))
-    indexer.metadata.resolveSearchRouting("1", Array("alias10", "alias21")) should be === (newMap("test2", newSet("1")))
-    indexer.metadata.resolveSearchRouting("0,1,2", Array("alias10", "alias21")) should be === (newMap("test1", newSet("0"), "test2", newSet("1")))
-    indexer.metadata.resolveSearchRouting("0,1,2", Array("test1", "alias10", "alias21")) should be === (newMap("test1", newSet("0", "1", "2"), "test2", newSet("1")))
+    indexer.metadata.resolveSearchRouting(null, "alias") should be(null)
+    indexer.metadata.resolveSearchRouting("0,1", "alias") should be === JMap("test1" -> JSet("0", "1"))
+    indexer.metadata.resolveSearchRouting(null, "alias10") should be === JMap("test1" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting(null, "alias10") should be === JMap("test1" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting("0", "alias10") should be === JMap("test1" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting("1", "alias10") should be(null)
+    indexer.metadata.resolveSearchRouting(null, "alias0") should be === JMap("test1" -> JSet("0"), "test2" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting(null, Array("alias10", "alias20")) should be === JMap("test1" -> JSet("0"), "test2" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting(null, Array("alias10", "alias21")) should be === JMap("test1" -> JSet("0"), "test2" -> JSet("1"))
+    indexer.metadata.resolveSearchRouting(null, Array("alias20", "alias21")) should be === JMap("test2" -> JSet("0", "1"))
+    indexer.metadata.resolveSearchRouting(null, Array("test1", "alias10")) should be(null)
+    indexer.metadata.resolveSearchRouting(null, Array("alias10", "test1")) should be(null)
+    indexer.metadata.resolveSearchRouting("0", Array("alias10", "alias20")) should be === JMap("test1" -> JSet("0"), "test2" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting("0,1", Array("alias10", "alias20")) should be === JMap("test1" -> JSet("0"), "test2" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting("1", Array("alias10", "alias20")) should be(null)
+    indexer.metadata.resolveSearchRouting("0", Array("alias10", "alias21")) should be === JMap("test1" -> JSet("0"))
+    indexer.metadata.resolveSearchRouting("1", Array("alias10", "alias21")) should be === JMap("test2" -> JSet("1"))
+    indexer.metadata.resolveSearchRouting("0,1,2", Array("alias10", "alias21")) should be === JMap("test1" -> JSet("0"), "test2" -> JSet("1"))
+    indexer.metadata.resolveSearchRouting("0,1,2", Array("test1", "alias10", "alias21")) should be === JMap("test1" -> JSet("0", "1", "2"), "test2" -> JSet("1"))
   }
 
-  private def newSet[T](elements: T*): Set[T] = new HashSet(elements)
+  private def JSet[A](elements: A*) = new java.util.HashSet(elements)
 
-  private def newMap[K, V](key: K, value: V): Map[K, V] = {
-    var r = new HashMap[K, V]
-    r.put(key, value)
-    r
-  }
-
-  private def newMap[K, V](key1: K,
-    value1: V,
-    key2: K,
-    value2: V): Map[K, V] = {
-    var r = new HashMap[K, V]
-    r.put(key1, value1)
-    r.put(key2, value2)
-    r
+  private def JMap[A, B](pairs: Tuple2[A, B]*) = {
+    val result = new java.util.HashMap[A, B]
+    pairs foreach { case (k, v) => result.put(k, v) }
+    result
   }
 }

@@ -6,7 +6,7 @@ import org.elasticsearch.node.NodeBuilder._
 import org.elasticsearch.common.network._
 import org.elasticsearch.common.settings._
 import org.elasticsearch.node._
-import scala.collection.JavaConversions._
+import scala.collection._, JavaConversions._
 import com.traackr.scalastic.elasticsearch._
 
 abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with BeforeAndAfterEach with BeforeAndAfterAll {
@@ -15,9 +15,9 @@ abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with Be
 
   def defaultSettings = Map("cluster.name" -> "test-cluster-%s".format(NetworkUtils.getLocalAddress.getHostName))
 
-  private val indexers = new java.util.HashMap[String, Indexer]
-  def indexer(id: String) = indexers.get(id)
-  def node(id: String): Node = indexers.get(id).asInstanceOf[NodeIndexer].node
+  private val indexers = new mutable.HashMap[String, Indexer]
+  def indexer(id: String): Indexer = indexers.getOrElse(id, null)
+  def node(id: String): Node = indexer(id).asInstanceOf[NodeIndexer].node
 
   override def beforeEach = indexers.values foreach (_.deleteIndex())
 
@@ -26,7 +26,7 @@ abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with Be
     indexers.values foreach (_.stop)
     indexers.clear
   }
-  def closeNode(id: String) = indexers.remove(id).stop
+  def closeNode(id: String) = indexers.remove(id) foreach (_.stop)
 
   def startNode(id: String): Node = buildNode(id).start()
   def startNode(id: String, settings: Settings.Builder): Node = startNode(id, settings.build())
