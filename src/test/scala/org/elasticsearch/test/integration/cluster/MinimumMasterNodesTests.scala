@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.cluster
 
-import org.scalatest._, matchers._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.discovery._
@@ -30,10 +29,10 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
   }
 
   test("simpleMinimumMasterNodes") {
-    buildNode("node1", settingsBuilder().put("gateway.type", "local"))
-    buildNode("node2", settingsBuilder().put("gateway.type", "local"))
+    buildNode("node1", settingsBuilder.put("gateway.type", "local"))
+    buildNode("node2", settingsBuilder.put("gateway.type", "local"))
     cleanAndCloseNodes()
-    val settings = settingsBuilder()
+    val settings = settingsBuilder
       .put("discovery.type", "zen")
       .put("discovery.zen.minimum_master_nodes", 2)
       .put("discovery.zen.ping_timeout", "200ms")
@@ -121,12 +120,12 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
 
   test("multipleNodesShutdownNonMasterNodes") {
     //logger.info("--> cleaning nodes")
-    buildNode("node1", settingsBuilder().put("gateway.type", "local"))
-    buildNode("node2", settingsBuilder().put("gateway.type", "local"))
-    buildNode("node3", settingsBuilder().put("gateway.type", "local"))
-    buildNode("node4", settingsBuilder().put("gateway.type", "local"))
+    buildNode("node1", settingsBuilder.put("gateway.type", "local"))
+    buildNode("node2", settingsBuilder.put("gateway.type", "local"))
+    buildNode("node3", settingsBuilder.put("gateway.type", "local"))
+    buildNode("node4", settingsBuilder.put("gateway.type", "local"))
     cleanAndCloseNodes()
-    val settings = settingsBuilder()
+    val settings = settingsBuilder
       .put("discovery.type", "zen")
       .put("discovery.zen.minimum_master_nodes", 3)
       .put("discovery.zen.ping_timeout", "200ms")

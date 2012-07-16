@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.aliases
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.cluster._
@@ -15,7 +14,7 @@ import com.traackr.scalastic.elasticsearch._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class IndexAliasesTests extends MultiNodesBasedTests {
 
   override def beforeAll() {
-    val nodeSettings = settingsBuilder().put("action.auto_create_index", false).build()
+    val nodeSettings = settingsBuilder.put("action.auto_create_index", false).build()
     startNode("server1", nodeSettings)
     startNode("server2", nodeSettings)
   }

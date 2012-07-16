@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.geo
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.index.mapper.geo._
 import org.elasticsearch.index.search.geo._

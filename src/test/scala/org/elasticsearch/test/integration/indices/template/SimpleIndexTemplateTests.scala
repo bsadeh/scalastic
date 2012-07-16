@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.indices.template
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.indices._
 import com.traackr.scalastic.elasticsearch._

@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.indices.stats
 
-import org.scalatest._, matchers._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.admin.indices.stats._
 import org.elasticsearch.action.get._

@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.discovery
 
-import org.scalatest._, matchers._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import com.traackr.scalastic.elasticsearch._
 
@@ -8,7 +7,7 @@ import com.traackr.scalastic.elasticsearch._
 class DiscoveryTests extends MultiNodesBasedTests {
 
   test("testUnicastDiscovery") {
-    val settings = settingsBuilder()
+    val settings = settingsBuilder
       .put("discovery.zen.multicast.enabled", false)
       .put("discovery.zen.unicast.hosts", "localhost")
       .build()

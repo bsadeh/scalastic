@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.cluster
 
-import org.scalatest._, matchers._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.node._
 import com.traackr.scalastic.elasticsearch._

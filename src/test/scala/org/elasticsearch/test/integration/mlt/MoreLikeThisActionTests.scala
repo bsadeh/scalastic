@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.mlt
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query.FilterBuilders._
 import com.traackr.scalastic.elasticsearch._
 

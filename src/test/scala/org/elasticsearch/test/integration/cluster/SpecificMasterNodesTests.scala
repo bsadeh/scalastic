@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.cluster
 
-import org.scalatest._, matchers._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.discovery._
 
@@ -9,7 +8,7 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
 
   test("simpleOnlyMasterNodeElection") {
     //logger.info("--> start data node / non master node")
-    startNode("data1", settingsBuilder()
+    startNode("data1", settingsBuilder
       .put("node.data", true)
       .put("node.master", false)
       .put("discovery.initial_state_timeout", "1s"))
@@ -20,7 +19,7 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
       case e: MasterNotDiscoveredException =>
     }
     //logger.info("--> start master node")
-    startNode("master1", settingsBuilder()
+    startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
     indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
@@ -34,7 +33,7 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
       case e: MasterNotDiscoveredException =>
     }
     //logger.info("--> start master node")
-    startNode("master1", settingsBuilder()
+    startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
     indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
@@ -46,7 +45,7 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
 
   test("electOnlyBetweenMasterNodes") {
     //logger.info("--> start data node / non master node")
-    startNode("data1", settingsBuilder()
+    startNode("data1", settingsBuilder
       .put("node.data", true)
       .put("node.master", false)
       .put("discovery.initial_state_timeout", "1s"))
@@ -57,13 +56,13 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
       case e: MasterNotDiscoveredException =>
     }
     //logger.info("--> start master node (1)")
-    startNode("master1", settingsBuilder()
+    startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
     indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
     indexer("master1").state().state.nodes().masterNode().name() should be === ("master1")
     //logger.info("--> start master node (2)")
-    startNode("master2", settingsBuilder()
+    startNode("master2", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
     indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")

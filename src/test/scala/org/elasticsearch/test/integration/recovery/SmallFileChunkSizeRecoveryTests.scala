@@ -5,5 +5,5 @@ import org.elasticsearch.common.settings._
 class SmallFileChunkSizeRecoveryTests extends SimpleRecoveryTests {
 
   protected override def recoverySettings = 
-    ImmutableSettings.settingsBuilder().put("shard.recovery.file_chunk_size", "3b").build
+    ImmutableSettings.settingsBuilder.put("shard.recovery.file_chunk_size", "3b").build
 }

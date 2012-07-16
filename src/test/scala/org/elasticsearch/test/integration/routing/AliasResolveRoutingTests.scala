@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.routing
 
-import org.scalatest._, matchers._
 import org.elasticsearch.cluster.metadata.AliasAction._
 import org.elasticsearch._
 import org.elasticsearch.client._

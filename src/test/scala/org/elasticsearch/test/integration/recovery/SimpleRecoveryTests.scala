@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.recovery
 
-import org.scalatest._, matchers._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.get._
 import org.elasticsearch.common.settings._

@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.broadcast
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.support.broadcast.BroadcastOperationThreading._

@@ -5,5 +5,5 @@ import org.elasticsearch.common.settings._
 class SmallTranslogOpsRecoveryTests extends SimpleRecoveryTests {
 
   protected override def recoverySettings = 
-    ImmutableSettings.settingsBuilder().put("shard.recovery.translog_ops", 1).build
+    ImmutableSettings.settingsBuilder.put("shard.recovery.translog_ops", 1).build
 }

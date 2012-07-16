@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.scriptfilter
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.search.sort._
 import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._

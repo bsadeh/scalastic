@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.facet
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.search._
 import java.util.concurrent._

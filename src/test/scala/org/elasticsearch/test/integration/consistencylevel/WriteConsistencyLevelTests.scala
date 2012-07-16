@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.consistencylevel
 
-import org.scalatest._, matchers._
 import org.elasticsearch.action._
 import org.elasticsearch.action.admin.cluster.health._
 import com.traackr.scalastic.elasticsearch._

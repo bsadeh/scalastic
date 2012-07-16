@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.recovery
 
-import org.scalatest._, matchers._
 import com.traackr.scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class FullRollingRestartTests extends MultiNodesBasedTests {

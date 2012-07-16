@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.cluster
 
-import org.scalatest._, matchers._
 import org.elasticsearch.cluster.block._
 import org.elasticsearch.common.unit._
 import org.elasticsearch.common.settings.ImmutableSettings._
@@ -20,7 +19,7 @@ class NoMasterNodeTests extends MultiNodesBasedTests {
     "number_of_shards" -> "1")
 
   test("testNoMasterActions") {
-    val settings = settingsBuilder()
+    val settings = settingsBuilder
       .put("discovery.type", "zen")
       .put("action.auto_create_index", false)
       .put("discovery.zen.minimum_master_nodes", 2)

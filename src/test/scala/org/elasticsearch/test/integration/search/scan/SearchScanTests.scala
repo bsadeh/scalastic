@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.scan
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.search._
 import scala.collection.JavaConversions._

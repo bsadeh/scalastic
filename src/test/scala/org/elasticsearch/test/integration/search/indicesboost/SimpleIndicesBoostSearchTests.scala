@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.indicesboost
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.search.builder.SearchSourceBuilder._
 import org.elasticsearch.action.search._, SearchType._

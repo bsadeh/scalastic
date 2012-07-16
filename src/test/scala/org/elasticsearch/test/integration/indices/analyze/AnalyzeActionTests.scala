@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.indices.analyze
 
-import org.scalatest._, matchers._
 import org.elasticsearch.action.admin.indices.analyze._
 import org.elasticsearch.client._
 import com.traackr.scalastic.elasticsearch._

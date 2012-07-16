@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.blocks
 
-import org.scalatest._, matchers._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection._, JavaConversions._
 import org.elasticsearch.client._
@@ -45,10 +44,10 @@ class SimpleBlocksTests extends IndexerBasedTest {
     canCreateIndex(client, "test1")
     canIndexDocument(client, "test1")
     client.admin().indices().prepareUpdateSettings("test1")
-      .setSettings(settingsBuilder().put(IndexMetaData.SETTING_BLOCKS_WRITE, true)).execute.actionGet
+      .setSettings(settingsBuilder.put(IndexMetaData.SETTING_BLOCKS_WRITE, true)).execute.actionGet
     canNotIndexDocument(client, "test1")
     client.admin().indices().prepareUpdateSettings("test1")
-      .setSettings(settingsBuilder().put(IndexMetaData.SETTING_BLOCKS_WRITE, false)).execute.actionGet
+      .setSettings(settingsBuilder.put(IndexMetaData.SETTING_BLOCKS_WRITE, false)).execute.actionGet
     canIndexDocument(client, "test1")
   }
 

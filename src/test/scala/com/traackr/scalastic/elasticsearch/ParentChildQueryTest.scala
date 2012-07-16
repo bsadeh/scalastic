@@ -1,6 +1,5 @@
 package com.traackr.scalastic.elasticsearch
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])

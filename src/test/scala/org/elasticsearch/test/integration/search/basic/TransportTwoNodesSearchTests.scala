@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.basic
 
-import org.scalatest._, matchers._
 import org.elasticsearch._
 import org.elasticsearch.action.search._, SearchType._
 import org.elasticsearch.client.Requests._

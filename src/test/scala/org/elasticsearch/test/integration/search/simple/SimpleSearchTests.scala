@@ -1,7 +1,6 @@
 package org.elasticsearch.test.integration.search.simple
 
 import org.elasticsearch.index.query.QueryBuilders._
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._
 import com.traackr.scalastic.elasticsearch._
 

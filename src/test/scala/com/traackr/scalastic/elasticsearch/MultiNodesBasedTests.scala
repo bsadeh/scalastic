@@ -36,15 +36,15 @@ abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with Be
   def buildNode(id: String, settings: Settings.Builder): Node = buildNode(id, settings.build())
   def buildNode(id: String, settings: Settings): Node = {
     val settingsSource = getClass.getName.replace('.', '/') + ".yml"
-    var finalSettings = settingsBuilder().loadFromClasspath(settingsSource)
+    var finalSettings = settingsBuilder.loadFromClasspath(settingsSource)
       .put(defaultSettings)
       .put(settings)
       .put("name", id)
       .build()
     if (finalSettings.get("gateway.type") == null)
-      finalSettings = settingsBuilder().put(finalSettings).put("gateway.type", "none").build()
+      finalSettings = settingsBuilder.put(finalSettings).put("gateway.type", "none").build()
     if (finalSettings.get("cluster.routing.schedule") != null)
-      finalSettings = settingsBuilder().put(finalSettings).put("cluster.routing.schedule", "50ms").build()
+      finalSettings = settingsBuilder.put(finalSettings).put("cluster.routing.schedule", "50ms").build()
     val node = nodeBuilder().settings(finalSettings).build()
     indexers.put(id, Indexer.at(node))
     node

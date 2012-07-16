@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration.search.basic
 
-import org.scalatest._, matchers._
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.action.search._
@@ -18,7 +17,7 @@ class SearchWhileCreatingIndexTests extends MultiNodesBasedTests {
     val node = startNode("node1")
     for (i <- 0 until 20) {
       node.client().admin().indices().prepareCreate(indexName)
-        .setSettings(settingsBuilder().put("number_of_shards", 10)).execute.actionGet
+        .setSettings(settingsBuilder.put("number_of_shards", 10)).execute.actionGet
       node.client().prepareIndex(indexName, "type1").setSource("""{"field": "test"}""").execute.actionGet
       node.client().admin().indices().prepareRefresh().execute.actionGet
       val response = node.client().prepareSearch(indexName).setQuery(termQuery("field",
