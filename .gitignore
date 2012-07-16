@@ -6,7 +6,8 @@
 .cache
 
 # sbt
-project
+project/project
+proget/target
 
 # building
 target
