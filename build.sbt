@@ -24,3 +24,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 publishArtifact in Test := true
 
 publishArtifact in Compile := true
+
+resolvers += "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases"
