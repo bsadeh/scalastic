@@ -28,7 +28,6 @@ object SearchParameterTypes {
   import org.elasticsearch.index.mapper.geo._
   import org.elasticsearch.index.search.geo._
   import org.elasticsearch.common.unit._
-  import highlight.HighlightBuilder.{ Field => HighlightField }
 
   case class ScriptField(name: String, script: String, parameters: Map[String, Object] = Map(), lang: Option[String] = None)
 
@@ -70,6 +69,14 @@ object SearchParameterTypes {
     }
   }
 
+  case class HighlightField(
+    name: String,
+    fragmentSize: Int = -1,
+    fragmentOffset: Int = -1,
+    numOfFragments: Int = -1,
+    requireFieldMatch: Option[Boolean] = None // currently ignored in the Java API
+  )
+
   case class Highlight(
       fields: Iterable[HighlightField] = Nil,
       order: Option[String] = None,
@@ -80,7 +87,15 @@ object SearchParameterTypes {
       tagsSchema: Option[String] = None) {
 
     def setIn(request: SearchRequestBuilder) {
-      fields foreach { request.addHighlightedField(_) }
+      fields foreach { f =>
+        f match {
+          case HighlightField(name, -1, -1, -1, None) => request.addHighlightedField(name)
+          case HighlightField(name, fs, -1, -1, None) => request.addHighlightedField(name, fs)
+          case HighlightField(name, fs, fo, -1, None) => request.addHighlightedField(name, fs, fo)
+          case HighlightField(name, fs, fo, nf, None) => request.addHighlightedField(name, fs, fo, nf)
+          case HighlightField(name, fs, fo, nf, Some(r)) => request.addHighlightedField(name, fs, fo, nf)
+        }
+      }
       order foreach { request.setHighlighterOrder(_) }
       requireFieldMatch foreach { request.setHighlighterRequireFieldMatch(_) }
       encoder foreach { request.setHighlighterEncoder(_) }
