@@ -2,6 +2,8 @@ name := "scalastic"
  
 version := "0.0.6-SNAPSHOT"
 
+organization := "com.traackr"
+
 crossScalaVersions := Seq("2.9.1", "2.9.2")
  
 scalaVersion := "2.9.2" 
