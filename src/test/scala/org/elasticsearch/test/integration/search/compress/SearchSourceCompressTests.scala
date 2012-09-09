@@ -4,7 +4,7 @@ import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.get._
 import org.elasticsearch.action.search._
 import org.elasticsearch.client._
-import org.elasticsearch.common.xcontent.XContentFactory._
+import org.elasticsearch.common.xcontent._, XContentFactory._
 import org.elasticsearch.index.query._
 import com.traackr.scalastic.elasticsearch._
 
@@ -40,7 +40,7 @@ import com.traackr.scalastic.elasticsearch._
     }
   }
 
-  private def buildSource(count: Int) = {
+  private def buildSource(count: Int): XContentBuilder = {
     val builder = jsonBuilder().startObject()
     val sb = new StringBuilder()
     for (j <- 0 until count) sb.append("value").append(j).append(' ')
