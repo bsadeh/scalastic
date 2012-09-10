@@ -81,3 +81,6 @@ or:
 * sbt 0.11.2
 * Maven 3.0.4
 
+# Installing
+* artifacts are available at https://github.com/bsadeh/scalastic/downloads 
+
