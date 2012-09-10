@@ -6,8 +6,8 @@
    <url>https://github.com/bsadeh/scalastic</url>
 
    <groupId>com.traackr</groupId>
-   <artifactId>traackr-scalastic</artifactId>
-   <version>0.0.6-SNAPSHOT</version>
+   <artifactId>scalastic</artifactId>
+   <version>0.0.6</version>
    <packaging>jar</packaging>
 
    <scm>
@@ -148,4 +148,41 @@
          </plugin>
       </plugins>
    </build>
+
+   <profiles>
+      <profile>
+         <id>githubUpload</id>
+         <activation>
+            <property>
+               <name>github.downloads</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>com.github.github</groupId>
+                  <artifactId>downloads-maven-plugin</artifactId>
+                  <version>0.4</version>
+                  <configuration>
+                     <description>${project.version} release of ${project.name}</description>
+                     <override>false</override>
+                     <includeAttached>true</includeAttached>
+                  </configuration>
+                  <executions>
+                     <execution>
+<!-- 
+find . -name "*.jar" -exec scp {} bsadeh@github.com:/bsadeh/scalastic/downloads
+ -->
+                        <goals>
+                           <goal>upload</goal>
+                        </goals>
+                        <phase>install</phase>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
 </project>

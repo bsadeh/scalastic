@@ -1,8 +1,8 @@
+organization := "com.traackr"
+
 name := "scalastic"
  
-version := "0.0.6-SNAPSHOT"
-
-organization := "com.traackr"
+version := "0.0.6"
 
 crossScalaVersions := Seq("2.9.1", "2.9.2")
  
