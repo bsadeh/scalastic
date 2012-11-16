@@ -4,7 +4,7 @@ import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.admin.indices.stats._
 import org.elasticsearch.action.get._
 import org.elasticsearch.client._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SimpleIndexStatsTests extends IndexerBasedTest {
 

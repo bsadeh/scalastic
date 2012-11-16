@@ -4,7 +4,7 @@ import org.elasticsearch.index.mapper._
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch._, action._, client._
 import org.elasticsearch.cluster.metadata.AliasAction._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
 class AliasRoutingTests extends MultiNodesBasedTests {

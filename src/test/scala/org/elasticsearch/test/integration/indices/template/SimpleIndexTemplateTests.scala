@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.indices.template
 
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.indices._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
 class SimpleIndexTemplateTests extends IndexerBasedTest {

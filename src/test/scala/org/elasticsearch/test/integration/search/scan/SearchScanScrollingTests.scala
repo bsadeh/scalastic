@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.search.scan
 
 import org.elasticsearch.action.search._
 import scala.collection.JavaConversions._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SearchScanScrollingTests extends IndexerBasedTest {

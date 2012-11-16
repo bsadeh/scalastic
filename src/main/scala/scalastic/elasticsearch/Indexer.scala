@@ -1,13 +1,13 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 import org.elasticsearch.client._, transport._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.node._, NodeBuilder._
 import scala.collection.JavaConversions._
-import org.slf4j._
+import grizzled.slf4j._
 
 object Indexer {
-  import org.elasticsearch.common.transport._
+import org.elasticsearch.common.transport._
 
   def transport(settings: Map[String, String], host: String = "localhost", ports: Seq[Int] = Seq(9300)) = {
     require(settings.contains("cluster.name"))

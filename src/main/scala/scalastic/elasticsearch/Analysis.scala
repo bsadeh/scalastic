@@ -1,4 +1,4 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 trait Analysis {
   self: Indexer =>

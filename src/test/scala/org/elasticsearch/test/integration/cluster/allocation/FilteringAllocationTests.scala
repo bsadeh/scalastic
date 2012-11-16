@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.cluster.allocation
 
 import org.elasticsearch.common.settings.ImmutableSettings._
 import scala.collection.JavaConversions._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
 class FilteringAllocationTests extends MultiNodesBasedTests {

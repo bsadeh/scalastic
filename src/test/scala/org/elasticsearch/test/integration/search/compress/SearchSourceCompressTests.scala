@@ -6,7 +6,7 @@ import org.elasticsearch.action.search._
 import org.elasticsearch.client._
 import org.elasticsearch.common.xcontent._, XContentFactory._
 import org.elasticsearch.index.query._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SearchSourceCompressTests extends IndexerBasedTest {
 
@@ -29,14 +29,14 @@ import com.traackr.scalastic.elasticsearch._
     indexer.refresh()
     for (i <- 1 until 100) {
       val getResponse = indexer.get(indexName, "type1", i.toString)
-      getResponse.source() should be === (buildSource(i).copiedBytes())
+      getResponse.sourceRef should be === (buildSource(i).bytes)
     }
     val getResponse = indexer.get(indexName, "type1", Integer toString 10000)
-    getResponse.source() should be === (buildSource(10000).copiedBytes())
+    getResponse.sourceRef should be === (buildSource(10000).bytes)
     for (i <- 1 until 100) {
       val response = indexer.search(query = idsQuery("type1").ids(i.toString))
       response.hits.getTotalHits should be === (1)
-      response.hits.getAt(0).source() should be === (buildSource(i).copiedBytes())
+      response.hits.getAt(0).sourceRef should be === (buildSource(i).bytes)
     }
   }
 

@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.search._
 import org.elasticsearch.client._
 import org.elasticsearch.common.settings._, ImmutableSettings._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SearchPreferenceTests extends IndexerBasedTest {
 

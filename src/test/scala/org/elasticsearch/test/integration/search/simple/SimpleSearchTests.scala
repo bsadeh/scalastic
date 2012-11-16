@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.search.simple
 
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.index.query._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleSearchTests extends IndexerBasedTest {
@@ -73,8 +73,8 @@ class SimpleSearchTests extends IndexerBasedTest {
     search("trying to find an exact match").hits.totalHits should be === 2
     search("\"trying to find an exact match\"").hits.totalHits should be === 1
 
-    search(textPhraseQuery("field", "trying to find an exact match")).hits.totalHits should be === 1
-    search(textPhraseQuery("field", "\"trying to find an exact match\"")).hits.totalHits should be === 1
+    search(matchPhraseQuery("field", "trying to find an exact match")).hits.totalHits should be === 1
+    search(matchPhraseQuery("field", "\"trying to find an exact match\"")).hits.totalHits should be === 1
   }
   
   test("multiSearch") {

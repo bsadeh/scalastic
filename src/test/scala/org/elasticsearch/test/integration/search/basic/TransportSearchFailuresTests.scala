@@ -6,7 +6,7 @@ import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.search._
 import org.elasticsearch.client.Requests._
 import org.elasticsearch.common._, xcontent.XContentFactory._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class TransportSearchFailuresTests extends MultiNodesBasedTests {
   

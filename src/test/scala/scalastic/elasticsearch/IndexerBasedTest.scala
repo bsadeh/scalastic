@@ -1,4 +1,4 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 import org.scalatest._, matchers._
 import org.elasticsearch.action.search._

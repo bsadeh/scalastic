@@ -1,4 +1,4 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 
@@ -27,23 +27,23 @@ class ParentChildQueryTest extends IndexerBasedTest {
     // the sum of the two
     combninedScore should be === (0.53125)
 
-    response = search(topChildrenQuery("post", textQuery("content", "Sausalito")).score("sum"))
+    response = search(topChildrenQuery("post", matchQuery("content", "Sausalito")).score("sum"))
     response.hits.totalHits should be === 1
     // the aggregated sum
     response.hits.getAt(0).getScore should be === (0.53125)
-    response = search(hasChildQuery("post", textQuery("content", "Sausalito")))
-    response = search(filteredQuery(matchAllQuery, hasChildFilter("post", textQuery("content", "Sausalito"))))
+    response = search(hasChildQuery("post", matchQuery("content", "Sausalito")))
+    response = search(filteredQuery(matchAllQuery, hasChildFilter("post", matchQuery("content", "Sausalito"))))
     response.hits.totalHits should be === 1
   }
 
   test("hasChild query search") {
     var response = indexer.search(
-      query = hasChildQuery("post", textQuery("content", "Sausalito")),
+      query = hasChildQuery("post", matchQuery("content", "Sausalito")),
       fields = List("name"))
     response.hits.totalHits should be === 1
     valueFor(response, 0, "name").toString should be === "John Doe"
     response = indexer.search(
-      query = filteredQuery(matchAllQuery, hasChildFilter("post", textQuery("content", "Sausalito"))),
+      query = filteredQuery(matchAllQuery, hasChildFilter("post", matchQuery("content", "Sausalito"))),
       fields = List("name"))
     response.hits.totalHits should be === 1
     valueFor(response, 0, "name").toString should be === "John Doe"

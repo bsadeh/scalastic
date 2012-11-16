@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.support.broadcast.BroadcastOperationThreading._
 import scala.collection.JavaConversions._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class BroadcastActionsTests extends IndexerBasedTest {

@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.mlt
 
 import org.elasticsearch.index.query.FilterBuilders._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class MoreLikeThisActionTests extends IndexerBasedTest {
 

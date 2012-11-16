@@ -1,4 +1,4 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 import org.elasticsearch.action.search._
 import org.elasticsearch.action.support.broadcast._

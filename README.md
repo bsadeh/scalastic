@@ -18,7 +18,7 @@ Way cool, but how do I use it?
 in general, look at the scalatest source for usage examples ...
 
 the main dude is the Indexer:
-	import com.traackr.elasticsearch._
+	import scalastic.elasticsearch._
 	val indexer = Indexer.<some creation method>
 
 just about every Indexer api call has these forms:

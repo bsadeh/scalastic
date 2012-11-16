@@ -8,7 +8,7 @@
 
    <logger name="org.scalaz" level="WARN" />
    <logger name="org.elasticsearch" level="WARN" />
-   <logger name="com.traackr.scalastic" level="WARN" />
+   <logger name="scalastic" level="WARN" />
    
    <root level="ERROR">
       <appender-ref ref="stdout" />

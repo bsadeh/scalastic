@@ -9,7 +9,7 @@ import org.elasticsearch.node.internal._
 import org.elasticsearch.search._
 import scala.collection.JavaConversions._
 import java.util.concurrent._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class IndexAliasesTests extends MultiNodesBasedTests {
 

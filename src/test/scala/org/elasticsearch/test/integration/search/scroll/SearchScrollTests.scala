@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.common.xcontent.XContentFactory._
 import org.elasticsearch.search.sort._
 import scala.collection.JavaConversions._
-import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._
+import scalastic.elasticsearch._, SearchParameterTypes._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SearchScrollTests extends IndexerBasedTest {

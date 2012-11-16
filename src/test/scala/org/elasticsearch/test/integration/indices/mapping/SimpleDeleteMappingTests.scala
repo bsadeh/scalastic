@@ -1,6 +1,6 @@
 package org.elasticsearch.test.integration.indices.mapping
 
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
 class SimpleDeleteMappingTests extends IndexerBasedTest {

@@ -7,7 +7,7 @@
 
    <groupId>com.traackr</groupId>
    <artifactId>scalastic</artifactId>
-   <version>0.0.6</version>
+   <version>0.19.11</version>
    <packaging>jar</packaging>
 
    <scm>
@@ -37,8 +37,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <scala.version>2.9.2</scala.version>
       <scalaz.version>6.0.4</scalaz.version>
-      <elasticsearch.version>0.19.8</elasticsearch.version>
-      <slf4j.version>1.6.4</slf4j.version>
+      <elasticsearch.version>0.19.11</elasticsearch.version>
       <logback.version>1.0.2</logback.version>
       <junit.version>4.10</junit.version>
       <scalatest.version>1.6.1</scalatest.version>
@@ -65,9 +64,9 @@
          <version>${elasticsearch.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-api</artifactId>
-         <version>${slf4j.version}</version>
+         <groupId>org.clapper</groupId>
+         <artifactId>grizzled-slf4j_${scala.version}</artifactId>
+         <version>0.6.10</version>
       </dependency>
       <dependency>
          <groupId>ch.qos.logback</groupId>
@@ -169,11 +168,11 @@
                      <override>false</override>
                      <includeAttached>true</includeAttached>
                   </configuration>
+<!-- 
+find . -name "*.jar" -exec scp {} bsadeh@github.com:/bsadeh/scalastic/downloads \;
+ -->
                   <executions>
                      <execution>
-<!-- 
-find . -name "*.jar" -exec scp {} bsadeh@github.com:/bsadeh/scalastic/downloads
- -->
                         <goals>
                            <goal>upload</goal>
                         </goals>

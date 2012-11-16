@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.indices.analyze
 
 import org.elasticsearch.action.admin.indices.analyze._
 import org.elasticsearch.client._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
 class AnalyzeActionTests extends IndexerBasedTest {

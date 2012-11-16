@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.consistencylevel
 
 import org.elasticsearch.action._
 import org.elasticsearch.action.admin.cluster.health._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class WriteConsistencyLevelTests extends MultiNodesBasedTests {
 

@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.search.scriptfilter
 
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.search.sort._
-import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._
+import scalastic.elasticsearch._, SearchParameterTypes._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class ScriptFilterSearchTests extends IndexerBasedTest {

@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.discovery
 
 import org.elasticsearch.common.settings.ImmutableSettings._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) 
 class DiscoveryTests extends MultiNodesBasedTests {

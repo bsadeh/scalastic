@@ -7,7 +7,7 @@ import org.elasticsearch.cluster.block._
 import org.elasticsearch.cluster.metadata._
 import org.elasticsearch.cluster.routing._
 import org.elasticsearch.common.logging._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SimpleIndexStateTests extends IndexerBasedTest {
 

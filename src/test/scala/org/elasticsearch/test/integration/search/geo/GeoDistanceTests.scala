@@ -4,7 +4,7 @@ import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.index.mapper.geo._
 import org.elasticsearch.index.search.geo._
 import org.elasticsearch.search.sort._
-import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._
+import scalastic.elasticsearch._, SearchParameterTypes._
 import scala.collection.JavaConversions._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])

@@ -3,7 +3,7 @@ package org.elasticsearch.test.integration.search.indicesboost
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.search.builder.SearchSourceBuilder._
 import org.elasticsearch.action.search._, SearchType._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleIndicesBoostSearchTests extends IndexerBasedTest {

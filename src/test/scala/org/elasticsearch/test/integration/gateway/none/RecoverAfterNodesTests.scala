@@ -3,7 +3,7 @@ package org.elasticsearch.test.integration.gateway.none
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.cluster.block._
 import org.elasticsearch.gateway._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) class RecoverAfterNodesTests extends MultiNodesBasedTests {
 

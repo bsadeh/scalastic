@@ -13,7 +13,7 @@ import org.elasticsearch.search.facet.range._
 import org.elasticsearch.search.facet.statistical._
 import org.elasticsearch.search.facet.terms._, bytes._, doubles._, ints._, longs._, shorts._
 import org.elasticsearch.search.facet.termsstats._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SimpleFacetsTests extends IndexerBasedTest {
 	

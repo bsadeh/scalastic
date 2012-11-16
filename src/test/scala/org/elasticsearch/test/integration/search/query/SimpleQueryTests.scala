@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.search.query
 
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.index.query._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleQueryTests extends IndexerBasedTest {

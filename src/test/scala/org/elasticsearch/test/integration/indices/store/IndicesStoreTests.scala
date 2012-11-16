@@ -3,7 +3,7 @@ package org.elasticsearch.test.integration.indices.store
 import org.elasticsearch.env._
 import org.elasticsearch.index.shard._
 import org.elasticsearch.node.internal._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class IndicesStoreTests extends MultiNodesBasedTests {
 

@@ -3,7 +3,7 @@ package org.elasticsearch.test.integration.cluster
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.common.unit.TimeValue._
 import org.elasticsearch.action._, index._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class SimpleDataNodesTests extends MultiNodesBasedTests {
 

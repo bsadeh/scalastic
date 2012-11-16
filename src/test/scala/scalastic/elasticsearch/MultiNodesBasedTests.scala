@@ -1,4 +1,4 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 import org.scalatest._, matchers._
 import org.elasticsearch.common.settings.ImmutableSettings._, Builder._
@@ -7,7 +7,8 @@ import org.elasticsearch.common.network._
 import org.elasticsearch.common.settings._
 import org.elasticsearch.node._
 import scala.collection._, JavaConversions._
-import com.traackr.scalastic.elasticsearch._
+
+import scalastic.elasticsearch._
 
 abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with BeforeAndAfterEach with BeforeAndAfterAll {
 

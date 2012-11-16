@@ -5,7 +5,7 @@ import scala.collection._, JavaConversions._
 import org.elasticsearch.client._
 import org.elasticsearch.cluster.block._
 import org.elasticsearch.cluster.metadata._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleBlocksTests extends IndexerBasedTest {

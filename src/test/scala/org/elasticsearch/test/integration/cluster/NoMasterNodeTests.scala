@@ -5,7 +5,7 @@ import org.elasticsearch.common.unit._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.discovery._
 import org.elasticsearch.rest._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class NoMasterNodeTests extends MultiNodesBasedTests {

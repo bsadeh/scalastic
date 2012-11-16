@@ -11,7 +11,7 @@ import org.elasticsearch.search.facet._
 import org.elasticsearch.search.facet.query._
 import org.elasticsearch.search.sort._
 import scala.collection._, JavaConversions._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class TransportTwoNodesSearchTests extends MultiNodesBasedTests {

@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.search.fields
 
 import org.elasticsearch.index.query.QueryBuilders._
-import com.traackr.scalastic.elasticsearch._, SearchParameterTypes._
+import scalastic.elasticsearch._, SearchParameterTypes._
 import scala.collection.JavaConversions._
 import java.util.{ Map => JMap, List => JList }
 

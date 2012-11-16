@@ -1,4 +1,4 @@
-package com.traackr.scalastic.elasticsearch
+package scalastic.elasticsearch
 
 import org.elasticsearch.common._, xcontent._
 import org.elasticsearch.index.VersionType

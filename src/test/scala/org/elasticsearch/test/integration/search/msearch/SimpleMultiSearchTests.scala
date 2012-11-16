@@ -1,7 +1,7 @@
 package org.elasticsearch.test.integration.search.msearch
 
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class SimpleMultiSearchTests extends IndexerBasedTest {

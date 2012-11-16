@@ -5,7 +5,7 @@ import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.action.search._
 import org.elasticsearch.index.query._
 import org.elasticsearch.node._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 /** This test basically verifies that search with a single shard active (cause we indexed to it) and other
  *  shards possibly not active at all (cause they haven't allocated) will still work.

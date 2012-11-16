@@ -5,7 +5,7 @@ import org.elasticsearch.search.facet.FacetBuilders._
 import org.elasticsearch.search.facet.geodistance._
 import org.elasticsearch.action.search._
 import org.elasticsearch.common.unit._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class GeoDistanceFacetTests extends IndexerBasedTest {

@@ -3,7 +3,7 @@ package org.elasticsearch.test.integration.recovery
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.action.get._
 import org.elasticsearch.common.settings._
-import com.traackr.scalastic.elasticsearch._
+import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner]) class SimpleRecoveryTests extends MultiNodesBasedTests {
 
