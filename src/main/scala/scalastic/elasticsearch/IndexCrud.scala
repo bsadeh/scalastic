@@ -70,9 +70,14 @@ trait DeleteIndex {
     request
   }
 
+  /** caveat: if none of the indices exists, we will encounter a validation exception */
   def deleteIndexIfExists(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndexIfExists_send(indices, timeout).actionGet
   def deleteIndexIfExists_send(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndexIfExists_prepare(indices, timeout).execute
-  def deleteIndexIfExists_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_prepare(indices filter (exists(_).exists), timeout)
+  def deleteIndexIfExists_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = {
+    val existing = indices filter (exists(_).exists)
+    val toDelete: Iterable[String] = if (existing.isEmpty) null else existing
+    deleteIndex_prepare(toDelete, timeout)
+  }
 }
 
 trait UpdateSettings {

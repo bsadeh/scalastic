@@ -2,14 +2,14 @@ organization := "com.traackr"
 
 name := "scalastic"
  
-version := "0.19.11"
+version := "0.19.12"
 
 crossScalaVersions := Seq("2.9.1", "2.9.2")
  
 scalaVersion := "2.9.2" 
 
 
-libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.19.11"
+libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.19.12"
 	
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "6.0.4"
 
