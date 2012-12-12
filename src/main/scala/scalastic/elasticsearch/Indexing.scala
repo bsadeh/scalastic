@@ -115,19 +115,19 @@ trait Index {
 trait Bulk {
   self: Indexer =>
 
-  def bulk[A <: ActionRequest](
+  def bulk[A <: ActionRequest[A]](
     requests: Iterable[A],
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     refresh: Option[Boolean] = None,
     replicationType: Option[ReplicationType] = None) = bulk_send(requests, consistencyLevel, refresh, replicationType).actionGet
     
-  def bulk_send[A <: ActionRequest](
+  def bulk_send[A <: ActionRequest[A]](
     requests: Iterable[A],
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     refresh: Option[Boolean] = None,
     replicationType: Option[ReplicationType] = None) = bulk_prepare(requests, consistencyLevel, refresh, replicationType).execute
     
-  def bulk_prepare[A <: ActionRequest](
+  def bulk_prepare[A <: ActionRequest[A]](
     requests: Iterable[A],
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     refresh: Option[Boolean] = None,
