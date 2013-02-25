@@ -10,8 +10,6 @@ About
 ---
 Scalastic is an interface for [ElasticSearch](http://www.elasticsearch.org), designed to provide more flexible and Scala-esque interface around the native [elasticsearch Java API](http://www.elasticsearch.org/guide/reference/java-api/).
 
-Scalastic has been developed and tested against elasticsearch 1.9.x+.
-
 
 Way cool, but how do I use it?
 ---
@@ -81,6 +79,4 @@ or:
 * sbt 0.11.2
 * Maven 3.0.4
 
-# Installing
-* artifacts are available at https://github.com/bsadeh/scalastic/downloads 
 
