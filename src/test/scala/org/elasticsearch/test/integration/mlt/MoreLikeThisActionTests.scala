@@ -3,16 +3,17 @@ package org.elasticsearch.test.integration.mlt
 import org.elasticsearch.index.query.FilterBuilders._
 import scalastic.elasticsearch._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class MoreLikeThisActionTests extends IndexerBasedTest {
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
+class MoreLikeThisActionTests extends IndexerBasedTest {
 
   test("testSimpleMoreLikeThis") {
     indexer.index(indexName, "type1", "1", """{"text": "lucene"}""")
     indexer.index(indexName, "type1", "2", """{"text": "lucene release"}""")
     indexer.refresh()
     val response = indexer.moreLikeThis(indexName, "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1))
-    response.successfulShards() should be === (1)
-    response.failedShards() should be === (0)
-    response.hits.totalHits should be === (1)
+    response.getSuccessfulShards should be === (1)
+    response.getFailedShards should be === (0)
+    response.getHits.totalHits should be === (1)
   }
 
   test("testMoreLikeThisWithAliases") {
@@ -26,14 +27,14 @@ import scalastic.elasticsearch._
 
     //logger.info("Running moreLikeThis on index")
     var response = indexer.moreLikeThis(indexName, "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1))
-    response.hits.totalHits should be === (2)
+    response.getHits.totalHits should be === (2)
     //logger.info("Running moreLikeThis on beta shard")
     response = indexer.moreLikeThis("beta", "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1))
-    response.hits.totalHits should be === (1)
-    response.hits.getAt(0).id should be === ("3")
+    response.getHits.totalHits should be === (1)
+    response.getHits.getAt(0).id should be === ("3")
     //logger.info("Running moreLikeThis on release shard")
     response = indexer.moreLikeThis(indexName, "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1), searchIndices = Seq("release"))
-    response.hits.totalHits should be === (1)
-    response.hits.getAt(0).id should be === ("2")
+    response.getHits.totalHits should be === (1)
+    response.getHits.getAt(0).id should be === ("2")
   }
 }

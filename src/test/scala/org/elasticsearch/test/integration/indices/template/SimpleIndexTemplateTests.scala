@@ -19,30 +19,32 @@ class SimpleIndexTemplateTests extends IndexerBasedTest {
       //fail //fixme: should fail recognizing it already exists
     } catch {
       case e: IndexTemplateAlreadyExistsException =>
-      case e: Exception => fail
+      case e: Exception => fail()
     }
     indexer.index("test_index", "type1", "1", """{"field1": "value1", "field2": "value 2"}""", refresh = Some(true))
     indexer.refresh()
+    indexer.waitForGreenStatus()
     var response = indexer.search(Seq("test_index"), query = termQuery("field1", "value1"), fields = Seq("field1", "field2"))
-    if (response.failedShards() > 0) {
-      //logger.warn("failed search " + response.shardFailures.mkString(","))
+    if (response.getFailedShards > 0) {
+      //println("failed search " + response.getShardFailures.mkString(","))
     }
-    response.failedShards() should be === (0)
-    response.hits.totalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).field("field1").value().toString should be === ("value1")
-    response.hits.getAt(0).field("field2").value().toString should be === ("value 2")
+    response.getFailedShards should be === (0)
+    response.getHits.totalHits should be === (1)
+    response.getHits.getHits.length should be === (1)
+    response.getHits.getAt(0).field("field1").value().toString should be === ("value1")
+    response.getHits.getAt(0).field("field2").value().toString should be === ("value 2")
     indexer.index("text_index", "type1", "1", """{"field1": "value1", "field2": "value 2"}""", refresh = Some(true))
     indexer.refresh()
-    response = indexer.search(Seq("test_index"), query = termQuery("field1", "value1"), fields = Seq("field1", "field2"))
-    if (response.failedShards() > 0) {
+    indexer.waitForGreenStatus()
+    response = indexer.search(Seq("text_index"), query = termQuery("field1", "value1"), fields = Seq("field1", "field2"))
+    if (response.getFailedShards > 0) {
       //logger.warn("failed search " + response.shardFailures.mkString(","))
     }
-    response.failedShards() should be === (0)
-    response.hits.totalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).field("field1").value().toString should be === ("value1")
-    response.hits.getAt(0).field("field2").value().toString should be === ("value 2")
+    response.getFailedShards should be === (0)
+    response.getHits.totalHits should be === (1)
+    response.getHits.getHits.length should be === (1)
+    response.getHits.getAt(0).field("field1").value().toString should be === ("value1")
+    response.getHits.getAt(0).field("field2").value().toString should be === ("value 2")
   }
 
   private def clean() {

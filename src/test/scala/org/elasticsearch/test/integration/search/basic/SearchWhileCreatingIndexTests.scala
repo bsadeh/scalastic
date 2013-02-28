@@ -22,7 +22,7 @@ class SearchWhileCreatingIndexTests extends MultiNodesBasedTests {
       node.client().admin().indices().prepareRefresh().execute.actionGet
       val response = node.client().prepareSearch(indexName).setQuery(termQuery("field",
         "test")).execute.actionGet
-      response.hits.totalHits should be === (1)
+      response.getHits.totalHits should be === (1)
       node.client().admin().indices().prepareDelete(indexName).execute.actionGet
     }
     try {

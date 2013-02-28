@@ -125,8 +125,8 @@ class SearchScanScrollingTests extends IndexerBasedTest {
     import scala.collection.mutable._
     indexer.createIndex(indexName, settings = Map("number_of_shards" -> numberOfShards.toString, "number_of_replicas" -> "0"))
     indexer.waitForYellowStatus()
-    var ids = new HashSet[String]
-    var expectedIds = new HashSet[String]
+    val ids = new HashSet[String]
+    val expectedIds = new HashSet[String]
     for (i <- 0 until numberOfDocs.toInt) {
       val id = i.toString
       expectedIds.add(id)
@@ -138,17 +138,17 @@ class SearchScanScrollingTests extends IndexerBasedTest {
     indexer.refresh()
     
     var response = indexer.search(searchType = Some(SearchType.SCAN), size = Some(size), scroll = Some("2m"))
-    response.hits.totalHits should be === (numberOfDocs)
+    response.getHits.totalHits should be === (numberOfDocs)
     var continue = true
     while (continue) {
-      response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-      response.hits.totalHits should be === (numberOfDocs)
-      response.failedShards() should be === (0)
-      for (hit <- response.hits) {
+      response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+      response.getHits.totalHits should be === (numberOfDocs)
+      response.getFailedShards should be === (0)
+      for (hit <- response.getHits) {
         ids.contains(hit.id()) should be === (false)
         ids.add(hit.id())
       }
-      continue = !response.hits.hits.isEmpty
+      continue = !response.getHits.hits.isEmpty
     }
     expectedIds should be === (ids)
   }

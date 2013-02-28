@@ -7,24 +7,28 @@ trait WaitingForGodot {
   val defaultMaxFactor = 64
 
   @deprecated(message="Replaced with waitTillCountAtMost", since="0.0.4")
-  def catchUpOn(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) =
+  def catchUpOn(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) {
     waitTillCountAtMost(indices, `type`, target, seed, maxFactor)
+  }
     
   def exactly(current: Long, target: Long): Boolean = { current != target }
-  def waitTillCountExactly(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) =
+  def waitTillCountExactly(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) {
     waitTillCountMatches(indices, `type`, target, exactly _, "exactly", seed, maxFactor)
+  }
 
   def atLeast(current: Long, target: Long): Boolean = { current < target }
-  def waitTillCountAtLeast(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) =
+  def waitTillCountAtLeast(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) {
     waitTillCountMatches(indices, `type`, target, atLeast _, "at least", seed, maxFactor)
+  }
 
   def atMost(current: Long, target: Long): Boolean = { current > target }
-  def waitTillCountAtMost(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) =
+  def waitTillCountAtMost(indices: Iterable[String] = Nil, `type`: String, target: Int, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) {
     waitTillCountMatches(indices, `type`, target, atMost _, "at most", seed, maxFactor)
+  }
 
-  def waitTillCountMatches(indices: Iterable[String] = Nil, `type`: String, target: Int, f: (Long, Long) => Boolean, criteriaDescription: String, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) = {
+  def waitTillCountMatches(indices: Iterable[String] = Nil, `type`: String, target: Int, f: (Long, Long) => Boolean, criteriaDescription: String, seed: Int = defaultSeed, maxFactor: Int = defaultMaxFactor) {
     var factor = seed
-    while (factor <= maxFactor && f(count(indices, types = Seq(`type`)).count, target)) {
+    while (factor <= maxFactor && f(count(indices, types = Seq(`type`)).getCount, target)) {
       info("waiting on {} to count {} {} in {} sec ...", `type`, criteriaDescription, target, factor)
       Thread sleep factor * 1000
       factor *= 2

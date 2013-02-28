@@ -3,8 +3,9 @@ package scalastic.elasticsearch
 import org.elasticsearch.action.search._
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.index.query._, QueryBuilders._
-import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
+import org.elasticsearch.search._, facet._, sort._, SortBuilders._, builder._
 import scala.collection._, JavaConversions._
+import org.elasticsearch.common.geo.{GeoPoint, GeoDistance}
 
 trait Searching 
 	extends Query 
@@ -25,8 +26,6 @@ trait Query {
 }
 
 object SearchParameterTypes {
-  import org.elasticsearch.index.mapper.geo._
-  import org.elasticsearch.index.search.geo._
   import org.elasticsearch.common.unit._
 
   case class ScriptField(name: String, script: String, parameters: Map[String, Object] = Map(), lang: Option[String] = None)
@@ -147,7 +146,7 @@ trait Search {
     /* the rest ... */
     explain: Option[Boolean] = None,
     extraSource: Option[Map[String, Object]] = None,
-    facets: Iterable[AbstractFacetBuilder] = Nil,
+    facets: Iterable[FacetBuilder] = Nil,
     fields: Iterable[String] = Nil,
     filter: Option[FilterBuilder] = None,
     from: Option[Int] = None,
@@ -177,7 +176,7 @@ trait Search {
     /* the rest ... */
     explain: Option[Boolean] = None,
     extraSource: Option[Map[String, Object]] = None,
-    facets: Iterable[AbstractFacetBuilder] = Nil,
+    facets: Iterable[FacetBuilder] = Nil,
     fields: Iterable[String] = Nil,
     filter: Option[FilterBuilder] = None,
     from: Option[Int] = None,
@@ -198,7 +197,7 @@ trait Search {
     source: Option[String] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, internalBuilder, minScore, operationThreading, partialFields, preference, queryHint, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
+    trackScores: Option[Boolean] = None) = search_prepare(indices, types, query, explain, extraSource, facets, fields, filter, from, highlight, indexBoosts, internalBuilder, minScore, operationThreading, partialFields, preference, routing, scriptFields, scroll, searchType, size, sortings, source, statsGroups, timeout, trackScores).execute
 
   def search_prepare(
     indices: Iterable[String] = Nil,
@@ -207,7 +206,7 @@ trait Search {
     /* the rest ... */
     explain: Option[Boolean] = None,
     extraSource: Option[Map[String, Object]] = None,
-    facets: Iterable[AbstractFacetBuilder] = Nil,
+    facets: Iterable[FacetBuilder] = Nil,
     fields: Iterable[String] = Nil,
     filter: Option[FilterBuilder] = None,
     from: Option[Int] = None,
@@ -218,7 +217,6 @@ trait Search {
     operationThreading: Option[SearchOperationThreading] = None,
     partialFields: Iterable[PartialField] = Nil,
     preference: Option[String] = None,
-    queryHint: Option[String] = None,
     routing: Option[String] = None,
     scriptFields: Iterable[ScriptField] = Nil,
     scroll: Option[String] = None,
@@ -248,7 +246,6 @@ trait Search {
     operationThreading foreach { request.setOperationThreading(_) }
     partialFields foreach { each => request.addPartialField(each.name, each.includes.toArray, each.excludes.toArray) }
     preference foreach { request.setPreference(_) }
-    queryHint foreach { request.setQueryHint(_) }
     routing foreach { request.setRouting(_) }
     scriptFields foreach { each => request.addScriptField(each.name, each.lang getOrElse (null), each.script, each.parameters) }
     scroll foreach { request.setScroll(_) }

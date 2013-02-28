@@ -1,6 +1,6 @@
 package org.elasticsearch.test.integration.search.msearch
 
-import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
+import org.elasticsearch.index.query._, QueryBuilders._
 import scalastic.elasticsearch._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
@@ -16,11 +16,11 @@ class SimpleMultiSearchTests extends IndexerBasedTest {
       indexer.search_prepare(indices = Seq(indexName), query = termQuery("field", "xxx")),
       indexer.search_prepare(indices = Seq(indexName), query = termQuery("field", "yyy")),
       indexer.search_prepare(indices = Seq(indexName))))
-    response.responses().length should be === (3)
-    response.responses()(0).response().hits.totalHits should be === (1)
-    response.responses()(1).response().hits.totalHits should be === (1)
-    response.responses()(2).response().hits.totalHits should be === (2)
-    response.responses()(0).response().hits.getAt(0).id should be === ("1")
-    response.responses()(1).response().hits.getAt(0).id should be === ("2")
+    response.getResponses.length should be === (3)
+    response.getResponses()(0).getResponse.getHits.totalHits should be === (1)
+    response.getResponses()(1).getResponse.getHits.totalHits should be === (1)
+    response.getResponses()(2).getResponse.getHits.totalHits should be === (2)
+    response.getResponses()(0).getResponse.getHits.getAt(0).id should be === ("1")
+    response.getResponses()(1).getResponse.getHits.getAt(0).id should be === ("2")
   }
 }

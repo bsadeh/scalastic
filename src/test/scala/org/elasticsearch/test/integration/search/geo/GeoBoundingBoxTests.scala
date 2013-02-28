@@ -19,17 +19,17 @@ class GeoBoundingBoxTests extends IndexerBasedTest {
     indexer.index(indexName, "type1", "7", """{"name": "Brooklyn", "location": {"lat": 40.65, "lon": -73.95}}""")
     indexer.refresh()
     var response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(40.73, -74.1).bottomRight(40.717, -73.99)))
-    response.hits.getTotalHits should be === (2)
-    response.hits.hits.length should be === (2)
-    for (hit <- response.hits) Set("1", "3", "5") should contain(hit.id)
+    response.getHits.getTotalHits should be === (2)
+    response.getHits.hits.length should be === (2)
+    for (hit <- response.getHits) Set("1", "3", "5") should contain(hit.getId)
 
     response = indexer.search_prepare().setQuery(filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(40.73,
       -74.1)
       .bottomRight(40.717, -73.99)
       .`type`("indexed"))).execute.actionGet
-    response.hits.getTotalHits should be === (2)
-    response.hits.hits.length should be === (2)
-    for (hit <- response.hits) Set("1", "3", "5") should contain(hit.id)
+    response.getHits.getTotalHits should be === (2)
+    response.getHits.hits.length should be === (2)
+    for (hit <- response.getHits) Set("1", "3", "5") should contain(hit.getId)
   }
 
   test("limitsBoundingBoxTest") {
@@ -47,44 +47,44 @@ class GeoBoundingBoxTests extends IndexerBasedTest {
     indexer.refresh()
 
     var response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(41, -11).bottomRight(40, 9)))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("2")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("2")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(41, -11).bottomRight(40, 9).`type`("indexed")))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("2")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("2")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(41, -9).bottomRight(40, 11)))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("3")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("3")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(41, -9).bottomRight(40, 11).`type`("indexed")))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("3")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("3")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(11, 171).bottomRight(1, -169)))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("5")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("5")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(11, 171).bottomRight(1, -169).`type`("indexed")))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("5")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("5")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(9, 169).bottomRight(-1, -171)))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("9")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("9")
 
     response = indexer.search(query = filteredQuery(matchAllQuery, geoBoundingBoxFilter("location").topLeft(9, 169).bottomRight(-1, -171).`type`("indexed")))
-    response.hits.getTotalHits should be === (1)
-    response.hits.hits.length should be === (1)
-    response.hits.getAt(0).id should be === ("9")
+    response.getHits.getTotalHits should be === (1)
+    response.getHits.hits.length should be === (1)
+    response.getHits.getAt(0).id should be === ("9")
   }
 
   test("limit2BoundingBoxTest") {
@@ -93,18 +93,18 @@ class GeoBoundingBoxTests extends IndexerBasedTest {
     indexer.index(indexName, "type1", "2", """{"userid": 534, "title": "Place in Montreal", "location": {"lat": 45.509526999999999, "lon": -73.570986000000005}}""")
     indexer.refresh()
     var response = indexer.search(query = filteredQuery(termQuery("userid", 880), geoBoundingBoxFilter("location").topLeft(74.579421999999994, 143.5).bottomRight(-66.668903999999998, 113.96875)))
-    response.hits.totalHits should be === (1)
+    response.getHits.totalHits should be === (1)
     response = indexer.search_prepare().setQuery(filteredQuery(termQuery("userid", 880), geoBoundingBoxFilter("location").topLeft(74.579421999999994,
       143.5)
       .bottomRight(-66.668903999999998, 113.96875)
       .`type`("indexed"))).execute.actionGet
-    response.hits.totalHits should be === (1)
+    response.getHits.totalHits should be === (1)
     response = indexer.search(query = filteredQuery(termQuery("userid", 534), geoBoundingBoxFilter("location").topLeft(74.579421999999994, 143.5).bottomRight(-66.668903999999998, 113.96875)))
-    response.hits.totalHits should be === (1)
+    response.getHits.totalHits should be === (1)
     response = indexer.search_prepare().setQuery(filteredQuery(termQuery("userid", 534), geoBoundingBoxFilter("location").topLeft(74.579421999999994,
       143.5)
       .bottomRight(-66.668903999999998, 113.96875)
       .`type`("indexed"))).execute.actionGet
-    response.hits.totalHits should be === (1)
+    response.getHits.totalHits should be === (1)
   }
 }
