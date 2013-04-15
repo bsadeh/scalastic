@@ -2,7 +2,7 @@ package org.elasticsearch.test.integration.aliases
 
 import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.admin.cluster.health._
-import org.elasticsearch.cluster._
+import org.elasticsearch.cluster.ClusterService
 import org.elasticsearch.common._, unit._, settings.ImmutableSettings._
 import org.elasticsearch.indices._
 import org.elasticsearch.node.internal._
