@@ -35,7 +35,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<scala.version>2.9.2</scala.version>
+		<scala.version>2.10.1</scala.version>
 		<scalaz.version>6.0.4</scalaz.version>
 		<elasticsearch.version>0.90.0</elasticsearch.version>
 		<logback.version>1.0.2</logback.version>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.clapper</groupId>
 			<artifactId>grizzled-slf4j_${scala.version}</artifactId>
-			<version>0.6.10</version>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
