@@ -8,7 +8,8 @@ import org.elasticsearch.client.Requests._
 import org.elasticsearch.common._, xcontent.XContentFactory._
 import scalastic.elasticsearch._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])class TransportSearchFailuresTests extends MultiNodesBasedTests {
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
+class TransportSearchFailuresTests extends MultiNodesBasedTests {
   
   test("testFailedSearchWithWrongQuery") {
 	startNode("server1")
@@ -21,15 +22,15 @@ import scalastic.elasticsearch._
       indexer("server1").index(indexName, "type1", "1", source(id, nameValue, age), consistencyLevel = Some(WriteConsistencyLevel.ONE))
     }
     var response = indexer("server1").refresh()
-    response.totalShards() should be === (9)
-    response.successfulShards() should be === (3)
-    response.failedShards() should be === (0)
+    response.getTotalShards should be === (9)
+    response.getSuccessfulShards should be === (3)
+    response.getFailedShards should be === (0)
     for (i <- 0 until 5) {
       try {
         val response = indexer("server1").client.search(searchRequest(indexName).source(Unicode.fromStringAsBytes("{ xxx }"))).actionGet
-        response.totalShards() should be === (3)
-        response.successfulShards() should be === (0)
-        response.failedShards() should be === (3)
+        response.getTotalShards should be === (3)
+        response.getSuccessfulShards should be === (0)
+        response.getFailedShards should be === (3)
         fail("search should fail")
       } catch {
         case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[SearchPhaseExecutionException]
@@ -37,21 +38,21 @@ import scalastic.elasticsearch._
     }
     
     startNode("server2")
-    indexer("server1").waitForNodes(howMany = "2").timedOut() should be === (false)
+    indexer("server1").waitForNodes(howMany = "2").isTimedOut should be === (false)
     val clusterHealth = indexer("server1").health_prepare().setWaitForYellowStatus().setWaitForRelocatingShards(0).setWaitForActiveShards(6).execute.actionGet
-    clusterHealth.timedOut() should be === (false)
-    clusterHealth.status() should be === (ClusterHealthStatus.YELLOW)
-    clusterHealth.activeShards() should be === (6)
+    clusterHealth.isTimedOut should be === (false)
+    clusterHealth.getStatus should be === (ClusterHealthStatus.YELLOW)
+    clusterHealth.getActiveShards should be === (6)
     response = indexer("server1").refresh()
-    response.totalShards() should be === (9)
-    response.successfulShards() should be === (6)
-    response.failedShards() should be === (0)
+    response.getTotalShards should be === (9)
+    response.getSuccessfulShards should be === (6)
+    response.getFailedShards should be === (0)
     for (i <- 0 until 5) {
       try {
         val response = indexer("server1").client.search(searchRequest(indexName).source(Unicode.fromStringAsBytes("{ xxx }"))).actionGet
-        response.totalShards() should be === (3)
-        response.successfulShards() should be === (0)
-        response.failedShards() should be === (3)
+        response.getTotalShards should be === (3)
+        response.getSuccessfulShards should be === (0)
+        response.getFailedShards should be === (3)
         fail("search should fail")
       } catch {
         case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[SearchPhaseExecutionException]
@@ -64,7 +65,7 @@ import scalastic.elasticsearch._
     for (i <- 0 until age) buffer.append(" ").append(nameValue)
     jsonBuilder().startObject().field("id", id).field("name", nameValue + id)
       .field("age", age)
-      .field("multi", buffer.toString)
+      .field("multi", buffer.toString())
       .field("_boost", age * 10)
       .endObject()
       .string

@@ -11,18 +11,18 @@ import scala.collection._, JavaConversions._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class MinimumMasterNodesTests extends AbstractZenNodesTests {
 
-  override def beforeEach() {
+  override def beforeEach {
     super.beforeEach
-    cleanAndCloseNodes
+    cleanAndCloseNodes()
   }
 
   def cleanAndCloseNodes() {
     for (i <- 0 until 10) {
       val nodeName = "node" + i
       if (indexer(nodeName) != null) {
-        indexer(nodeName).stop
+        indexer(nodeName).stop()
         val injector = node(nodeName).asInstanceOf[InternalNode].injector
-        if (injector.getInstance(classOf[NodeEnvironment]).hasNodeFile())
+        if (injector.getInstance(classOf[NodeEnvironment]).hasNodeFile)
           injector.getInstance(classOf[Gateway]).reset()
       }
     }
@@ -43,17 +43,17 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     //logger.info("--> start first node")
     startNode("node1", settings)
     //logger.info("--> should be blocked, no master...")
-    var state = indexer("node1").state(local = Some(true)).state
+    var state = indexer("node1").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
     //logger.info("--> start second node, cluster should be formed")
     startNode("node2", settings)
     var clusterHealthResponse = indexer("node1").waitForNodes(howMany = "2")
-    clusterHealthResponse.timedOut() should be === (false)
-    state = indexer("node1").state(local = Some(true)).state
+    clusterHealthResponse.isTimedOut should be === (false)
+    state = indexer("node1").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (false)
-    state = indexer("node2").state(local = Some(true)).state
+    state = indexer("node2").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (false)
-    state = indexer("node1").state().state
+    state = indexer("node1").state().getState
     state.nodes().size should be === (2)
     state.metaData().indices().containsKey(indexName) should be === (false)
     indexer("node1").createIndex(indexName)
@@ -63,58 +63,58 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     indexer("node1").refresh()
     //logger.info("--> verify we the data back")
     for (i <- 0 until 10) {
-      indexer("node1").count().count should be === (100)
+      indexer("node1").count().getCount should be === (100)
     }
     var masterNodeName = state.nodes().masterNode().name()
     var nonMasterNodeName = if (masterNodeName == "node1") "node2" else "node1"
     closeNode(masterNodeName)
     Thread.sleep(200)
-    state = indexer(nonMasterNodeName).state(local = Some(true)).state
+    state = indexer(nonMasterNodeName).state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
     //logger.info("--> starting the previous master node again...")
     startNode(masterNodeName, settings)
     clusterHealthResponse = indexer("node1").health_prepare().setWaitForYellowStatus()
       .setWaitForNodes("2").execute.actionGet
-    clusterHealthResponse.timedOut() should be === (false)
-    state = indexer("node1").state(local = Some(true)).state
+    clusterHealthResponse.isTimedOut should be === (false)
+    state = indexer("node1").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (false)
-    state = indexer("node2").state(local = Some(true)).state
+    state = indexer("node2").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (false)
-    state = indexer("node1").state().state
+    state = indexer("node1").state().getState
     state.nodes().size should be === (2)
     state.metaData().indices().containsKey(indexName) should be === (true)
     var clusterHealth = indexer("node1").waitForGreenStatus()
-    clusterHealth.timedOut() should be === (false)
-    clusterHealth.status() should be === (ClusterHealthStatus.GREEN)
+    clusterHealth.isTimedOut should be === (false)
+    clusterHealth.getStatus should be === (ClusterHealthStatus.GREEN)
     //logger.info("--> verify we the data back")
     for (i <- 0 until 10) {
-      indexer("node1").count().count should be === (100)
+      indexer("node1").count().getCount should be === (100)
     }
     masterNodeName = state.nodes().masterNode().name()
     nonMasterNodeName = if (masterNodeName == "node1") "node2" else "node1"
     closeNode(nonMasterNodeName)
     Thread.sleep(200)
-    state = indexer(masterNodeName).state(local = Some(true)).state
+    state = indexer(masterNodeName).state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
     //logger.info("--> starting the previous master node again...")
     startNode(nonMasterNodeName, settings)
     Thread.sleep(200)
     clusterHealthResponse = indexer("node1").health_prepare().setWaitForNodes("2")
       .setWaitForGreenStatus().execute.actionGet
-    clusterHealthResponse.timedOut() should be === (false)
-    state = indexer("node1").state(local = Some(true)).state
+    clusterHealthResponse.isTimedOut should be === (false)
+    state = indexer("node1").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (false)
-    state = indexer("node2").state(local = Some(true)).state
+    state = indexer("node2").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (false)
-    state = indexer("node1").state().state
+    state = indexer("node1").state().getState
     state.nodes().size should be === (2)
     state.metaData().indices().containsKey(indexName) should be === (true)
     clusterHealth = indexer("node1").waitForGreenStatus()
-    clusterHealth.timedOut() should be === (false)
-    clusterHealth.status() should be === (ClusterHealthStatus.GREEN)
+    clusterHealth.isTimedOut should be === (false)
+    clusterHealth.getStatus should be === (ClusterHealthStatus.GREEN)
     //logger.info("--> verify we the data back")
     for (i <- 0 until 10) {
-      indexer("node1").count().count should be === (100)
+      indexer("node1").count().getCount should be === (100)
     }
   }
 
@@ -136,16 +136,16 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     startNode("node1", settings)
     startNode("node2", settings)
     Thread.sleep(500)
-    var state = indexer("node1").state(local = Some(true)).state
-    state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
-    state = indexer("node2").state(local = Some(true)).state
+    var state = indexer("node1").state(local = Some(true)).getState
+    state.getBlocks.hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
+    state = indexer("node2").state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
     //logger.info("--> start two more nodes")
     startNode("node3", settings)
     startNode("node4", settings)
     var clusterHealthResponse = indexer("node1").waitForNodes(howMany = "4")
-    clusterHealthResponse.timedOut() should be === (false)
-    state = indexer("node1").state().state
+    clusterHealthResponse.isTimedOut should be === (false)
+    state = indexer("node1").state().getState
     state.nodes().size should be === (4)
     val masterNode = state.nodes().masterNode().name()
     val nonMasterNodes = new java.util.LinkedList[String]
@@ -154,7 +154,7 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     for (i <- 0 until 100) indexer("node1").index(indexName, "type1", i.toString, """{"field": "value"}""")
     indexer("node1").refresh()
     //logger.info("--> verify we the data back")
-    for (i <- 0 until 10) indexer("node1").count().count should be === (100)
+    for (i <- 0 until 10) indexer("node1").count().getCount should be === (100)
 
     var nodesToShutdown = new mutable.HashSet[String]
     nodesToShutdown.add(nonMasterNodes.removeLast())
@@ -164,20 +164,20 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     Thread.sleep(1000)
     val lastNonMasterNodeUp = nonMasterNodes.removeLast()
     //logger.info("--> verify that there is no master anymore on remaining nodes")
-    state = indexer(masterNode).state(local = Some(true)).state
+    state = indexer(masterNode).state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
-    state = indexer(lastNonMasterNodeUp).state(local = Some(true)).state
+    state = indexer(lastNonMasterNodeUp).state(local = Some(true)).getState
     state.blocks().hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
     //logger.info("--> start back the nodes {}", nodesToShutdown)
     nodesToShutdown foreach (startNode(_, settings))
     clusterHealthResponse = indexer("node1").waitForNodes(howMany = "4")
-    clusterHealthResponse.timedOut() should be === (false)
+    clusterHealthResponse.isTimedOut should be === (false)
     val clusterHealth = indexer("node1").waitForGreenStatus()
-    clusterHealth.timedOut() should be === (false)
-    clusterHealth.status() should be === (ClusterHealthStatus.GREEN)
-    state = indexer("node1").state().state
+    clusterHealth.isTimedOut should be === (false)
+    clusterHealth.getStatus should be === (ClusterHealthStatus.GREEN)
+    state = indexer("node1").state().getState
     state.nodes().size should be === (4)
     //logger.info("--> verify we the data back")
-    for (i <- 0 until 10) indexer("node1").count().count should be === (100)
+    for (i <- 0 until 10) indexer("node1").count().getCount should be === (100)
   }
 }

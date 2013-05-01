@@ -3,9 +3,10 @@ package scalastic.elasticsearch
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.cluster.metadata._
-import org.elasticsearch.index.query._, QueryBuilders._
+import org.elasticsearch.index.query._
 import org.elasticsearch.common.unit._, TimeValue._
 import scala.collection._, JavaConversions._
+import org.elasticsearch.action.admin.indices.cache.clear.ClearIndicesCacheRequestBuilder
 
 trait IndexCrud
     extends Exists
@@ -54,7 +55,7 @@ trait CreateIndex {
     val request = client.admin.indices.prepareCreate(index)
     if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings).build())
     mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
-    cause foreach { request.cause(_) }
+    cause foreach { request.setCause(_) }
     timeout foreach { request.setTimeout(_) }
     request
   }
@@ -74,7 +75,7 @@ trait DeleteIndex {
   def deleteIndexIfExists(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndexIfExists_send(indices, timeout).actionGet
   def deleteIndexIfExists_send(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndexIfExists_prepare(indices, timeout).execute
   def deleteIndexIfExists_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = {
-    val existing = indices filter (exists(_).exists)
+    val existing = indices filter (exists(_).isExists)
     val toDelete: Iterable[String] = if (existing.isEmpty) null else existing
     deleteIndex_prepare(toDelete, timeout)
   }
@@ -484,36 +485,32 @@ trait ClearCache {
   def clearCache(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
-    bloomCache: Option[Boolean] = None,
     fieldDataCache: Option[Boolean] = None,
     filterCache: Option[Boolean] = None,
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_send(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).actionGet
+    operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_send(indices, fields, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).actionGet
     
   def clearCache_send(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
-    bloomCache: Option[Boolean] = None,
     fieldDataCache: Option[Boolean] = None,
     filterCache: Option[Boolean] = None,
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_prepare(indices, fields, bloomCache, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).execute
+    operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_prepare(indices, fields, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).execute
     
   def clearCache_prepare(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
-    bloomCache: Option[Boolean] = None,
     fieldDataCache: Option[Boolean] = None,
     filterCache: Option[Boolean] = None,
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = {
+    operationThreading: Option[BroadcastOperationThreading] = None): ClearIndicesCacheRequestBuilder = {
 		  /* method body */
     val request = client.admin.indices.prepareClearCache(indices.toArray: _*)
     request.setFields(fields.toArray: _*)
-    bloomCache foreach { request.setBloomCache(_) }
     fieldDataCache foreach { request.setFieldDataCache(_) }
     filterCache foreach { request.setFilterCache(_) }
     idCache foreach { request.setIdCache(_) }

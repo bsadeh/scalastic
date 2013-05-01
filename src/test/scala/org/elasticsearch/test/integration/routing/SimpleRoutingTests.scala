@@ -1,7 +1,6 @@
 package org.elasticsearch.test.integration.routing
 
-import org.elasticsearch.index.query.QueryBuilders._
-import org.elasticsearch._, action._, client._
+import org.elasticsearch._, action._
 import org.elasticsearch.index.mapper._
 import scalastic.elasticsearch._
 
@@ -19,46 +18,46 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     indexer("node1").index(indexName, "type1", "1", """{"field": "value1"}""", routing = Some("0"), refresh = Some(true))
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
     //logger.info("--> deleting with no routing, should not delete anything")
     indexer("node1").delete(indexName, "type1", "1", refresh = Some(true))
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
     //logger.info("--> deleting with routing, should delete")
     indexer("node1").delete(indexName, "type1", "1", routing = Some("0"), refresh = Some(true))
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (false)
     }
     indexer("node1").index(indexName, "type1", "1", """{"field": "value1"}""", routing = Some("0"), refresh = Some(true))
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
     //logger.info("--> deleting_by_query with 1 as routing, should not delete anything")
     indexer("node1").deleteByQuery(routing = Some("1"))
     indexer("node1").refresh()
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
     //logger.info("--> deleting_by_query with , should delete")
     indexer("node1").deleteByQuery(routing = Some("0"))
     indexer("node1").refresh()
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (false)
     }
   }
 
@@ -68,51 +67,51 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     indexer("node1").index(indexName, "type1", "1", """{"field": "value1"}""", routing = Some("0"), refresh = Some(true))
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
     //logger.info("--> search with no routing, should fine one")
     for (i <- 0 until 5) {
-      indexer("node1").search().hits.totalHits() should be === (1)
+      indexer("node1").search().getHits.totalHits() should be === (1)
     }
     //logger.info("--> search with wrong routing, should not find")
     for (i <- 0 until 5) {
-      indexer("node1").search(routing = Some("1")).hits.totalHits() should be === (0)
-      indexer("node1").count(Nil, routing = Some("1")).count() should be === (0)
+      indexer("node1").search(routing = Some("1")).getHits.totalHits() should be === (0)
+      indexer("node1").count(Nil, routing = Some("1")).getCount should be === (0)
     }
     //logger.info("--> search with correct routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").search(routing = Some("0")).hits.totalHits() should be === (1)
-      indexer("node1").count(Nil, routing = Some("0")).count() should be === (1)
+      indexer("node1").search(routing = Some("0")).getHits.totalHits() should be === (1)
+      indexer("node1").count(Nil, routing = Some("0")).getCount should be === (1)
     }
     indexer("node1").index(indexName, "type1", "2", """{"field": "value1"}""", routing = Some("1"), refresh = Some(true))
     //logger.info("--> search with no routing, should fine two")
     for (i <- 0 until 5) {
-      indexer("node1").search().hits.totalHits() should be === (2)
-      indexer("node1").count().count should be === (2)
+      indexer("node1").search().getHits.totalHits() should be === (2)
+      indexer("node1").count().getCount should be === (2)
     }
     //logger.info("--> search with 0 routing, should find one")
     for (i <- 0 until 5) {
-      indexer("node1").search(routing = Some("0")).hits.totalHits() should be === (1)
-      indexer("node1").count(Nil, routing = Some("0")).count() should be === (1)
+      indexer("node1").search(routing = Some("0")).getHits.totalHits() should be === (1)
+      indexer("node1").count(Nil, routing = Some("0")).getCount should be === (1)
     }
     //logger.info("--> search with 1 routing, should find one")
     for (i <- 0 until 5) {
-      indexer("node1").search(routing = Some("1")).hits.totalHits() should be === (1)
-      indexer("node1").count(Nil, routing = Some("1")).count() should be === (1)
+      indexer("node1").search(routing = Some("1")).getHits.totalHits() should be === (1)
+      indexer("node1").count(Nil, routing = Some("1")).getCount should be === (1)
     }
     //logger.info("--> search with 0,1 routings , should find two")
     for (i <- 0 until 5) {
-      indexer("node1").search(routing = Some("0,1")).hits.totalHits() should be === (2)
-      indexer("node1").count(Nil, routing = Some("0,1")).count() should be === (2)
+      indexer("node1").search(routing = Some("0,1")).getHits.totalHits() should be === (2)
+      indexer("node1").count(Nil, routing = Some("0,1")).getCount should be === (2)
     }
     //logger.info("--> search with 0,1,0 routings , should find two")
     for (i <- 0 until 5) {
-      indexer("node1").search(routing = Some("0,1,0")).hits.totalHits() should be === (2)
-      indexer("node1").count(Nil, routing = Some("0,1,0")).count() should be === (2)
+      indexer("node1").search(routing = Some("0,1,0")).getHits.totalHits() should be === (2)
+      indexer("node1").count(Nil, routing = Some("0,1,0")).getCount should be === (2)
     }
   }
 
@@ -123,19 +122,19 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     //logger.info("--> verifying get with no routing, should not find anything")
     try {
       indexer("node1").index(indexName, "type1", "1", """{"field": "value1"}""", refresh = Some(true))
-      fail
+      fail()
     } catch {
       case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[RoutingMissingException]
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
     //logger.info("--> deleting with no routing, should broadcast the delete since _routing is required")
     indexer("node1").delete(indexName, "type1", "1", refresh = Some(true))
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (false)
     }
     indexer("node1").index(indexName, "type1", "1", """{"field": "value1"}""", routing = Some("0"), refresh = Some(true))
     //logger.info("--> verifying get with no routing, should not find anything")
@@ -143,9 +142,9 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     indexer("node1").bulk(Seq(indexer("node1").delete_prepare(indexName, "type1", "1").request))
     indexer("node1").refresh()
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
       //fixme: failing 
-      //indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (false)
+      //indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (false)
     }
   }
 
@@ -156,17 +155,17 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     //logger.info("--> check failure with different routing")
     try {
       indexer("node1").index(indexName, "type1", "1", """{"field": "value1", "routing_field": "0"}""", routing = Some("1"), refresh = Some(true))
-      fail
+      fail()
     } catch {
       case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[MapperParsingException]
     }
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
   }
 
@@ -177,11 +176,11 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     indexer("node1").refresh()
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
   }
 
@@ -192,11 +191,11 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
     indexer("node1").refresh()
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1").exists() should be === (false)
+      indexer("node1").get(indexName, "type1", "1").isExists should be === (false)
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
-      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).exists() should be === (true)
+      indexer("node1").get(indexName, "type1", "1", routing = Some("0")).isExists should be === (true)
     }
   }
 }

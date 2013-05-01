@@ -10,7 +10,7 @@ scalaVersion := "2.9.2"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
-libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.20.5"
+libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.0.Beta1"
 	
 libraryDependencies += "com.spatial4j" % "spatial4j" % "0.3"
 

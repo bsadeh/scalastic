@@ -33,7 +33,7 @@ import org.elasticsearch.common.transport._
 trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis with Indexing with Searching with WaitingForGodot {
   val client: Client
   def start: Indexer
-  def stop
+  def stop()
 
   /** reindexing using a supplied <reindexing> function
    *  the reindexing has sole control over how to retrieve the data to be indexed in <targetIndex>.
@@ -71,12 +71,12 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
 
 class NodeIndexer(val node: Node) extends Indexer {
   val client = node.client
-  def start(): Indexer = { node.start; waitForYellowStatus(); this }
-  def stop() = node.close
+  def start: Indexer = { node.start; waitForYellowStatus(); this }
+  def stop() { node.close() }
 }
 
 class ClientIndexer(val client: Client) extends Indexer {
-  def start(): Indexer = { waitForYellowStatus(); this }
-  def stop() = client.close
+  def start: Indexer = { waitForYellowStatus(); this }
+  def stop() { client.close() }
 }
 

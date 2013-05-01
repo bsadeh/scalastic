@@ -20,19 +20,19 @@ class SearchScrollTests extends IndexerBasedTest {
 
     var counter = 0
     var response = indexer.search(size = Some(35), scroll = Some("2m"), sortings = Seq(FieldSort("field", order = SortOrder.ASC)))
-    response.hits.getTotalHits should be === (100)
-    response.hits.hits.length should be === (35)
-    for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+    response.getHits.getTotalHits should be === (100)
+    response.getHits.hits.length should be === (35)
+    for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
 
-    response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-    response.hits.getTotalHits should be === (100)
-    response.hits.hits.length should be === (35)
-    for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+    response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+    response.getHits.getTotalHits should be === (100)
+    response.getHits.hits.length should be === (35)
+    for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
 
-    response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-    response.hits.getTotalHits should be === (100)
-    response.hits.hits.length should be === (30)
-    for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+    response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+    response.getHits.getTotalHits should be === (100)
+    response.getHits.hits.length should be === (30)
+    for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
   }
 
   test("simpleScrollQueryThenFetchSmallSizeUnevenDistribution") {
@@ -49,47 +49,47 @@ class SearchScrollTests extends IndexerBasedTest {
       .setScroll(TimeValue.timeValueMinutes(2))
       .addSort("field", SortOrder.ASC).execute.actionGet
     var counter = 0
-    response.hits.getTotalHits should be === (100)
-    response.hits.hits.length should be === (3)
-    for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+    response.getHits.getTotalHits should be === (100)
+    response.getHits.hits.length should be === (3)
+    for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
     for (i <- 0 until 32) {
-      response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-      response.hits.getTotalHits should be === (100)
-      response.hits.hits.length should be === (3)
-      for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+      response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+      response.getHits.getTotalHits should be === (100)
+      response.getHits.hits.length should be === (3)
+      for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
     }
-    response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-    response.hits.getTotalHits should be === (100)
-    response.hits.hits.length should be === (1)
-    for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
-    response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-    response.hits.getTotalHits should be === (100)
-    response.hits.hits.length should be === (0)
-    for (hit <- response.hits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+    response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+    response.getHits.getTotalHits should be === (100)
+    response.getHits.hits.length should be === (1)
+    for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
+    response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+    response.getHits.getTotalHits should be === (100)
+    response.getHits.hits.length should be === (0)
+    for (hit <- response.getHits) { hit.sortValues()(0) should be === (counter); counter += 1 }
   }
 
   test("scrollAndUpdateIndex") {
     indexer.createIndex(indexName, settings = Map("number_of_shards" -> "5"))
     for (i <- 0 until 500) indexer.index(indexName, "tweet", i.toString, """{"user": "kimchy", "postDate": %s, "message": "test"}""".format(i))
     indexer.refresh()
-    indexer.count().count should be === (500)
-    indexer.count(query = termQuery("message", "test")).count should be === (500)
-    indexer.count(query = termQuery("message", "test")).count should be === (500)
-    indexer.count(query = termQuery("message", "update")).count should be === (0)
-    indexer.count(query = termQuery("message", "update")).count should be === (0)
+    indexer.count().getCount should be === (500)
+    indexer.count(query = termQuery("message", "test")).getCount should be === (500)
+    indexer.count(query = termQuery("message", "test")).getCount should be === (500)
+    indexer.count(query = termQuery("message", "update")).getCount should be === (0)
+    indexer.count(query = termQuery("message", "update")).getCount should be === (0)
     var response = indexer.search(query = queryString("user:kimchy"), size = Some(35), scroll = Some("2m"), sortings = Seq(FieldSort("postDate", order = SortOrder.ASC)))
     do {
-      for (searchHit <- response.hits.hits) {
+      for (searchHit <- response.getHits.hits) {
         val map = searchHit.sourceAsMap() + ("message" -> "update")
         indexer.index(indexName, "tweet", searchHit.id(), jsonBuilder().map(map).string())
       }
-      response = indexer.searchScroll(response.scrollId, scroll = Some("2m"))
-    } while (response.hits.hits.length > 0);
+      response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
+    } while (response.getHits.hits.length > 0)
     indexer.refresh()
-    indexer.count().count should be === (500)
-    indexer.count(query = termQuery("message", "test")).count should be === (0)
-    indexer.count(query = termQuery("message", "test")).count should be === (0)
-    indexer.count(query = termQuery("message", "update")).count should be === (500)
-    indexer.count(query = termQuery("message", "update")).count should be === (500)
+    indexer.count().getCount should be === (500)
+    indexer.count(query = termQuery("message", "test")).getCount should be === (0)
+    indexer.count(query = termQuery("message", "test")).getCount should be === (0)
+    indexer.count(query = termQuery("message", "update")).getCount should be === (500)
+    indexer.count(query = termQuery("message", "update")).getCount should be === (500)
   }
 }

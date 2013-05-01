@@ -7,7 +7,7 @@
 
 	<groupId>scalastic</groupId>
 	<artifactId>scalastic</artifactId>
-	<version>0.20.5</version>
+	<version>0.90.0.Beta1</version>
 	<packaging>jar</packaging>
 
 	<scm>
@@ -37,7 +37,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<scala.version>2.9.2</scala.version>
 		<scalaz.version>6.0.4</scalaz.version>
-		<elasticsearch.version>0.20.5</elasticsearch.version>
+		<elasticsearch.version>0.90.0.Beta1</elasticsearch.version>
 		<logback.version>1.0.2</logback.version>
 		<junit.version>4.10</junit.version>
 		<scalatest.version>1.6.1</scalatest.version>

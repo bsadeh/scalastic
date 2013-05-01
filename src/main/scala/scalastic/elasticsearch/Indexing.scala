@@ -3,11 +3,10 @@ package scalastic.elasticsearch
 import org.elasticsearch.common._, xcontent._
 import org.elasticsearch.index.VersionType
 import org.elasticsearch.index.query._, QueryBuilders._
-import org.elasticsearch.action._, get._, index._, bulk._, delete._
+import org.elasticsearch.action._, get._, index._, delete._
 import org.elasticsearch.action.support.broadcast._
 import org.elasticsearch.action.support.replication._
 import scala.collection._, JavaConversions._
-import scalaz._, Scalaz._
 
 trait Indexing
     extends Index
@@ -158,8 +157,7 @@ trait Count {
     listenerThreaded: Option[Boolean] = None,
     minScore: Option[Float] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    queryHint: Option[String] = None,
-    routing: Option[String] = None) = count_send(indices, types, query, listenerThreaded, minScore, operationThreading, queryHint, routing).actionGet
+    routing: Option[String] = None) = count_send(indices, types, query, listenerThreaded, minScore, operationThreading, routing).actionGet
 
   def count_send(
     indices: Iterable[String] = Nil,
@@ -168,8 +166,7 @@ trait Count {
     listenerThreaded: Option[Boolean] = None,
     minScore: Option[Float] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    queryHint: Option[String] = None,
-    routing: Option[String] = None) = count_prepare(indices, types, query, listenerThreaded, minScore, operationThreading, queryHint, routing).execute
+    routing: Option[String] = None) = count_prepare(indices, types, query, listenerThreaded, minScore, operationThreading, routing).execute
 
   def count_prepare(
     indices: Iterable[String] = Nil,
@@ -178,7 +175,6 @@ trait Count {
     listenerThreaded: Option[Boolean] = None,
     minScore: Option[Float] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    queryHint: Option[String] = None,
     routing: Option[String] = None) = {
 		  /* method body */
     val request = client.prepareCount(indices.toArray: _*)
@@ -187,7 +183,6 @@ trait Count {
     listenerThreaded foreach { request.setListenerThreaded(_) }
     minScore foreach { request.setMinScore(_) }
     operationThreading foreach { request.setOperationThreading(_) }
-    queryHint foreach { request.setQueryHint(_) }
     routing foreach { request.setRouting(_) }
     request
   }

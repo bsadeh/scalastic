@@ -13,7 +13,7 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
       .put("node.master", false)
       .put("discovery.initial_state_timeout", "1s"))
     try {
-      indexer("data1").state(timeout = Some("100ms")).state().nodes().masterNodeId() should be(null)
+      indexer("data1").state(timeout = Some("100ms")).getState.nodes().masterNodeId() should be(null)
       fail("should not be able to find master")
     } catch {
       case e: MasterNotDiscoveredException =>
@@ -22,12 +22,12 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
     startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().state.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
     //logger.info("--> stop master node")
     closeNode("master1")
     try {
-      indexer("data1").state(timeout = Some("100ms")).state().nodes().masterNodeId() should be(null)
+      indexer("data1").state(timeout = Some("100ms")).getState.nodes().masterNodeId() should be(null)
       fail("should not be able to find master")
     } catch {
       case e: MasterNotDiscoveredException =>
@@ -36,8 +36,8 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
     startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().state.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
     //logger.info("--> stop all nodes")
     closeNode("data1")
     closeNode("master1")
@@ -50,7 +50,7 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
       .put("node.master", false)
       .put("discovery.initial_state_timeout", "1s"))
     try {
-      indexer("data1").state(timeout = Some("100ms")).state().nodes().masterNodeId() should be(null)
+      indexer("data1").state(timeout = Some("100ms")).getState.nodes().masterNodeId() should be(null)
       fail("should not be able to find master")
     } catch {
       case e: MasterNotDiscoveredException =>
@@ -59,17 +59,17 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
     startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().state.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
     //logger.info("--> start master node (2)")
     startNode("master2", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().state.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().state.nodes().masterNode().name() should be === ("master1")
-    indexer("master2").state().state.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("master2").state().getState.nodes().masterNode().name() should be === ("master1")
     closeNode("master1")
-    indexer("data1").state().state.nodes().masterNode().name() should be === ("master2")
-    indexer("master2").state().state.nodes().masterNode().name() should be === ("master2")
+    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master2")
+    indexer("master2").state().getState.nodes().masterNode().name() should be === ("master2")
   }
 }
