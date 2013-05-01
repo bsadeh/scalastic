@@ -4,9 +4,9 @@ name := "scalastic"
  
 version := "0.90.0.RC2"
 
-//crossScalaVersions := Seq("2.9.1", "2.9.2", "2.10")
+crossScalaVersions := Seq("2.9.1", "2.9.2", "2.10.0", "2.10.1")
  
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.1" 
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
@@ -18,11 +18,11 @@ libraryDependencies += "org.scalaz" %% "scalaz-core" % "6.0.4"
 
 libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.7"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.2"
 
 
 
-libraryDependencies += "junit" % "junit" % "4.11" % "test"
+libraryDependencies += "junit" % "junit" % "4.10" % "test"
 	
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
 
@@ -35,5 +35,3 @@ publishArtifact in Compile := true
 parallelExecution in Test := false
 
 resolvers += "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases"
-
-publishTo := Some(Resolver.file("file",  new File( "/home/charith/code/maven-repo/releases")))

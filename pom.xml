@@ -38,8 +38,8 @@
 		<scala.version>2.10</scala.version>
 		<scalaz.version>6.0.4</scalaz.version>
 		<elasticsearch.version>0.90.0.RC2</elasticsearch.version>
-		<logback.version>1.0.7</logback.version>
-		<junit.version>4.11</junit.version>
+		<logback.version>1.0.2</logback.version>
+		<junit.version>4.10</junit.version>
 		<scalatest.version>1.9.1</scalatest.version>
 	</properties>
 
