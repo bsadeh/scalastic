@@ -2,6 +2,7 @@ package org.elasticsearch
 
 import org.elasticsearch.action.search._
 import org.elasticsearch.common.unit._
+import scala.language.implicitConversions
 
 object Conversions {
   implicit object TimeValueOrdering extends Ordering[TimeValue] {

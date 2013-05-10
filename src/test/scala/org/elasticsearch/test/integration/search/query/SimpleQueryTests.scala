@@ -27,8 +27,10 @@ class SimpleQueryTests extends IndexerBasedTest {
     typeFilterTests("not_analyzed")
   }
 
-  //"Known bug in 0.90.0.Beta1. See commit 1e937fd for the fix"
-  test("typeFilterTypeNotIndexedTests")(pendingUntilFixed(typeFilterTests("no")))
+
+  test("typeFilterTypeNotIndexedTests"){
+    typeFilterTests("no")
+  }
 
   private def typeFilterTests(index: String) {
     indexer.deleteIndex(Seq(indexName))
