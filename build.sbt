@@ -8,7 +8,7 @@ crossScalaVersions := Seq("2.9.1", "2.9.2", "2.10.0", "2.10.1")
  
 scalaVersion := "2.10.1" 
 
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-unchecked", "-feature", "-deprecation")
 
 libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.0"
 	
