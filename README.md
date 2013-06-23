@@ -16,10 +16,12 @@ Way cool, but how do I use it?
 in general, look at the scalatest source for usage examples ...
 
 the main dude is the Indexer:
+
 	import scalastic.elasticsearch._
 	val indexer = Indexer.<some creation method>
 
 just about every Indexer api call has these forms:
+
 	indexer.<api-call>			// a blocking call
 	indexer.send_<api-call>		// async call
 	indexer.prepare_<api-call>	// get the builder and tailor it all to your heart's content
