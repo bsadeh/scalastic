@@ -5,9 +5,14 @@
 .scala_dependencies
 .cache
 
+# IntelliJ IDEA
+.idea
+.idea_modules
+*.iml
+
 # sbt
 project/project
-proget/target
+project/target
 
 # building
 target
