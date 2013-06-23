@@ -6,7 +6,7 @@ import scala.Some
 object Build extends Build {
 
   val basicSettings = Seq(
-    organization := "com.github.scalastic",
+    organization := "org.scalastic",
     name := "scalastic",
     version := "0.90.0",
     description := "a scala driver for elasticsearch",
