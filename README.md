@@ -1,84 +1,120 @@
 # Scalastic 
 ### Scala driver for [ElasticSearch](http://www.elasticsearch.org)
 
-Contributors
----
-* Benny Sadeh <benny.sadeh@gmail.com> 
-* you?
+Scalastic is an interface for [ElasticSearch](http://www.elasticsearch.org), designed to provide more flexible
+and Scala-esque interface around the native [ElasticSearch Java API](http://www.elasticsearch.org/guide/reference/java-api/).
 
-About
----
-Scalastic is an interface for [ElasticSearch](http://www.elasticsearch.org), designed to provide more flexible and Scala-esque interface around the native [elasticsearch Java API](http://www.elasticsearch.org/guide/reference/java-api/).
+# Installation
+
+Add the following to your sbt build:
+
+```scala
+libraryDependencies += "org.scalastic" %% "scalastic" % "0.90.0"
+```
+
+**Please note**, Scalastic supports Scala 2.10.x only.
+
+# Way cool, but how do I use it?
+
+In general, look at the [test sources](https://github.com/bsadeh/scalastic/tree/master/src/test/scala)
+for usage examples.
+
+The main dude is the `Indexer`:
+
+```scala
+import scalastic.elasticsearch._
+
+val indexer = Indexer.<some creation method>
+```
+
+Just about every `Indexer` API call has these forms:
+
+```scala
+indexer.<api-call>          // a blocking call
+indexer.send_<api-call>     // async call
+indexer.prepare_<api-call>  // get the builder and tailor it all to your heart's content
+```
+
+`api-call`s employ named parameters and provide default values - you only need to provide what differs.
 
 
-Way cool, but how do I use it?
----
-in general, look at the scalatest source for usage examples ...
+## Creating an Indexer (connecting to an ElasticSearch cluster)
 
-the main dude is the Indexer:
+### Using node-based access:
 
-	import scalastic.elasticsearch._
-	val indexer = Indexer.<some creation method>
-
-just about every Indexer api call has these forms:
-
-	indexer.<api-call>			// a blocking call
-	indexer.send_<api-call>		// async call
-	indexer.prepare_<api-call>	// get the builder and tailor it all to your heart's content
-
-api-calls employ named parameters and provide default values;
-you only need to provide what differs.
+```scala
+val indexer = Indexer.local.start
+```
 
 
-## Creating an Indexer (connecting to an elastic cluster)
-using node-based access:
+```scala
+val indexer = Indexer.using(settings) // String or Map
+```
 
-	val indexer = Indexer.local.start
-	val indexer = Indexer.using(settings) // String or Map
-	val indexer = Indexer.at(node)
 
-using a transport client:
+```scala
+val indexer = Indexer.at(node)
+```
 
-	val indexer = Indexer.transport(settings = Map(...), host = "...")
+### Using a transport client:
+
+```scala
+val indexer = Indexer.transport(settings = Map(...), host = "...")
+```
 
 ## Indexing
-    val mapping = """
-    {
-	  "type1": {
-	    "properties" : {
-		  "from" : {"type": "ip"},
-    	  "to" : {"type": "ip"}		
-	    }
-	  }
+
+```scala
+val mapping = """
+{
+    "type1": {
+        "properties" : {
+            "from" : {"type": "ip"},
+            "to" : {"type": "ip"}
+        }
     }
-    """
-    indexer.createIndex("index1", settings = """{"number_of_shards":1}""")
-    indexer.waitTillActive()
-    indexer.putMapping(indexName, "type1", mapping)
-    indexer.index(indexName, "type1", "1", """{"from":"192.168.0.5", "to":"192.168.0.10"}""")
-    indexer.refresh()
+}
+"""
+indexer.createIndex("index1", settings = """{"number_of_shards":1}""")
+indexer.waitTillActive()
+indexer.putMapping(indexName, "type1", mapping)
+indexer.index(indexName, "type1", "1", """{"from":"192.168.0.5", "to":"192.168.0.10"}""")
+indexer.refresh()
+```
 
-* for an atomic total-reindexing operation, see:
+* for an atomic total-reindexing operation, see `indexer.reindexWith` method
+* for syncing with indexing operations on a type (index/delete), see the family of methods in the `WaitingForGodot` trait:
 
-	indexer.reindexWith
-
-* for syncing with indexing operations on a type (index/delete), see the family of methods in the WaitingForGodot trait:
-
-	indexer.waitTillCount[AtLeast | Exactly | AtMost]
+```scala
+indexer.waitTillCount[AtLeast | Exactly | AtMost]
+```
 
 ## Searching
-    indexer.search(query = boolQuery
-      .must(rangeQuery("from") lt "192.168.0.7")
-      .must(rangeQuery("to") gt "192.168.0.7"))
+
+```scala
+indexer.search(query = boolQuery
+    .must(rangeQuery("from") lt "192.168.0.7")
+    .must(rangeQuery("to") gt "192.168.0.7"))
+```
+
 or:
 
-    val response = indexer.search(indices=List(index1, indexN), query = some_narly_query, from=100, size=25, etc. etc.)
+```scala
+val response = indexer.search(indices=List(index1, indexN), query = some_narly_query, from=100, size=25, ...)
+```
 
 ## Testing
-* try mixing in the UsingIndexer trait
+Try mixing in the `UsingIndexer` trait
 
-# Building
-* sbt 0.11.2
-* Maven 3.0.4
+## Building from source
+* Scala 2.10
+* sbt 0.12.3
 
+## Contributors
+* Benny Sadeh <benny.sadeh@gmail.com>
+* you?
+
+# License
+
+This software is available under [Apache 2 license](http://www.apache.org/licenses/LICENSE-2.0.html).
 
