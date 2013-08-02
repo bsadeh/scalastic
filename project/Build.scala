@@ -46,6 +46,10 @@ object Build extends Build {
           <id>bsadeh</id>
           <name>Benny Sadeh</name>
         </developer>
+        <developer>
+          <id>yatskevich</id>
+          <name>Ivan Yatskevich</name>
+        </developer>
       </developers>
 
       <issueManagement>

@@ -119,6 +119,7 @@ given ElasticSearch 0.90.0 - Scalastic versions will be 0.90.0, 0.90.0.1, 0.90.0
 
 ## Contributors
 * Benny Sadeh <benny.sadeh@gmail.com>
+* Ivan Yatskevich ([github](https://github.com/yatskevich))
 * you?
 
 # License
