@@ -110,6 +110,13 @@ Try mixing in the `UsingIndexer` trait
 * Scala 2.10
 * sbt 0.12.3
 
+## Versioning scheme
+Scalastic versions correspond to ElasticSearch versions (starting from `0.90.0` binaries are available via Maven repo)
+with a small addition - *the fourth* component of the version is used to reflect Scalastic improvements/bug fixes.
+
+For example:
+given ElasticSearch 0.90.0 - Scalastic versions will be 0.90.0, 0.90.0.1, 0.90.0.2 and so on.
+
 ## Contributors
 * Benny Sadeh <benny.sadeh@gmail.com>
 * you?
