@@ -41,6 +41,17 @@ object Build extends Build {
         <developerConnection>scm:git:git@github.com:bsadeh/scalastic.git</developerConnection>
       </scm>
 
+      <developers>
+        <developer>
+          <id>bsadeh</id>
+          <name>Benny Sadeh</name>
+        </developer>
+        <developer>
+          <id>yatskevich</id>
+          <name>Ivan Yatskevich</name>
+        </developer>
+      </developers>
+
       <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/bsadeh/scalastic/issues/</url>
