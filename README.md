@@ -9,7 +9,7 @@ and Scala-esque interface around the native [ElasticSearch Java API](http://www.
 Add the following to your sbt build:
 
 ```scala
-libraryDependencies += "org.scalastic" %% "scalastic" % "0.90.0"
+libraryDependencies += "org.scalastic" %% "scalastic" % "0.90.0.1"
 ```
 
 **Please note**, Scalastic supports Scala 2.10.x only.
