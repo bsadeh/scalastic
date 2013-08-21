@@ -19,6 +19,8 @@ libraryDependencies += "org.scalastic" %% "scalastic" % "0.90.0.1"
 In general, look at the [test sources](https://github.com/bsadeh/scalastic/tree/master/src/test/scala)
 for usage examples.
 
+## Connect to an ElasticSearch cluster
+
 The main dude is the `Indexer`:
 
 ```scala
@@ -26,19 +28,6 @@ import scalastic.elasticsearch._
 
 val indexer = Indexer.<some creation method>
 ```
-
-Just about every `Indexer` API call has these forms:
-
-```scala
-indexer.<api-call>          // a blocking call
-indexer.send_<api-call>     // async call
-indexer.prepare_<api-call>  // get the builder and tailor it all to your heart's content
-```
-
-`api-call`s employ named parameters and provide default values - you only need to provide what differs.
-
-
-## Creating an Indexer (connecting to an ElasticSearch cluster)
 
 ### Using node-based access:
 
@@ -62,12 +51,27 @@ val indexer = Indexer.at(node)
 val indexer = Indexer.transport(settings = Map(...), host = "...")
 ```
 
+## General API structure
+
+Just about every `Indexer` API call has these forms:
+
+```scala
+indexer.<api-call>          // a blocking call
+indexer.<api-call>_send     // async call
+indexer.<api-call>_prepare  // get the builder and tailor it all to your heart's content
+```
+
+`api-call`s employ named parameters and provide default values - you only need to provide what differs.
+
+
 ## Indexing
 
 ```scala
-val mapping = """
+val indexType = "subnet"
+
+val mapping = s"""
 {
-    "type1": {
+    "$indexType": {
         "properties" : {
             "from" : {"type": "ip"},
             "to" : {"type": "ip"}
@@ -75,10 +79,15 @@ val mapping = """
     }
 }
 """
-indexer.createIndex("index1", settings = """{"number_of_shards":1}""")
+val indexName = "networks"
+
+indexer.createIndex(indexName, settings = Map("number_of_shards" -> "1"))
 indexer.waitTillActive()
-indexer.putMapping(indexName, "type1", mapping)
-indexer.index(indexName, "type1", "1", """{"from":"192.168.0.5", "to":"192.168.0.10"}""")
+
+indexer.putMapping(indexName, indexType, mapping)
+
+indexer.index(indexName, indexType, "1", """{"from":"192.168.0.5", "to":"192.168.0.10"}""")
+
 indexer.refresh()
 ```
 
@@ -92,6 +101,8 @@ indexer.waitTillCount[AtLeast | Exactly | AtMost]
 ## Searching
 
 ```scala
+import org.elasticsearch.index.query.QueryBuilders._
+
 indexer.search(query = boolQuery
     .must(rangeQuery("from") lt "192.168.0.7")
     .must(rangeQuery("to") gt "192.168.0.7"))
@@ -100,7 +111,13 @@ indexer.search(query = boolQuery
 or:
 
 ```scala
-val response = indexer.search(indices=List(index1, indexN), query = some_narly_query, from=100, size=25, ...)
+import org.elasticsearch.index.query.QueryBuilder
+
+val searchQuery: QueryBuilder = ...
+val response = indexer.search(indices = List("index1", "indexN"),
+                              query = searchQuery,
+                              from = 100,
+                              size = 25 /* and so on */)
 ```
 
 ## Testing
