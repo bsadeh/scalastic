@@ -6,7 +6,6 @@
       </encoder>
    </appender>
 
-   <logger name="org.scalaz" level="WARN" />
    <logger name="org.elasticsearch" level="WARN" />
    <logger name="scalastic" level="WARN" />
    
