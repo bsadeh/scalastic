@@ -27,7 +27,7 @@ class TransportSearchFailuresTests extends MultiNodesBasedTests {
     response.getFailedShards should be === (0)
     for (i <- 0 until 5) {
       try {
-        val response = indexer("server1").client.search(searchRequest(indexName).source(Unicode.fromStringAsBytes("{ xxx }"))).actionGet
+        val response = indexer("server1").client.search(searchRequest(indexName).source(Strings.toUTF8Bytes("{ xxx }"))).actionGet
         response.getTotalShards should be === (3)
         response.getSuccessfulShards should be === (0)
         response.getFailedShards should be === (3)
@@ -49,7 +49,7 @@ class TransportSearchFailuresTests extends MultiNodesBasedTests {
     response.getFailedShards should be === (0)
     for (i <- 0 until 5) {
       try {
-        val response = indexer("server1").client.search(searchRequest(indexName).source(Unicode.fromStringAsBytes("{ xxx }"))).actionGet
+        val response = indexer("server1").client.search(searchRequest(indexName).source(Strings.toUTF8Bytes("{ xxx }"))).actionGet
         response.getTotalShards should be === (3)
         response.getSuccessfulShards should be === (0)
         response.getFailedShards should be === (3)
