@@ -67,13 +67,12 @@ object Build extends Build {
 
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % "0.90.0",
-      "com.spatial4j" % "spatial4j" % "0.3",
-      "org.scalaz" %% "scalaz-core" % "6.0.4",
+
       "org.clapper" %% "grizzled-slf4j" % "1.0.1",
-      "ch.qos.logback" % "logback-classic" % "1.0.2",
 
       "junit" % "junit" % "4.10" % "test",
-      "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+      "org.scalatest" %% "scalatest" % "1.9.1" % "test",
+      "ch.qos.logback" % "logback-classic" % "1.0.2" % "test"
     ),
 
     parallelExecution in Test := false
