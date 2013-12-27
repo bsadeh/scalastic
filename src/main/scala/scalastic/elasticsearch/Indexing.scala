@@ -15,6 +15,7 @@ trait Indexing
     with Count
     with Get
     with Multiget
+    with Update
     with Delete
     with DeleteByQuery {
   self: Indexer =>
