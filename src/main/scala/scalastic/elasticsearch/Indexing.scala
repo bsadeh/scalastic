@@ -292,30 +292,33 @@ trait Update {
     index: String, 
     `type`: String, 
     id: String, 
+    doc: Option[String] = None,
     parent: Option[String] = None,
     script: Option[String] = None, 
     scriptLanguage: Option[String] = None, 
     scriptParams: Map[String, Object] = Map(),
     percolate: Option[String] = None, 
     replicationType: Option[ReplicationType] = None, 
-    consistencyLevel: Option[WriteConsistencyLevel] = None) = update_send(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).actionGet
+    consistencyLevel: Option[WriteConsistencyLevel] = None) = update_send(index, `type`, id, doc, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).actionGet
 
   def update_send(
     index: String, 
     `type`: String, 
     id: String, 
+    doc: Option[String] = None,
     parent: Option[String] = None,
     script: Option[String] = None, 
     scriptLanguage: Option[String] = None, 
     scriptParams: Map[String, Object] = Map(),
     percolate: Option[String] = None, 
     replicationType: Option[ReplicationType] = None, 
-    consistencyLevel: Option[WriteConsistencyLevel] = None) = update_prepare(index, `type`, id, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).execute
+    consistencyLevel: Option[WriteConsistencyLevel] = None) = update_prepare(index, `type`, id, doc, parent, script, scriptLanguage, scriptParams, percolate, replicationType, consistencyLevel).execute
 
   def update_prepare(
     index: String, 
     `type`: String, 
     id: String, 
+    doc: Option[String] = None,
     parent: Option[String] = None,
     script: Option[String] = None, 
     scriptLanguage: Option[String] = None, 
@@ -323,9 +326,10 @@ trait Update {
     percolate: Option[String] = None, 
     replicationType: Option[ReplicationType] = None, 
     consistencyLevel: Option[WriteConsistencyLevel] = None) = {
-		  /* method body */
+          /* method body */
     val request = client.prepareUpdate(index, `type`, id)
     parent foreach { request.setParent(_) }
+    doc foreach { request.setDoc(_) }
     script foreach { that =>
       request.setScript(that)
       request.setScriptParams(scriptParams)
