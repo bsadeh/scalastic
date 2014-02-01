@@ -22,8 +22,8 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
     startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should equal ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should equal ("master1")
     //logger.info("--> stop master node")
     closeNode("master1")
     try {
@@ -36,8 +36,8 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
     startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should equal ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should equal ("master1")
     //logger.info("--> stop all nodes")
     closeNode("data1")
     closeNode("master1")
@@ -59,17 +59,17 @@ class SpecificMasterNodesTests extends AbstractZenNodesTests {
     startNode("master1", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should equal ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should equal ("master1")
     //logger.info("--> start master node (2)")
     startNode("master2", settingsBuilder
       .put("node.data", false)
       .put("node.master", true))
-    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master1")
-    indexer("master1").state().getState.nodes().masterNode().name() should be === ("master1")
-    indexer("master2").state().getState.nodes().masterNode().name() should be === ("master1")
+    indexer("data1").state().getState.nodes().masterNode().name() should equal ("master1")
+    indexer("master1").state().getState.nodes().masterNode().name() should equal ("master1")
+    indexer("master2").state().getState.nodes().masterNode().name() should equal ("master1")
     closeNode("master1")
-    indexer("data1").state().getState.nodes().masterNode().name() should be === ("master2")
-    indexer("master2").state().getState.nodes().masterNode().name() should be === ("master2")
+    indexer("data1").state().getState.nodes().masterNode().name() should equal ("master2")
+    indexer("master2").state().getState.nodes().masterNode().name() should equal ("master2")
   }
 }

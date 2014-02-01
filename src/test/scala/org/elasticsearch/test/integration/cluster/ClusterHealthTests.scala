@@ -12,7 +12,7 @@ class ClusterHealthTests extends MultiNodesBasedTests {
     val healthResponse = node1.client().admin().cluster().prepareHealth(indexName)
       .setWaitForYellowStatus()
       .setTimeout("1s").execute.actionGet
-    healthResponse.isTimedOut should be === (true)
-    healthResponse.getStatus should be === (ClusterHealthStatus.RED)
+    healthResponse.isTimedOut should equal (true)
+    healthResponse.getStatus should equal (ClusterHealthStatus.RED)
   }
 }

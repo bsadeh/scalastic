@@ -202,7 +202,7 @@ trait Optimize {
     maxNumSegments foreach { request.setMaxNumSegments(_) }
     onlyExpungeDeletes foreach { request.setOnlyExpungeDeletes(_) }
     operationThreading foreach { request.setOperationThreading(_) }
-    refresh foreach { request.setRefresh(_) }
+//    refresh foreach { request.setRefresh(_) }
     waitForMerge foreach { request.setWaitForMerge(_) }
     request
   }
@@ -228,7 +228,7 @@ trait Flush {
 		  /* method body */
     val request = client.admin.indices.prepareFlush(indices.toArray: _*)
     full foreach { request.setFull(_) }
-    refresh foreach { request.setRefresh(_) }
+//    refresh foreach { request.setRefresh(_) }
     request
   }
 }
@@ -257,7 +257,7 @@ trait Refresh {
     val request = client.admin.indices.prepareRefresh(indices.toArray: _*)
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
-    waitForOperations foreach { request.setWaitForOperations(_) }
+//    waitForOperations foreach { request.setWaitForOperations(_) }
     request
   }
 }

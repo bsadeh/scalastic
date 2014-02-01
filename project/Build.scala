@@ -8,7 +8,7 @@ object Build extends Build {
   val basicSettings = Seq(
     organization := "org.scalastic",
     name := "scalastic",
-    version := "0.90.3",
+    version := "0.90.5",
     description := "a scala driver for elasticsearch",
     homepage := Some(url("https://github.com/bsadeh/scalastic")),
     licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
@@ -66,13 +66,13 @@ object Build extends Build {
     resolvers += Resolver.sonatypeRepo("releases"),
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "0.90.3",
+      "org.elasticsearch" % "elasticsearch" % "0.90.5" withSources,
+      "com.google.code.findbugs" % "jsr305" % "1.3.9",
+      "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources,
 
-      "org.clapper" %% "grizzled-slf4j" % "1.0.1",
-
-      "junit" % "junit" % "4.10" % "test",
-      "org.scalatest" %% "scalatest" % "1.9.1" % "test",
-      "ch.qos.logback" % "logback-classic" % "1.0.2" % "test"
+      "junit" % "junit" % "4.10" % "test" withSources,
+      "org.scalatest" %% "scalatest" % "2.0" % "test" withSources,
+      "ch.qos.logback" % "logback-classic" % "1.0.2" % "test" withSources
     ),
 
     parallelExecution in Test := false

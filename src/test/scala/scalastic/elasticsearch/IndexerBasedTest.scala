@@ -14,7 +14,7 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
 
   override def beforeEach() {
 	  indexer_beforeEach
-	  indexer.count().getCount should be === 0
+	  indexer.count().getCount should equal (0)
 	  if (shouldCreateDefaultIndex) createDefaultIndex()
   }
   
@@ -36,8 +36,8 @@ abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
   }
 
   def shouldHaveNoFailures(response: SearchResponse) {
-    response.getShardFailures.length should be === 0
-    response.getFailedShards should be === 0
+    response.getShardFailures.length should equal (0)
+    response.getFailedShards should equal (0)
   }
 
   def valueFor[A](response: SearchResponse, whichHit: Int, field: String): A = {

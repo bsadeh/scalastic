@@ -39,15 +39,15 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
       .size(60)
       .explain(true)
     var response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source), scroll = Some("10m"))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (60)
-    response.getHits.hits().map(_.id).toSet should be === (for (i <- 0 until 60) yield (100 - 1 - i).toString).toSet
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (60)
+    response.getHits.hits().map(_.id).toSet should equal (((for (i <- 0 until 60) yield (100 - 1 - i).toString)).toSet)
 
     response = indexer("server1").searchScroll(response.getScrollId)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
-    response.getHits.hits().map(_.id).toSet should be === (for (i <- 0 until 40) yield (40 - 1 - i).toString).toSet
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
+    response.getHits.hits().map(_.id).toSet should equal (((for (i <- 0 until 40) yield (40 - 1 - i).toString)).toSet)
   }
 
   test("testDfsQueryThenFetchWithSort") {
@@ -56,20 +56,20 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
       .explain(true)
       .sort("age", SortOrder.ASC)
     var response = indexer("server1").search(Seq(indexName), searchType = Some(DFS_QUERY_THEN_FETCH), internalBuilder = Some(source), scroll = Some("10m"))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (60)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (60)
     for (i <- 0 until 60) {
       val hit = response.getHits.hits()(i)
       hit.explanation() should not be (null)
-      hit.id should be === (i.toString)
+      hit.id should equal ((i.toString))
     }
     response = indexer("server1").searchScroll(response.getScrollId)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
     for (i <- 0 until 40) {
       val hit = response.getHits.hits()(i)
-      hit.id should be === (i + 60).toString
+      hit.id should equal ((i + 60).toString)
     }
   }
 
@@ -79,20 +79,20 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
       .size(60)
       .explain(true)
     var response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source), scroll = Some("10m"))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (60)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (60)
     for (i <- 0 until 60) {
       val hit = response.getHits.hits()(i)
       hit.explanation() should not be (null)
-      hit.id should be === (100 - i - 1).toString
+      hit.id should equal ((100 - i - 1).toString)
     }
     response = indexer("server1").searchScroll(response.getScrollId)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
     for (i <- 0 until 40) {
       val hit = response.getHits.hits()(i)
-      hit.id should be === (40 - 1 - i).toString
+      hit.id should equal ((40 - 1 - i).toString)
     }
   }
 
@@ -100,23 +100,23 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
     val source = searchSource().query(matchAllQuery).explain(true)
     val collectedIds = new mutable.HashSet[String]()
     var response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source.from(60).size(60)))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
     pending //fixme: failing test
-    response.getHits.getHits.length should be === (60)
+    response.getHits.getHits.length should equal (60)
     for (i <- 0 until 60) {
       val hit = response.getHits.hits()(i)
       collectedIds.add(hit.id())
     }
     response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source.from(60).size(60)))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
     for (i <- 0 until 40) {
       val hit = response.getHits.hits()(i)
       collectedIds.add(hit.id())
     }
-    collectedIds should be === (fullExpectedIds)
+    collectedIds should equal (fullExpectedIds)
   }
 
   test("testQueryThenFetchWithSort") {
@@ -125,20 +125,20 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
       .explain(true)
       .sort("age", SortOrder.ASC)
     var response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source), scroll = Some("10m"))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (60)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (60)
     for (i <- 0 until 60) {
       val hit = response.getHits.hits()(i)
       hit.explanation() should not be (null)
-      hit.id should be === (i.toString)
+      hit.id should equal ((i.toString))
     }
     response = indexer("server1").searchScroll(response.getScrollId)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
     for (i <- 0 until 40) {
       val hit = response.getHits.hits()(i)
-      hit.id should be === (i + 60).toString
+      hit.id should equal ((i + 60).toString)
     }
   }
 
@@ -151,17 +151,17 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
       expectedIds.add("" + i)
     }
     var response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source), scroll = Some("10m"))
-    response.getShardFailures.length should be === (0)
+    response.getShardFailures.length should equal (0)
     pending //fixme: failing test
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (60)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (60)
     for (i <- 0 until 60) expectedIds.remove(response.getHits.hits()(i).id)
 
     response = indexer("server1").searchScroll(response.getScrollId)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
     for (i <- 0 until 40) expectedIds.remove(response.getHits.hits()(i).id)
-    expectedIds.size should be === (0)
+    expectedIds.size should equal (0)
   }
 
   test("testDfsQueryAndFetch") {
@@ -173,20 +173,20 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
       expectedIds.add("" + i)
     }
     var response = indexer("server1").search(Seq(indexName), searchType = Some(DFS_QUERY_THEN_FETCH), internalBuilder = Some(source), scroll = Some("10m"))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
     pending //fixme: failing test
-    response.getHits.getHits.length should be === (60)
+    response.getHits.getHits.length should equal (60)
     for (i <- 0 until 60) {
       val hit = response.getHits.hits()(i)
       hit.explanation() should not be (null)
       expectedIds.remove(hit.id)
     }
     response = indexer("server1").searchScroll(response.getScrollId)
-    response.getHits.totalHits should be === (100)
-    response.getHits.getHits.length should be === (40)
+    response.getHits.totalHits should equal (100)
+    response.getHits.getHits.length should equal (40)
     for (i <- 0 until 40) expectedIds.remove(response.getHits.hits()(i).id)
-    expectedIds.size should be === (0)
+    expectedIds.size should equal (0)
   }
 
   def testSimpleFacets() {
@@ -197,10 +197,10 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
         .global(true))
       .facet(FacetBuilders.queryFacet("test1", termQuery("name", "test1")))
     var response = indexer("server1").search(Seq(indexName), internalBuilder = Some(sourceBuilder))
-    response.getShardFailures.length should be === (0)
-    response.getHits.totalHits should be === (100)
-    response.getFacets.facet(classOf[QueryFacet], "test1").getCount should be === (1)
-    response.getFacets.facet(classOf[QueryFacet], "all").getCount should be === (100)
+    response.getShardFailures.length should equal (0)
+    response.getHits.totalHits should equal (100)
+    response.getFacets.facet(classOf[QueryFacet], "test1").getCount should equal (1)
+    response.getFacets.facet(classOf[QueryFacet], "all").getCount should equal (100)
   }
 
   test("testSimpleFacetsTwice") {
@@ -211,31 +211,31 @@ class TransportTwoNodesSearchTests extends MultiNodesBasedTests {
   test("testFailedSearchWithWrongQuery") {
     try {
       val response = indexer("server1").client.search(searchRequest(indexName).source(Strings.toUTF8Bytes("{ xxx }"))).actionGet
-      response.getTotalShards should be === (3)
-      response.getSuccessfulShards should be === (0)
-      response.getFailedShards should be === (3)
+      response.getTotalShards should equal (3)
+      response.getSuccessfulShards should equal (0)
+      response.getFailedShards should equal (3)
       fail("search should fail")
     } catch {
-      case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[SearchPhaseExecutionException]
+      case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
     }
   }
 
   test("testFailedSearchWithWrongFrom") {
     val source = searchSource().query(termQuery("multi", "test")).from(1000).size(20).explain(true)
     var response = indexer("server1").search(Seq(indexName), searchType = Some(DFS_QUERY_AND_FETCH), internalBuilder = Some(source))
-    response.getHits.getHits.length should be === (0)
-    response.getTotalShards should be === (3)
-    response.getSuccessfulShards should be === (3)
-    response.getFailedShards should be === (0)
+    response.getHits.getHits.length should equal (0)
+    response.getTotalShards should equal (3)
+    response.getSuccessfulShards should equal (3)
+    response.getFailedShards should equal (0)
     response = indexer("server1").search(Seq(indexName), searchType = Some(QUERY_THEN_FETCH), internalBuilder = Some(source))
-    response.getShardFailures.length should be === (0)
-    response.getHits.getHits.length should be === (0)
+    response.getShardFailures.length should equal (0)
+    response.getHits.getHits.length should equal (0)
     response = indexer("server1").search(Seq(indexName), searchType = Some(DFS_QUERY_AND_FETCH), internalBuilder = Some(source))
-    response.getShardFailures.length should be === (0)
-    response.getHits.getHits.length should be === (0)
+    response.getShardFailures.length should equal (0)
+    response.getHits.getHits.length should equal (0)
     response = indexer("server1").search(Seq(indexName), searchType = Some(DFS_QUERY_THEN_FETCH), internalBuilder = Some(source))
-    response.getShardFailures.length should be === (0)
-    response.getHits.getHits.length should be === (0)
+    response.getShardFailures.length should equal (0)
+    response.getHits.getHits.length should equal (0)
   }
 
   private def source(id: String, nameValue: String, age: Int): XContentBuilder = {

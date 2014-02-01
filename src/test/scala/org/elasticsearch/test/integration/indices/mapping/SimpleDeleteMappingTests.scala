@@ -8,12 +8,12 @@ class SimpleDeleteMappingTests extends IndexerBasedTest {
   test("simpleDeleteMapping") {
     for (i <- 0 until 10) indexer.index(indexName, "type1", i.toString, """{"value": "test%s"}""".format(i))
     indexer.refresh()
-    for (i <- 0 until 10) indexer.count(Nil).getCount should be === (10)
+    for (i <- 0 until 10) indexer.count(Nil).getCount should equal (10)
 
-    indexer.state().getState.metaData().index(indexName).mappings().containsKey("type1") should be === (true)
+    indexer.state().getState.metaData().index(indexName).mappings().containsKey("type1") should equal (true)
     indexer.deleteMapping(`type` = Some("type1"))
     indexer.refresh()
-    for (i <- 0 until 10) indexer.count(Nil).getCount should be === (0)
-    indexer.state().getState.metaData().index(indexName).mappings().containsKey("type1") should be === (false)
+    for (i <- 0 until 10) indexer.count(Nil).getCount should equal (0)
+    indexer.state().getState.metaData().index(indexName).mappings().containsKey("type1") should equal (false)
   }
 }

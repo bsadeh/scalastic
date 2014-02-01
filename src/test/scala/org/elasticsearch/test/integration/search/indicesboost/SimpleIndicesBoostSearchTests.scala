@@ -35,40 +35,40 @@ class SimpleIndicesBoostSearchTests extends IndexerBasedTest {
       internalBuilder = Some(searchSource().explain(true).indexBoost("test1", indexBoost).query(termQuery(indexName, "value"))))
     
     pending //fixme: failing test
-    response.getHits.totalHits should be === (2)
+    response.getHits.totalHits should equal (2)
 
     //logger.info("Hit[0] {} Explanation {}", response.getHits.getAt(0).index(), response.getHits.getAt(0).explanation())
     //logger.info("Hit[1] {} Explanation {}", response.getHits.getAt(1).index(), response.getHits.getAt(1).explanation())
-    response.getHits.getAt(0).index() should be === ("test1")
-    response.getHits.getAt(1).index() should be === ("test2")
+    response.getHits.getAt(0).index() should equal ("test1")
+    response.getHits.getAt(1).index() should equal ("test2")
 	//logger.info("Query with test2 boosted")
     response = indexer.search(
       searchType = Some(QUERY_THEN_FETCH),
       internalBuilder = Some(searchSource().explain(true).indexBoost("test2", indexBoost).query(termQuery(indexName, "value"))))
-    response.getHits.totalHits should be === (2)
+    response.getHits.totalHits should equal (2)
 
     //logger.info("Hit[0] {} Explanation {}", response.getHits.getAt(0).index(), response.getHits.getAt(0).explanation())
     //logger.info("Hit[1] {} Explanation {}", response.getHits.getAt(1).index(), response.getHits.getAt(1).explanation())
-    response.getHits.getAt(0).index() should be === ("test2")
-    response.getHits.getAt(1).index() should be === ("test1")
+    response.getHits.getAt(0).index() should equal ("test2")
+    response.getHits.getAt(1).index() should equal ("test1")
 	//logger.info("--- DFS_QUERY_THEN_FETCH")
 	//logger.info("Query with test1 boosted")
     response = indexer.search(
       internalBuilder = Some(searchSource().explain(true).indexBoost("test1", indexBoost).query(termQuery(indexName, "value"))))
-    response.getHits.totalHits should be === (2)
+    response.getHits.totalHits should equal (2)
     //logger.info("Hit[0] {} Explanation {}", response.getHits.getAt(0).index(), response.getHits.getAt(0).explanation())
     //logger.info("Hit[1] {} Explanation {}", response.getHits.getAt(1).index(), response.getHits.getAt(1).explanation())
-    response.getHits.getAt(0).index() should be === ("test1")
-    response.getHits.getAt(1).index() should be === ("test2")
+    response.getHits.getAt(0).index() should equal ("test1")
+    response.getHits.getAt(1).index() should equal ("test2")
 	//logger.info("Query with test2 boosted")
     response = indexer.search(
       searchType = Some(QUERY_THEN_FETCH),
       internalBuilder = Some(searchSource().explain(true).indexBoost("test2", indexBoost).query(termQuery(indexName, "value"))))
-    response.getHits.totalHits should be === (2)
+    response.getHits.totalHits should equal (2)
 
     //logger.info("Hit[0] {} Explanation {}", response.getHits.getAt(0).index(), response.getHits.getAt(0).explanation())
     //logger.info("Hit[1] {} Explanation {}", response.getHits.getAt(1).index(), response.getHits.getAt(1).explanation())
-    response.getHits.getAt(0).index() should be === ("test2")
-    response.getHits.getAt(1).index() should be === ("test1")
+    response.getHits.getAt(0).index() should equal ("test2")
+    response.getHits.getAt(1).index() should equal ("test1")
   }
 }

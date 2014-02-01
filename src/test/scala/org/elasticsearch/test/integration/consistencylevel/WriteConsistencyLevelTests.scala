@@ -11,8 +11,8 @@ class WriteConsistencyLevelTests extends MultiNodesBasedTests {
     startNode("node1")
     indexer("node1").createIndex(indexName, settings = Map("number_of_shards" -> "1", "number_of_replicas" -> "2"))
     var clusterHealth = indexer("node1").health_prepare().setWaitForActiveShards(1).setWaitForYellowStatus().execute.actionGet
-    clusterHealth.isTimedOut should be === (false)
-    clusterHealth.getStatus should be === (ClusterHealthStatus.YELLOW)
+    clusterHealth.isTimedOut should equal (false)
+    clusterHealth.getStatus should equal (ClusterHealthStatus.YELLOW)
     indexer("node1").index(indexName, "type1", "1", source("1", "test"), consistencyLevel = Some(WriteConsistencyLevel.ONE))
     try {
       indexer("node1").index(indexName, "type1", "1", source("1", "test"), consistencyLevel = Some(WriteConsistencyLevel.QUORUM), timeout = Some("100ms"))
@@ -22,8 +22,8 @@ class WriteConsistencyLevelTests extends MultiNodesBasedTests {
     }
     startNode("node2")
     clusterHealth = indexer("node1").health_prepare().setWaitForActiveShards(2).setWaitForYellowStatus().execute.actionGet
-    clusterHealth.isTimedOut should be === (false)
-    clusterHealth.getStatus should be === (ClusterHealthStatus.YELLOW)
+    clusterHealth.isTimedOut should equal (false)
+    clusterHealth.getStatus should equal (ClusterHealthStatus.YELLOW)
     indexer("node1").index(indexName, "type1", "1", source("1", "test"), consistencyLevel = Some(WriteConsistencyLevel.QUORUM), timeout = Some("1s"))
     try {
       indexer("node1").index(indexName, "type1", "1", source("1", "test"), consistencyLevel = Some(WriteConsistencyLevel.ALL), timeout = Some("100ms"))
@@ -34,8 +34,8 @@ class WriteConsistencyLevelTests extends MultiNodesBasedTests {
     startNode("node3")
     clusterHealth = indexer("node1").health_prepare().setWaitForActiveShards(3)
       .setWaitForGreenStatus().execute.actionGet
-    clusterHealth.isTimedOut should be === (false)
-    clusterHealth.getStatus should be === (ClusterHealthStatus.GREEN)
+    clusterHealth.isTimedOut should equal (false)
+    clusterHealth.getStatus should equal (ClusterHealthStatus.GREEN)
     indexer("node1").index(indexName, "type1", "1", source("1", "test"), consistencyLevel = Some(WriteConsistencyLevel.ALL), timeout = Some("1s"))
   }
 

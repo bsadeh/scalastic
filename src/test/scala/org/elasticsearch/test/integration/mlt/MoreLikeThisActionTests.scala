@@ -11,9 +11,9 @@ class MoreLikeThisActionTests extends IndexerBasedTest {
     indexer.index(indexName, "type1", "2", """{"text": "lucene release"}""")
     indexer.refresh()
     val response = indexer.moreLikeThis(indexName, "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1))
-    response.getSuccessfulShards should be === (1)
-    response.getFailedShards should be === (0)
-    response.getHits.totalHits should be === (1)
+    response.getSuccessfulShards should equal (1)
+    response.getFailedShards should equal (0)
+    response.getHits.totalHits should equal (1)
   }
 
   test("testMoreLikeThisWithAliases") {
@@ -27,14 +27,14 @@ class MoreLikeThisActionTests extends IndexerBasedTest {
 
     //logger.info("Running moreLikeThis on index")
     var response = indexer.moreLikeThis(indexName, "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1))
-    response.getHits.totalHits should be === (2)
+    response.getHits.totalHits should equal (2)
     //logger.info("Running moreLikeThis on beta shard")
     response = indexer.moreLikeThis("beta", "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1))
-    response.getHits.totalHits should be === (1)
-    response.getHits.getAt(0).id should be === ("3")
+    response.getHits.totalHits should equal (1)
+    response.getHits.getAt(0).id should equal ("3")
     //logger.info("Running moreLikeThis on release shard")
     response = indexer.moreLikeThis(indexName, "type1", "1", minTermFreq = Some(1), minDocFreq = Some(1), searchIndices = Seq("release"))
-    response.getHits.totalHits should be === (1)
-    response.getHits.getAt(0).id should be === ("2")
+    response.getHits.totalHits should equal (1)
+    response.getHits.getAt(0).id should equal ("2")
   }
 }

@@ -20,32 +20,32 @@ class ScriptFilterSearchTests extends IndexerBasedTest {
       query = filteredQuery(matchAllQuery, scriptFilter("doc['num1'].value > 1")),
       sortings = Seq(FieldSort("num1", order = SortOrder.ASC)),
       scriptFields = Seq(ScriptField("sNum1", "doc['num1'].value")))
-    response.getHits.totalHits should be === (2)
-    response.getHits.getAt(0).id should be === ("2")
-    response.getHits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (2.0)
-    response.getHits.getAt(1).id should be === ("3")
-    response.getHits.getAt(1).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (3.0)
+    response.getHits.totalHits should equal (2)
+    response.getHits.getAt(0).id should equal ("2")
+    response.getHits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should equal (2.0)
+    response.getHits.getAt(1).id should equal ("3")
+    response.getHits.getAt(1).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should equal (3.0)
 
     //info("running doc['num1'].value > param1")
     response = indexer.search_prepare().setQuery(filteredQuery(matchAllQuery, scriptFilter("doc['num1'].value > param1").addParam("param1",
       2)))
       .addSort("num1", SortOrder.ASC)
       .addScriptField("sNum1", "doc['num1'].value").execute.actionGet
-    response.getHits.totalHits should be === (1)
-    response.getHits.getAt(0).id should be === ("3")
-    response.getHits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (3.0)
+    response.getHits.totalHits should equal (1)
+    response.getHits.getAt(0).id should equal ("3")
+    response.getHits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should equal (3.0)
 
     //info("running doc['num1'].value > param1")
     response = indexer.search_prepare().setQuery(filteredQuery(matchAllQuery, scriptFilter("doc['num1'].value > param1").addParam("param1",
       -1)))
       .addSort("num1", SortOrder.ASC)
       .addScriptField("sNum1", "doc['num1'].value").execute.actionGet
-    response.getHits.totalHits should be === (3)
-    response.getHits.getAt(0).id should be === ("1")
-    response.getHits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (1.0)
-    response.getHits.getAt(1).id should be === ("2")
-    response.getHits.getAt(1).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (2.0)
-    response.getHits.getAt(2).id should be === ("3")
-    response.getHits.getAt(2).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should be === (3.0)
+    response.getHits.totalHits should equal (3)
+    response.getHits.getAt(0).id should equal ("1")
+    response.getHits.getAt(0).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should equal (1.0)
+    response.getHits.getAt(1).id should equal ("2")
+    response.getHits.getAt(1).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should equal (2.0)
+    response.getHits.getAt(2).id should equal ("3")
+    response.getHits.getAt(2).fields().get("sNum1").values.get(0).asInstanceOf[java.lang.Double] should equal (3.0)
   }
 }

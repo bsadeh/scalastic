@@ -138,18 +138,18 @@ class SearchScanScrollingTests extends IndexerBasedTest {
     indexer.refresh()
     
     var response = indexer.search(searchType = Some(SearchType.SCAN), size = Some(size), scroll = Some("2m"))
-    response.getHits.totalHits should be === (numberOfDocs)
+    response.getHits.totalHits should equal (numberOfDocs)
     var continue = true
     while (continue) {
       response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
-      response.getHits.totalHits should be === (numberOfDocs)
-      response.getFailedShards should be === (0)
+      response.getHits.totalHits should equal (numberOfDocs)
+      response.getFailedShards should equal (0)
       for (hit <- response.getHits) {
-        ids.contains(hit.id()) should be === (false)
+        ids.contains(hit.id()) should equal (false)
         ids.add(hit.id())
       }
       continue = !response.getHits.hits.isEmpty
     }
-    expectedIds should be === (ids)
+    expectedIds should equal (ids)
   }
 }

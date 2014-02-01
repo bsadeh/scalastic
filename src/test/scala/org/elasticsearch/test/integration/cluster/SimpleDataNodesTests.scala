@@ -17,7 +17,7 @@ class SimpleDataNodesTests extends MultiNodesBasedTests {
       case e: UnavailableShardsException =>
     }
     startNode("nonData2", settingsBuilder.put("node.data", false).build())
-    indexer("nonData1").waitForNodes(howMany = "2").isTimedOut should be === (false)
+    indexer("nonData1").waitForNodes(howMany = "2").isTimedOut should equal (false)
     try {
       indexer("nonData2").index(indexName, "type1", "1", source("1", "test"), timeout=Some("1s"))
       fail("no allocation should happen")
@@ -25,10 +25,10 @@ class SimpleDataNodesTests extends MultiNodesBasedTests {
       case e: UnavailableShardsException =>
     }
     startNode("data1", settingsBuilder.put("node.data", true).build())
-    indexer("nonData1").waitForNodes(howMany = "3").isTimedOut should be === (false)
+    indexer("nonData1").waitForNodes(howMany = "3").isTimedOut should equal (false)
     val indexResponse = indexer("nonData2").index(indexName, "type1", "1", source("1", "test"))
-    indexResponse.getId should be === ("1")
-    indexResponse.getType should be === ("type1")
+    indexResponse.getId should equal ("1")
+    indexResponse.getType should equal ("type1")
   }
 
   private def source(id: String, nameValue: String) = """{"type1": {"id": "%s", "name": "%s"}}""".format(id, nameValue)

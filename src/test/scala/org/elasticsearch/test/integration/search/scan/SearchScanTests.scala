@@ -21,18 +21,18 @@ class SearchScanTests extends IndexerBasedTest {
     for (i <- 100 until 200) indexer.index(indexName, "tweet", i.toString, """{"user": "kimchy2", "postDate": %s, "message": "test"}""".format(System.currentTimeMillis()))
     indexer.refresh()
     var response = indexer.search(searchType = Some(SearchType.SCAN), query = termQuery("user", "kimchy1"), size = Some(35), scroll = Some("2m"))
-    response.getHits.totalHits should be === (100)
+    response.getHits.totalHits should equal (100)
     var continue = true
     while (continue) {
       response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
-      response.getHits.totalHits should be === (100)
-      response.getFailedShards should be === (0)
+      response.getHits.totalHits should equal (100)
+      response.getFailedShards should equal (0)
       for (hit <- response.getHits) {
-        ids.contains(hit.getId) should be === (false)
+        ids.contains(hit.getId) should equal (false)
         ids.add(hit.getId)
       }
       continue = !response.getHits.hits.isEmpty
     }
-    expectedIds should be === (ids)
+    expectedIds should equal (ids)
   }
 }

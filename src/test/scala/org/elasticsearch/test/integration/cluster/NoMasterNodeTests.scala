@@ -34,24 +34,24 @@ class NoMasterNodeTests extends MultiNodesBasedTests {
     node2.close()
     Thread.sleep(200)
     val state = node.client().admin().cluster().prepareState().setLocal(true).execute.actionGet.getState
-    state.getBlocks.hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should be === (true)
+    state.getBlocks.hasGlobalBlock(Discovery.NO_MASTER_BLOCK) should equal (true)
     try {
       node.client().prepareGet(indexName, "type1", "1").execute.actionGet
       fail()
     } catch {
-      case e: ClusterBlockException => e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+      case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
     }
     try {
       node.client().prepareMultiGet().add(indexName, "type1", "1").execute.actionGet
       fail()
     } catch {
-      case e: ClusterBlockException => e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+      case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
     }
     try {
       node.client().preparePercolate(indexName, "type1").setSource("""{}""").execute.actionGet
       fail()
     } catch {
-      case e: ClusterBlockException => e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+      case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
     }
     var now = System.currentTimeMillis()
     try {
@@ -61,20 +61,20 @@ class NoMasterNodeTests extends MultiNodesBasedTests {
     } catch {
       case e: ClusterBlockException => {
         (System.currentTimeMillis() - now) should be > (timeout.millis() - 50)
-        e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+        e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
       }
     }
     try {
       node.client().admin().indices().prepareAnalyze(indexName, "this is a test").execute.actionGet
       fail()
     } catch {
-      case e: ClusterBlockException => e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+      case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
     }
     try {
       node.client().prepareCount(indexName).execute.actionGet
       fail()
     } catch {
-      case e: ClusterBlockException => e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+      case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
     }
     now = System.currentTimeMillis()
     try {
@@ -84,7 +84,7 @@ class NoMasterNodeTests extends MultiNodesBasedTests {
     } catch {
       case e: ClusterBlockException => {
         (System.currentTimeMillis() - now) should be > (timeout.millis() - 50)
-        e.status() should be === (RestStatus.SERVICE_UNAVAILABLE)
+        e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
       }
     }
   }

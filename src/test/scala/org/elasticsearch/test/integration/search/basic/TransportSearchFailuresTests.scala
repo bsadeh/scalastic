@@ -22,40 +22,40 @@ class TransportSearchFailuresTests extends MultiNodesBasedTests {
       indexer("server1").index(indexName, "type1", "1", source(id, nameValue, age), consistencyLevel = Some(WriteConsistencyLevel.ONE))
     }
     var response = indexer("server1").refresh()
-    response.getTotalShards should be === (9)
-    response.getSuccessfulShards should be === (3)
-    response.getFailedShards should be === (0)
+    response.getTotalShards should equal (9)
+    response.getSuccessfulShards should equal (3)
+    response.getFailedShards should equal (0)
     for (i <- 0 until 5) {
       try {
         val response = indexer("server1").client.search(searchRequest(indexName).source(Strings.toUTF8Bytes("{ xxx }"))).actionGet
-        response.getTotalShards should be === (3)
-        response.getSuccessfulShards should be === (0)
-        response.getFailedShards should be === (3)
+        response.getTotalShards should equal (3)
+        response.getSuccessfulShards should equal (0)
+        response.getFailedShards should equal (3)
         fail("search should fail")
       } catch {
-        case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[SearchPhaseExecutionException]
+        case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
       }
     }
     
     startNode("server2")
-    indexer("server1").waitForNodes(howMany = "2").isTimedOut should be === (false)
+    indexer("server1").waitForNodes(howMany = "2").isTimedOut should equal (false)
     val clusterHealth = indexer("server1").health_prepare().setWaitForYellowStatus().setWaitForRelocatingShards(0).setWaitForActiveShards(6).execute.actionGet
-    clusterHealth.isTimedOut should be === (false)
-    clusterHealth.getStatus should be === (ClusterHealthStatus.YELLOW)
-    clusterHealth.getActiveShards should be === (6)
+    clusterHealth.isTimedOut should equal (false)
+    clusterHealth.getStatus should equal (ClusterHealthStatus.YELLOW)
+    clusterHealth.getActiveShards should equal (6)
     response = indexer("server1").refresh()
-    response.getTotalShards should be === (9)
-    response.getSuccessfulShards should be === (6)
-    response.getFailedShards should be === (0)
+    response.getTotalShards should equal (9)
+    response.getSuccessfulShards should equal (6)
+    response.getFailedShards should equal (0)
     for (i <- 0 until 5) {
       try {
         val response = indexer("server1").client.search(searchRequest(indexName).source(Strings.toUTF8Bytes("{ xxx }"))).actionGet
-        response.getTotalShards should be === (3)
-        response.getSuccessfulShards should be === (0)
-        response.getFailedShards should be === (3)
+        response.getTotalShards should equal (3)
+        response.getSuccessfulShards should equal (0)
+        response.getFailedShards should equal (3)
         fail("search should fail")
       } catch {
-        case e: ElasticSearchException => e.unwrapCause().getClass should be === classOf[SearchPhaseExecutionException]
+        case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
       }
     }
   }

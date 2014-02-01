@@ -16,11 +16,11 @@ class SimpleMultiSearchTests extends IndexerBasedTest {
       indexer.search_prepare(indices = Seq(indexName), query = termQuery("field", "xxx")),
       indexer.search_prepare(indices = Seq(indexName), query = termQuery("field", "yyy")),
       indexer.search_prepare(indices = Seq(indexName))))
-    response.getResponses.length should be === (3)
-    response.getResponses()(0).getResponse.getHits.totalHits should be === (1)
-    response.getResponses()(1).getResponse.getHits.totalHits should be === (1)
-    response.getResponses()(2).getResponse.getHits.totalHits should be === (2)
-    response.getResponses()(0).getResponse.getHits.getAt(0).id should be === ("1")
-    response.getResponses()(1).getResponse.getHits.getAt(0).id should be === ("2")
+    response.getResponses.length should equal (3)
+    response.getResponses()(0).getResponse.getHits.totalHits should equal (1)
+    response.getResponses()(1).getResponse.getHits.totalHits should equal (1)
+    response.getResponses()(2).getResponse.getHits.totalHits should equal (2)
+    response.getResponses()(0).getResponse.getHits.getAt(0).id should equal ("1")
+    response.getResponses()(1).getResponse.getHits.getAt(0).id should equal ("2")
   }
 }

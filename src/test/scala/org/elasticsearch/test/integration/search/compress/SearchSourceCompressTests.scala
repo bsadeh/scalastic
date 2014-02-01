@@ -26,14 +26,14 @@ class SearchSourceCompressTests extends IndexerBasedTest {
     indexer.refresh()
     for (i <- 1 until 100) {
       val getResponse = indexer.get(indexName, "type1", i.toString)
-      getResponse.getSourceAsBytesRef should be === (buildSource(i).bytes)
+      getResponse.getSourceAsBytesRef should equal (buildSource(i).bytes)
     }
     val getResponse = indexer.get(indexName, "type1", Integer toString 10000)
-    getResponse.getSourceAsBytesRef should be === (buildSource(10000).bytes)
+    getResponse.getSourceAsBytesRef should equal (buildSource(10000).bytes)
     for (i <- 1 until 100) {
       val response = indexer.search(query = idsQuery("type1").ids(i.toString))
-      response.getHits.getTotalHits should be === (1)
-      response.getHits.getAt(0).sourceRef should be === (buildSource(i).bytes)
+      response.getHits.getTotalHits should equal (1)
+      response.getHits.getAt(0).sourceRef should equal (buildSource(i).bytes)
     }
   }
 

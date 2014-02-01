@@ -29,11 +29,11 @@ class SearchPreferenceTests extends IndexerBasedTest {
     indexer.index(indexName, "type1", null, """{"field1": "value1"}""")
     indexer.refresh()
     
-    indexer.search(preference = Some("_local")).getHits.totalHits should be === (1)
-    indexer.search(preference = Some("_local")).getHits.totalHits should be === (1)
-    indexer.search(preference = Some("_primary")).getHits.totalHits should be === (1)
-    indexer.search(preference = Some("_primary")).getHits.totalHits should be === (1)
-    indexer.search(preference = Some("1234")).getHits.totalHits should be === (1)
-    indexer.search(preference = Some("1234")).getHits.totalHits should be === (1)
+    indexer.search(preference = Some("_local")).getHits.totalHits should equal (1)
+    indexer.search(preference = Some("_local")).getHits.totalHits should equal (1)
+    indexer.search(preference = Some("_primary")).getHits.totalHits should equal (1)
+    indexer.search(preference = Some("_primary")).getHits.totalHits should equal (1)
+    indexer.search(preference = Some("1234")).getHits.totalHits should equal (1)
+    indexer.search(preference = Some("1234")).getHits.totalHits should equal (1)
   }
 }

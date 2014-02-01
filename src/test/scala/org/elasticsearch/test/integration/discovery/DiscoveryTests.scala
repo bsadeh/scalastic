@@ -13,7 +13,7 @@ class DiscoveryTests extends MultiNodesBasedTests {
       .build()
     startNode("node1", settings)
     startNode("node2", settings)
-    indexer("node1").state().getState.nodes().size should be === (2)
-    indexer("node2").state().getState.nodes().size should be === (2)
+    indexer("node1").state().getState.nodes().size should equal (2)
+    indexer("node2").state().getState.nodes().size should equal (2)
   }
 }

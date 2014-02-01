@@ -28,11 +28,11 @@ class SimpleIndexTemplateTests extends IndexerBasedTest {
     if (response.getFailedShards > 0) {
       //println("failed search " + response.getShardFailures.mkString(","))
     }
-    response.getFailedShards should be === (0)
-    response.getHits.totalHits should be === (1)
-    response.getHits.getHits.length should be === (1)
-    response.getHits.getAt(0).field("field1").value().toString should be === ("value1")
-    response.getHits.getAt(0).field("field2").value().toString should be === ("value 2")
+    response.getFailedShards should equal (0)
+    response.getHits.totalHits should equal (1)
+    response.getHits.getHits.length should equal (1)
+    response.getHits.getAt(0).field("field1").value().toString should equal ("value1")
+    response.getHits.getAt(0).field("field2").value().toString should equal ("value 2")
     indexer.index("text_index", "type1", "1", """{"field1": "value1", "field2": "value 2"}""", refresh = Some(true))
     indexer.refresh()
     indexer.waitForGreenStatus()
@@ -40,11 +40,11 @@ class SimpleIndexTemplateTests extends IndexerBasedTest {
     if (response.getFailedShards > 0) {
       //logger.warn("failed search " + response.shardFailures.mkString(","))
     }
-    response.getFailedShards should be === (0)
-    response.getHits.totalHits should be === (1)
-    response.getHits.getHits.length should be === (1)
-    response.getHits.getAt(0).field("field1").value().toString should be === ("value1")
-    response.getHits.getAt(0).field("field2").value().toString should be === ("value 2")
+    response.getFailedShards should equal (0)
+    response.getHits.totalHits should equal (1)
+    response.getHits.getHits.length should equal (1)
+    response.getHits.getAt(0).field("field1").value().toString should equal ("value1")
+    response.getHits.getAt(0).field("field2").value().toString should equal ("value 2")
   }
 
   private def clean() {
