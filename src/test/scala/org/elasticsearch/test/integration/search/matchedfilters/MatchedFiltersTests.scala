@@ -16,9 +16,9 @@ class MatchedFiltersTests extends IndexerBasedTest {
     response.getHits.totalHits should equal (3)
     for (hit <- response.getHits) {
       if (hit.getId == "1" || hit.getId == "2")
-        hit.matchedFilters() should equal (Array("test1"))
+        hit.matchedQueries should equal (Array("test1"))
       else if (hit.getId == "3")
-        hit.matchedFilters() should equal (Array("test2"))
+        hit.matchedQueries should equal (Array("test2"))
       else 
         fail()
     }

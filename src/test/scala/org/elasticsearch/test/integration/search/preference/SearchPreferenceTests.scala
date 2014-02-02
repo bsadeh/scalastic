@@ -20,7 +20,7 @@ class SearchPreferenceTests extends IndexerBasedTest {
     val firstNodeId = indexer.search(indices = Seq(indexName)).getHits.getAt(0).shard().nodeId()
     val secondNodeId = indexer.search(indices = Seq(indexName)).getHits.getAt(0).shard().nodeId()
     pending //fixme: failed test - need to use 2 nodes
-    firstNodeId should not be === (secondNodeId)
+    firstNodeId should not equal (secondNodeId)
   }
 
   test("simplePreferenceTests") {

@@ -11,7 +11,7 @@ import org.elasticsearch.Conversions._
 
 import scalastic.elasticsearch._
 
-abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with BeforeAndAfterEach with BeforeAndAfterAll {
+abstract class MultiNodesBasedTests extends FunSuiteLike with Matchers with BeforeAndAfterEach with BeforeAndAfterAll {
 
   def indexName = getClass.getSimpleName.toLowerCase
 

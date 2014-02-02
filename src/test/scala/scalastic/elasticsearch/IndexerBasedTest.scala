@@ -4,7 +4,7 @@ import org.scalatest._, matchers._
 import org.elasticsearch.action.search._
 import org.elasticsearch.index.query._, QueryBuilders._
 
-abstract class IndexerBasedTest extends FunSuite with ShouldMatchers
+abstract class IndexerBasedTest extends FunSuiteLike with Matchers
     with BeforeAndAfterEach with BeforeAndAfterAll with UsingIndexer {
 //  val logger = org.slf4j.LoggerFactory.getLogger(getClass.getName)
 
