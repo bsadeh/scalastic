@@ -428,7 +428,7 @@ trait PutTemplate {
     order foreach { request.setOrder(_) }
     source foreach { request.setSource(_) }
     template foreach { request.setTemplate(_) }
-    timeout foreach { request.setTimeout(_) }
+    timeout foreach { request.setMasterNodeTimeout(_) }
     request
   }
 }
@@ -439,7 +439,7 @@ trait DeleteTemplate {
   def deleteTemplate_send(name: String, timeout: Option[String] = None) = deleteTemplate_prepare(name, timeout).execute
   def deleteTemplate_prepare(name: String, timeout: Option[String] = None) = {
     val request = client.admin.indices.prepareDeleteTemplate(name)
-    timeout foreach { request.setTimeout(_) }
+    timeout foreach { request.setMasterNodeTimeout(_) }
     request
   }
 }

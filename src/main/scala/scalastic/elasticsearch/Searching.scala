@@ -237,7 +237,7 @@ trait Search {
     extraSource foreach { request.setExtraSource(_) }
     facets foreach { request.addFacet(_) }
     fields foreach { request.addField(_) }
-    filter foreach { request.setFilter(_) }
+    filter foreach { request.setPostFilter(_) }
     from foreach { request.setFrom(_) }
     highlight.setIn(request)
     indexBoosts foreach { case (key, value) => request.addIndexBoost(key, value) }

@@ -138,7 +138,7 @@ class SimpleQueryTests extends IndexerBasedTest {
     indexer.search(query = wrapper).getHits.totalHits should equal (1)
     
     val wrapperFilter = new WrapperFilterBuilder("{ \"term\" : { \"field1\" : \"value1_1\" } }")
-    indexer.search_prepare().setFilter(wrapperFilter).execute.actionGet.getHits.totalHits should equal (1)
+    indexer.search_prepare().setPostFilter(wrapperFilter).execute.actionGet.getHits.totalHits should equal (1)
   }
 
   test("filtersWithCustomCacheKey") {

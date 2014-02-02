@@ -2,6 +2,7 @@ package scalastic.elasticsearch
 
 import org.elasticsearch.client._, transport._
 import org.elasticsearch.common.settings._, ImmutableSettings._
+import org.elasticsearch.cluster.metadata._
 import org.elasticsearch.node._, NodeBuilder._
 import scala.collection.JavaConversions._
 import org.elasticsearch.Conversions._
@@ -60,7 +61,8 @@ trait Indexer extends Logging with ClusterAdmin with IndexCrud with Analysis wit
         sourceSettings.get("number_of_replicas"), sourceSettings.get("refresh_interval")),
         targetIndex)
       //	- ... then transfer aliases from sourceIndex to targetIndex
-      for (each <- metadataFor(sourceIndex).aliases.values) {
+       val aliases = metadataFor(sourceIndex).aliases.values.toArray(classOf[AliasMetaData])
+        for (each <- aliases) yield {
         unalias(Seq(sourceIndex), each.alias)
         alias(Seq(targetIndex), each.alias)
       }
