@@ -7,10 +7,10 @@ import scalastic.elasticsearch._
 class DiscoveryTests extends MultiNodesBasedTests {
 
   test("testUnicastDiscovery") {
-    val settings = settingsBuilder
-      .put("discovery.zen.multicast.enabled", false)
-      .put("discovery.zen.unicast.hosts", "localhost")
-      .build()
+    val settings = settingsBuilder.
+      put("discovery.zen.multicast.enabled", false).
+      put("discovery.zen.unicast.hosts", "localhost").
+      build
     startNode("node1", settings)
     startNode("node2", settings)
     indexer("node1").state().getState.nodes().size should equal (2)

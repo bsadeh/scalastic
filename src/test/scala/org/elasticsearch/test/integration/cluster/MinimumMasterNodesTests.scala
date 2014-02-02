@@ -32,14 +32,14 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     buildNode("node1", settingsBuilder.put("gateway.type", "local"))
     buildNode("node2", settingsBuilder.put("gateway.type", "local"))
     cleanAndCloseNodes()
-    val settings = settingsBuilder
-      .put("discovery.type", "zen")
-      .put("discovery.zen.minimum_master_nodes", 2)
-      .put("discovery.zen.ping_timeout", "200ms")
-      .put("discovery.initial_state_timeout", "500ms")
-      .put("gateway.type", "local")
-      .put("number_of_shards", 1)
-      .build()
+    val settings = settingsBuilder.
+      put("discovery.type", "zen").
+      put("discovery.zen.minimum_master_nodes", 2).
+      put("discovery.zen.ping_timeout", "200ms").
+      put("discovery.initial_state_timeout", "500ms").
+      put("gateway.type", "local").
+      put("number_of_shards", 1).
+      build()
     //logger.info("--> start first node")
     startNode("node1", settings)
     //logger.info("--> should be blocked, no master...")
@@ -125,13 +125,13 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     buildNode("node3", settingsBuilder.put("gateway.type", "local"))
     buildNode("node4", settingsBuilder.put("gateway.type", "local"))
     cleanAndCloseNodes()
-    val settings = settingsBuilder
-      .put("discovery.type", "zen")
-      .put("discovery.zen.minimum_master_nodes", 3)
-      .put("discovery.zen.ping_timeout", "200ms")
-      .put("discovery.initial_state_timeout", "500ms")
-      .put("gateway.type", "local")
-      .build()
+    val settings = settingsBuilder.
+      put("discovery.type", "zen").
+      put("discovery.zen.minimum_master_nodes", 3).
+      put("discovery.zen.ping_timeout", "200ms").
+      put("discovery.initial_state_timeout", "500ms").
+      put("gateway.type", "local").
+      build()
     //logger.info("--> start first 2 nodes")
     startNode("node1", settings)
     startNode("node2", settings)

@@ -1,12 +1,13 @@
 package scalastic.elasticsearch
 
 import org.scalatest._, matchers._
-import org.elasticsearch.common.settings.ImmutableSettings._, Builder._
+import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.node.NodeBuilder._
 import org.elasticsearch.common.network._
 import org.elasticsearch.common.settings._
 import org.elasticsearch.node._
 import scala.collection._, JavaConversions._
+import org.elasticsearch.Conversions._
 
 import scalastic.elasticsearch._
 
@@ -33,12 +34,12 @@ abstract class MultiNodesBasedTests extends FunSuite with ShouldMatchers with Be
   def startNode(id: String, settings: Settings.Builder): Node = startNode(id, settings.build())
   def startNode(id: String, settings: Settings): Node = buildNode(id, settings).start()
 
-  def buildNode(id: String): Node = buildNode(id, EMPTY_SETTINGS)
+  def buildNode(id: String): Node = buildNode(id, Builder.EMPTY_SETTINGS)
   def buildNode(id: String, settings: Settings.Builder): Node = buildNode(id, settings.build())
   def buildNode(id: String, settings: Settings): Node = {
     val settingsSource = getClass.getName.replace('.', '/') + ".yml"
     var finalSettings = settingsBuilder.loadFromClasspath(settingsSource)
-      .put(defaultSettings)
+      .put(defaultSettings.toSettings)
       .put(settings)
       .put("name", id)
       .build()

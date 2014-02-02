@@ -19,14 +19,14 @@ class NoMasterNodeTests extends MultiNodesBasedTests {
     "number_of_shards" -> "1")
 
   test("testNoMasterActions") {
-    val settings = settingsBuilder
-      .put("discovery.type", "zen")
-      .put("action.auto_create_index", false)
-      .put("discovery.zen.minimum_master_nodes", 2)
-      .put("discovery.zen.ping_timeout", "200ms")
-      .put("discovery.initial_state_timeout", "500ms")
-      .put("index.number_of_shards", 1)
-      .build()
+    val settings = settingsBuilder.
+      put("discovery.type", "zen").
+      put("action.auto_create_index", false).
+      put("discovery.zen.minimum_master_nodes", 2).
+      put("discovery.zen.ping_timeout", "200ms").
+      put("discovery.initial_state_timeout", "500ms").
+      put("index.number_of_shards", 1).
+      build()
     val timeout = TimeValue.timeValueMillis(200)
     val node = startNode("node1", settings)
     val node2 = startNode("node2", settings)

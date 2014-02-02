@@ -6,7 +6,8 @@ import org.elasticsearch.cluster.metadata._
 import org.elasticsearch.index.query._
 import org.elasticsearch.common.unit._, TimeValue._
 import scala.collection._, JavaConversions._
-import org.elasticsearch.action.admin.indices.cache.clear.ClearIndicesCacheRequestBuilder
+import org.elasticsearch.Conversions._
+import org.elasticsearch.action.admin.indices.cache.clear._
 
 trait IndexCrud
     extends Exists
@@ -53,7 +54,7 @@ trait CreateIndex {
     timeout: Option[String] = None) = {
 		  /* method body */
     val request = client.admin.indices.prepareCreate(index)
-    if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings).build())
+    if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings.toSettings).build())
     mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
     cause foreach { request.setCause(_) }
     timeout foreach { request.setTimeout(_) }

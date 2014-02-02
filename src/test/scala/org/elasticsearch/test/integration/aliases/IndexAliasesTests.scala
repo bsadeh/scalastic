@@ -4,6 +4,7 @@ import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.action.admin.cluster.health._
 import org.elasticsearch.cluster._
 import org.elasticsearch.common._, unit._
+import org.elasticsearch.common.settings.ImmutableSettings._
 import org.elasticsearch.indices._
 import org.elasticsearch.node.internal._
 import org.elasticsearch.search._
@@ -15,7 +16,7 @@ import scala.language.postfixOps
 class IndexAliasesTests extends MultiNodesBasedTests {
 
   override def beforeAll() {
-    val nodeSettings = org.elasticsearch.common.settings.ImmutableSettings.settingsBuilder.put("action.auto_create_index", false).build()
+    val nodeSettings = settingsBuilder.put("action.auto_create_index", false).build()
     startNode("server1", nodeSettings)
     startNode("server2", nodeSettings)
   }
@@ -50,15 +51,16 @@ class IndexAliasesTests extends MultiNodesBasedTests {
   test("testFailedFilter") {
     indexer("server1").createIndex(indexName)
     val clusterHealth = indexer("server1").waitForGreenStatus()
-    clusterHealth.isTimedOut should equal (false)
-    clusterHealth.getStatus should equal (ClusterHealthStatus.GREEN)
-    //    try {
-    //      //logger.info("--> aliasing index [indexName] with [alias1] and filter [t]")
-    //      indexer("server1").alias(Seq(indexName), "alias1", filter=Some("{ t }"))
-    //      fail
-    //    } catch {
-    //      case e: Exception => 
-    //    }
+    clusterHealth.isTimedOut should equal(false)
+    clusterHealth.getStatus should equal(ClusterHealthStatus.GREEN)
+//    try {
+//      //logger.info("--> aliasing index [indexName] with [alias1] and filter [t]")
+//fixme:
+//      indexer("server1").alias(Seq(indexName), "alias1", filter = Some("{ t }"))
+//      fail
+//    } catch {
+//      case e: Exception =>
+//    }
   }
 
   test("testFilteringAliases") {
