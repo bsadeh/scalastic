@@ -1,9 +1,10 @@
 package scalastic.elasticsearch
 
 import org.elasticsearch.client._, transport._
-import org.elasticsearch.common.settings.ImmutableSettings._
+import org.elasticsearch.common.settings._, ImmutableSettings._
 import org.elasticsearch.node._, NodeBuilder._
 import scala.collection.JavaConversions._
+import org.elasticsearch.Conversions._
 import grizzled.slf4j._
 
 object Indexer {
@@ -11,18 +12,16 @@ import org.elasticsearch.common.transport._
 
   def transport(settings: Map[String, String], host: String = "localhost", ports: Seq[Int] = Seq(9300)) = {
     require(settings.contains("cluster.name"))
-    val builder = settingsBuilder
-    for ((key, value) <- settings) builder.put(key, value)
-    val client = new TransportClient(builder)
+    val client = new TransportClient(settings.toSettings)
     for (each <- ports) client.addTransportAddress(new InetSocketTransportAddress(host, each))
     new ClientIndexer(client)
   }
 
-  def using(settings: String): Indexer = using(settingsBuilder.loadFromSource(settings))
+  def using(settings: String): Indexer = using(settingsBuilder.loadFromSource(settings).build)
 
-  def using(settings: Map[String, String]): Indexer = using(settingsBuilder.put(settings))
+  def using(settings: Map[String, String]): Indexer = using(settings.toSettings)
 
-  private def using(builder: Builder) = at(nodeBuilder.settings(builder).build)
+  private def using(settings: Settings) = at(nodeBuilder.settings(settings).build)
 
   def local = at(nodeBuilder.local(true).data(true).node)
 

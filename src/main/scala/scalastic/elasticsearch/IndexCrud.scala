@@ -421,7 +421,7 @@ trait PutTemplate {
     timeout: Option[String] = None) = {
 		  /* method body */
     val request = client.admin.indices.preparePutTemplate(name)
-    if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings).build())
+    if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings.toSettings).build())
     mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
     cause foreach { request.cause(_) }
     create foreach { request.setCreate(_) }
