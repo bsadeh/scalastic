@@ -241,7 +241,9 @@ trait Search {
     source: Option[String] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = {
+    trackScores: Option[Boolean] = None,
+    highlighterQuery: Option[QueryBuilder] = None,
+    highlighterNoMatchSize: Option[Int] = None) = {
 		  /* method body */
     // ... essentials
     val request = client.prepareSearch(indices.toArray: _*)
@@ -271,6 +273,8 @@ trait Search {
     if (!statsGroups.isEmpty) request.setStats(statsGroups.toArray: _*)
     timeout foreach { request.setTimeout(_) }
     trackScores foreach { request.setTrackScores(_) }
+    highlighterQuery foreach { request.setHighlighterQuery(_) }
+    highlighterNoMatchSize foreach { request.setHighlighterNoMatchSize(_) }
     request
   }
 }
