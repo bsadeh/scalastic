@@ -15,6 +15,7 @@ trait IndexCrud
     with Open with Close
     with Alias with Unalias
     with PutMapping with DeleteMapping
+    with GetFieldMappings
     with PutTemplate with DeleteTemplate
     with GetTemplates
     with ClearCache
@@ -332,7 +333,7 @@ trait Stats {
 
 trait PutMapping {
   self: Indexer =>
-    
+
   def putMapping(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
     putMappingForAll(Seq(index), `type`, source, ignoreConflicts, timeout)
   def putMapping_send(index: String, `type`: String, source: String, ignoreConflicts: Option[Boolean] = None, timeout: Option[String] = None) = 
@@ -354,24 +355,49 @@ trait PutMapping {
   }
 }
 
-trait DeleteMapping {
+trait GetFieldMappings {
   self: Indexer =>
     
+  def getFieldMappings(
+    indices: Iterable[String] = Nil,
+    fields: Iterable[String] = Nil,
+    includeDefaults: Option[Boolean] = None) =  getFieldMappings_send(indices, fields, includeDefaults).actionGet
+    
+  def getFieldMappings_send(
+    indices: Iterable[String] = Nil,
+    fields: Iterable[String] = Nil,
+    includeDefaults: Option[Boolean] = None) = getFieldMappings_prepare(indices, fields, includeDefaults).execute
+    
+  def getFieldMappings_prepare(
+    indices: Iterable[String] = Nil,
+    fields: Iterable[String] = Nil,
+    includeDefaults: Option[Boolean] = None) = {
+      /* method body */
+    val request = client.admin.indices.prepareGetFieldMappings(indices.toArray: _*)
+    request.setFields(fields.toArray: _*)
+    includeDefaults foreach { request.includeDefaults(_) }
+    request
+  }
+}
+
+trait DeleteMapping {
+  self: Indexer =>
+
   def deleteMapping(
     indices: Iterable[String] = Nil,
     `type`: Option[String] = None,
     timeout: Option[String] = None) =  deleteMapping_send(indices, `type`, timeout).actionGet
-    
+
   def deleteMapping_send(
     indices: Iterable[String] = Nil,
     `type`: Option[String] = None,
     timeout: Option[String] = None) = deleteMapping_prepare(indices, `type`, timeout).execute
-    
+
   def deleteMapping_prepare(
     indices: Iterable[String] = Nil,
     `type`: Option[String] = None,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareDeleteMapping(indices.toArray: _*)
     `type` foreach { request.setType(_) }
     timeout foreach { each => request.setMasterNodeTimeout(parseTimeValue(each, null)) }
