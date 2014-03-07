@@ -214,22 +214,18 @@ trait Flush {
     
   def flush(
     indices: Iterable[String] = Nil,
-    full: Option[Boolean] = None,
-    refresh: Option[Boolean] = None) = flush_send(indices, full, refresh).actionGet
+    full: Option[Boolean] = None) = flush_send(indices, full).actionGet
     
   def flush_send(
     indices: Iterable[String] = Nil,
-    full: Option[Boolean] = None,
-    refresh: Option[Boolean] = None) = flush_prepare(indices, full, refresh).execute
+    full: Option[Boolean] = None) = flush_prepare(indices, full).execute
     
   def flush_prepare(
     indices: Iterable[String] = Nil,
-    full: Option[Boolean] = None,
-    refresh: Option[Boolean] = None) = {
+    full: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.admin.indices.prepareFlush(indices.toArray: _*)
     full foreach { request.setFull(_) }
-//    refresh foreach { request.setRefresh(_) }
     request
   }
 }
