@@ -312,8 +312,9 @@ trait Stats {
     store: Option[Boolean] = None,
     types: Iterable[String] = Nil,
     completion: Option[Boolean] = None,
-    completionFields: Iterable[String] = Nil) = {
-		  /* method body */
+    completionFields: Iterable[String] = Nil,
+    segments: Option[Boolean] = None) = {
+      /* method body */
     val request = client.admin.indices.prepareStats(indices.toArray: _*)
     docs foreach { request.setDocs(_) }
     flush foreach { request.setFlush(_) }
@@ -327,6 +328,7 @@ trait Stats {
     request.setTypes(types.toArray: _*)
     completion foreach { request.setCompletion(_) }
     request.setCompletionFields(completionFields.toArray: _*)
+    segments foreach { request.setSegments(_) }
     request
   }
 }
