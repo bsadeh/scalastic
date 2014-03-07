@@ -172,9 +172,8 @@ trait Optimize {
     maxNumSegments: Option[Int] = None,
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    refresh: Option[Boolean] = None, 
     waitForMerge: Option[Boolean] = None) =
-    optimize_send(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, refresh, waitForMerge).actionGet
+    optimize_send(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, waitForMerge).actionGet
 
   def optimize_send(
     indices: Iterable[String] = Nil,
@@ -183,9 +182,8 @@ trait Optimize {
     maxNumSegments: Option[Int] = None,
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    refresh: Option[Boolean] = None, 
     waitForMerge: Option[Boolean] = None) =
-    optimize_prepare(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, refresh, waitForMerge).execute
+    optimize_prepare(indices, flush, listenerThreaded, maxNumSegments, onlyExpungeDeletes, operationThreading, waitForMerge).execute
 
   def optimize_prepare(
     indices: Iterable[String] = Nil,
@@ -194,7 +192,6 @@ trait Optimize {
     maxNumSegments: Option[Int] = None,
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    refresh: Option[Boolean] = None, 
     waitForMerge: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.admin.indices.prepareOptimize(indices.toArray: _*)
@@ -203,7 +200,6 @@ trait Optimize {
     maxNumSegments foreach { request.setMaxNumSegments(_) }
     onlyExpungeDeletes foreach { request.setOnlyExpungeDeletes(_) }
     operationThreading foreach { request.setOperationThreading(_) }
-//    refresh foreach { request.setRefresh(_) }
     waitForMerge foreach { request.setWaitForMerge(_) }
     request
   }
