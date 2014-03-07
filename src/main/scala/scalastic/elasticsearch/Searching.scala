@@ -10,8 +10,8 @@ import org.elasticsearch.common.geo._
 trait Searching 
 	extends Query 
 	with Search 
-	with SearchScroll 
-    with MoreLikeThis
+	with SearchScroll with ClearScroll
+  with MoreLikeThis
 	with Multisearch 
 	with Percolate 
 	with ValidateQuery {
@@ -106,30 +106,45 @@ object SearchParameterTypes {
 }
 
 trait SearchScroll {
-	self: Indexer =>
-	  
+  self: Indexer =>
+
   def searchScroll(
     scrollId: String,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     scroll: Option[String] = None) = searchScroll_send(scrollId, listenerThreaded, operationThreading, scroll).actionGet
-    
+
   def searchScroll_send(
     scrollId: String,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     scroll: Option[String] = None) = searchScroll_prepare(scrollId, listenerThreaded, operationThreading, scroll).execute
-    
+
   def searchScroll_prepare(
     scrollId: String,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     scroll: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareSearchScroll(scrollId)
     listenerThreaded foreach { request.listenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
     scroll foreach { request.setScroll(_) }
+    request
+  }
+}
+
+trait ClearScroll {
+  self: Indexer =>
+    
+  def clearScroll(cursorIds: Iterable[String]) = clearScroll_send(cursorIds).actionGet
+    
+  def clearScroll_send(cursorIds: Iterable[String]) = clearScroll_prepare(cursorIds).execute
+    
+  def clearScroll_prepare(cursorIds: Iterable[String]) = {
+      /* method body */
+    val request = client.prepareClearScroll()
+    request.setScrollIds(cursorIds.toList)
     request
   }
 }
