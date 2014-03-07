@@ -233,24 +233,24 @@ trait Refresh {
     indices: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    waitForOperations: Option[Boolean] = None) = refresh_send(indices, listenerThreaded, operationThreading, waitForOperations).actionGet
+    force: Option[Boolean] = None) = refresh_send(indices, listenerThreaded, operationThreading, force).actionGet
     
   def refresh_send(
     indices: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    waitForOperations: Option[Boolean] = None) = refresh_prepare(indices, listenerThreaded, operationThreading, waitForOperations).execute
+    force: Option[Boolean] = None) = refresh_prepare(indices, listenerThreaded, operationThreading, force).execute
     
   def refresh_prepare(
     indices: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
-    waitForOperations: Option[Boolean] = None) = {
+    force: Option[Boolean] = None) = {
 		  /* method body */
     val request = client.admin.indices.prepareRefresh(indices.toArray: _*)
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
-//    waitForOperations foreach { request.setWaitForOperations(_) }
+    force foreach { request.setForce(_) }
     request
   }
 }
