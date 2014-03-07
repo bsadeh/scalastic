@@ -16,6 +16,7 @@ trait IndexCrud
     with Alias with Unalias
     with PutMapping with DeleteMapping
     with PutTemplate with DeleteTemplate
+    with GetTemplates
     with ClearCache
     with Flush
     with Refresh
@@ -436,6 +437,16 @@ trait DeleteTemplate {
   def deleteTemplate_prepare(name: String, timeout: Option[String] = None) = {
     val request = client.admin.indices.prepareDeleteTemplate(name)
     timeout foreach { request.setMasterNodeTimeout(_) }
+    request
+  }
+}
+
+trait GetTemplates {
+  self: Indexer =>
+  def getTemplates(names: Iterable[String]) = getTemplates_send(names).actionGet
+  def getTemplates_send(names: Iterable[String]) = getTemplates_prepare(names).execute
+  def getTemplates_prepare(names: Iterable[String]) = {
+    val request = client.admin.indices.prepareGetTemplates(names.toArray: _*)
     request
   }
 }
