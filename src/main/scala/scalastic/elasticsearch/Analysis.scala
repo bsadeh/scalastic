@@ -29,7 +29,7 @@ trait Analysis {
     tokenFilters: Iterable[String] = Nil,
     analyzer: Option[String] = None,
     preferLocal: Option[Boolean] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareAnalyze(text)
     index foreach { that =>
       request.setIndex(that)

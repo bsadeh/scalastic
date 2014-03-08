@@ -45,7 +45,7 @@ trait Index {
     ttl: Option[Long] = None,
     version: Option[Long] = None,
     versionType: Option[VersionType] = None) = index_send(index, `type`, id, source, parent, consistencyLevel, contentType, create, listenerThreaded, operationThreaded, opType, percolate, refresh, replicationType, routing, timeout, timestamp, ttl, version, versionType).actionGet
-    
+
   def index_send(
     index: String,
     `type`: String,
@@ -89,7 +89,7 @@ trait Index {
     ttl: Option[Long] = None,
     version: Option[Long] = None,
     versionType: Option[VersionType] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareIndex(index, `type`, id)
     request.setSource(source)
     request.setParent(parent)
@@ -120,19 +120,19 @@ trait Bulk {
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     refresh: Option[Boolean] = None,
     replicationType: Option[ReplicationType] = None) = bulk_send(requests, consistencyLevel, refresh, replicationType).actionGet
-    
+
   def bulk_send[A <: ActionRequest[A]](
     requests: Iterable[A],
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     refresh: Option[Boolean] = None,
     replicationType: Option[ReplicationType] = None) = bulk_prepare(requests, consistencyLevel, refresh, replicationType).execute
-    
+
   def bulk_prepare[A <: ActionRequest[A]](
     requests: Iterable[A],
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     refresh: Option[Boolean] = None,
     replicationType: Option[ReplicationType] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareBulk
     consistencyLevel foreach { request.setConsistencyLevel(_) }
     refresh foreach { request.setRefresh(_) }
@@ -177,7 +177,7 @@ trait Count {
     minScore: Option[Float] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
     routing: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareCount(indices.toArray: _*)
       .setTypes(types.toArray: _*)
       .setQuery(query)
@@ -202,8 +202,8 @@ trait Get {
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None,
     routing: Option[String] = None) = get_send(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).actionGet
-      
-  def get_send(
+
+    def get_send(
     index: String,
     @Nullable `type`: String,
     id: String,
@@ -214,8 +214,8 @@ trait Get {
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None,
     routing: Option[String] = None) = get_prepare(index, `type`, id, fields, listenerThreaded, operationThreaded, preference, realtime, refresh, routing).execute
-      
-  def get_prepare(
+
+    def get_prepare(
     index: String,
     @Nullable `type`: String,
     id: String,
@@ -226,7 +226,7 @@ trait Get {
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None,
     routing: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareGet(index, `type`, id)
     if (!fields.isEmpty) request.setFields(fields.toArray: _*)
     listenerThreaded foreach { request.setListenerThreaded(_) }
@@ -250,7 +250,7 @@ trait Multiget {
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None) = multiget_send(index, `type`, ids, fields, listenerThreaded, preference, realtime, refresh).actionGet
-    
+
   def multiget_send(
     index: String,
     @Nullable `type`: String,
@@ -260,7 +260,7 @@ trait Multiget {
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None) = multiget_prepare(index, `type`, ids, fields, listenerThreaded, preference, realtime, refresh).execute
-    
+
   def multiget_prepare(
     index: String,
     @Nullable `type`: String,
@@ -270,7 +270,7 @@ trait Multiget {
     preference: Option[String] = None,
     realtime: Option[Boolean] = None,
     refresh: Option[Boolean] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareMultiGet
     for (each <- ids) {
       val item = new MultiGetRequest.Item(index, `type`, each)
@@ -344,7 +344,7 @@ trait Update {
 
 trait Delete {
   self: Indexer =>
-    
+
   def delete(
     index: String,
     `type`: String,
@@ -358,7 +358,7 @@ trait Delete {
     routing: Option[String] = None,
     version: Option[Long] = None,
     versionType: Option[VersionType] = None) = delete_send(index, `type`, id, parent, consistencyLevel, listenerThreaded, operationThreaded, refresh, replicationType, routing, version, versionType).actionGet
-  
+
   def delete_send(
     index: String,
     `type`: String,
@@ -372,7 +372,7 @@ trait Delete {
     routing: Option[String] = None,
     version: Option[Long] = None,
     versionType: Option[VersionType] = None) = delete_prepare(index, `type`, id, parent, consistencyLevel, listenerThreaded, operationThreaded, refresh, replicationType, routing, version, versionType).execute
-  
+
   def delete_prepare(
     index: String,
     `type`: String,
@@ -386,7 +386,7 @@ trait Delete {
     routing: Option[String] = None,
     version: Option[Long] = None,
     versionType: Option[VersionType] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareDelete(index, `type`, id)
     request.setParent(parent)
     consistencyLevel foreach { request.setConsistencyLevel(_) }
@@ -430,7 +430,7 @@ trait DeleteByQuery {
     consistencyLevel: Option[WriteConsistencyLevel] = None,
     routing: Option[String] = None,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareDeleteByQuery(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)

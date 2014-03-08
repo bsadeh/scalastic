@@ -54,7 +54,7 @@ trait CreateIndex {
     mappings: Map[String, String] = Map(),
     cause: Option[String] = None,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareCreate(index)
     if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings.toSettings).build())
     mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
@@ -104,28 +104,28 @@ trait Exists {
 
 trait Alias {
   self: Indexer =>
-    
+
   def alias(
     indices: Iterable[String],
     alias: String,
     actions: Iterable[AliasAction] = Nil,
     filter: Option[FilterBuilder] = None,
     timeout: Option[String] = None) = alias_send(indices, alias, actions, filter, timeout).actionGet
-    
+
   def alias_send(
     indices: Iterable[String],
     alias: String,
     actions: Iterable[AliasAction] = Nil,
     filter: Option[FilterBuilder] = None,
     timeout: Option[String] = None) = alias_prepare(indices, alias, actions, filter, timeout).execute
-    
+
   def alias_prepare(
     indices: Iterable[String],
     alias: String,
     actions: Iterable[AliasAction] = Nil,
     filter: Option[FilterBuilder] = None,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareAliases
     actions foreach { request.addAliasAction(_) }
     indices foreach {
@@ -141,22 +141,22 @@ trait Alias {
 
 trait Unalias {
   self: Indexer =>
-    
+
   def unalias(
     indices: Iterable[String],
     alias: String,
     timeout: Option[String] = None) = unalias_send(indices, alias, timeout).actionGet
-    
+
   def unalias_send(
     indices: Iterable[String],
     alias: String,
     timeout: Option[String] = None) = unalias_prepare(indices, alias, timeout).execute
-    
+
   def unalias_prepare(
     indices: Iterable[String],
     alias: String,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareAliases
     indices foreach { request.removeAlias(_, alias) }
     timeout foreach { each => request.setTimeout(parseTimeValue(each, null)) }
@@ -195,7 +195,7 @@ trait Optimize {
     onlyExpungeDeletes: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
     waitForMerge: Option[Boolean] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareOptimize(indices.toArray: _*)
     flush foreach { request.setFlush(_) }
     listenerThreaded foreach { request.setListenerThreaded(_) }
@@ -209,19 +209,19 @@ trait Optimize {
 
 trait Flush {
   self: Indexer =>
-    
+
   def flush(
     indices: Iterable[String] = Nil,
     full: Option[Boolean] = None) = flush_send(indices, full).actionGet
-    
+
   def flush_send(
     indices: Iterable[String] = Nil,
     full: Option[Boolean] = None) = flush_prepare(indices, full).execute
-    
+
   def flush_prepare(
     indices: Iterable[String] = Nil,
     full: Option[Boolean] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareFlush(indices.toArray: _*)
     full foreach { request.setFull(_) }
     request
@@ -230,25 +230,25 @@ trait Flush {
 
 trait Refresh {
   self: Indexer =>
-    
+
   def refresh(
     indices: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
     force: Option[Boolean] = None) = refresh_send(indices, listenerThreaded, operationThreading, force).actionGet
-    
+
   def refresh_send(
     indices: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
     force: Option[Boolean] = None) = refresh_prepare(indices, listenerThreaded, operationThreading, force).execute
-    
+
   def refresh_prepare(
     indices: Iterable[String] = Nil,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None,
     force: Option[Boolean] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareRefresh(indices.toArray: _*)
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
@@ -262,7 +262,7 @@ trait Status {
   def status(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = status_send(indices, recovery, snapshot).actionGet
   def status_send(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = status_prepare(indices, recovery, snapshot).execute
   def status_prepare(indices: Iterable[String] = Nil, recovery: Option[Boolean] = None, snapshot: Option[Boolean] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareStatus(indices.toArray: _*)
     recovery foreach { request.setRecovery(_) }
     snapshot foreach { request.setSnapshot(_) }
@@ -359,17 +359,17 @@ trait PutMapping {
 
 trait GetFieldMappings {
   self: Indexer =>
-    
+
   def getFieldMappings(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
     includeDefaults: Option[Boolean] = None) =  getFieldMappings_send(indices, fields, includeDefaults).actionGet
-    
+
   def getFieldMappings_send(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
     includeDefaults: Option[Boolean] = None) = getFieldMappings_prepare(indices, fields, includeDefaults).execute
-    
+
   def getFieldMappings_prepare(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
@@ -409,7 +409,7 @@ trait DeleteMapping {
 
 trait PutTemplate {
   self: Indexer =>
-    
+
   def putTemplate(
     name: String,
     settings: Map[String, String] = Map(),
@@ -444,7 +444,7 @@ trait PutTemplate {
     source: Option[String] = None,
     template: Option[String] = None,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.preparePutTemplate(name)
     if (!settings.isEmpty) request.setSettings(settingsBuilder.put(settings.toSettings).build())
     mappings foreach { case (kind, mapping) => request.addMapping(kind, mapping) }
@@ -517,7 +517,7 @@ trait Segments {
 
 trait ClearCache {
   self: Indexer =>
-    
+
   def clearCache(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
@@ -526,7 +526,7 @@ trait ClearCache {
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_send(indices, fields, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).actionGet
-    
+
   def clearCache_send(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
@@ -535,7 +535,7 @@ trait ClearCache {
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None) = clearCache_prepare(indices, fields, fieldDataCache, filterCache, idCache, listenerThreaded, operationThreading).execute
-    
+
   def clearCache_prepare(
     indices: Iterable[String] = Nil,
     fields: Iterable[String] = Nil,
@@ -544,7 +544,7 @@ trait ClearCache {
     idCache: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None): ClearIndicesCacheRequestBuilder = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareClearCache(indices.toArray: _*)
     request.setFields(fields.toArray: _*)
     fieldDataCache foreach { request.setFieldDataCache(_) }
