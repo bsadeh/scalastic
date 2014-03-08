@@ -1,6 +1,10 @@
 package scalastic.elasticsearch
 
-trait ClusterAdmin extends Health with Nodes with State with Metadata {
+trait ClusterAdmin extends Health
+  with Nodes
+  with State
+  with Metadata
+  with ClusterStats {
   self: Indexer =>
 }
 
@@ -55,7 +59,7 @@ trait State {
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
     timeout: Option[String] = None) = state_send(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).actionGet
-      	
+
   def state_send(
     filterBlocks: Option[Boolean] = None,
     filterMetaData: Option[Boolean] = None,
@@ -66,7 +70,7 @@ trait State {
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
     timeout: Option[String] = None) = state_prepare(filterBlocks, filterMetaData, filter, filterIndexTemplates, filterIndices, filterNodes, filterRoutingTable, local, timeout).execute
-      	
+
   def state_prepare(
     filterBlocks: Option[Boolean] = None,
     filterMetaData: Option[Boolean] = None,
@@ -77,7 +81,7 @@ trait State {
     filterRoutingTable: Option[Boolean] = None,
     local: Option[Boolean] = None,
     timeout: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.cluster.prepareState
     filterBlocks foreach { request.setFilterBlocks(_) }
     request.setFilterIndexTemplates(filterIndexTemplates.toArray: _*)
@@ -97,4 +101,12 @@ trait Metadata {
   def metadataFor(index: String) = metadata.index(index)
   def metadataFor(index: String, `type`: String) = metadata.index(index).mappings.get(`type`)
   def fieldsOf(index: String, `type`: String) = metadataFor(index, `type`).sourceAsMap.get("properties").asInstanceOf[Map[String, Object]]
+}
+
+trait ClusterStats {
+  self: Indexer =>
+
+  def clusterStats() = clusterStats_send().actionGet
+  def clusterStats_send() = clusterStats_prepare().execute
+  def clusterStats_prepare() = client.admin.cluster.prepareClusterStats
 }

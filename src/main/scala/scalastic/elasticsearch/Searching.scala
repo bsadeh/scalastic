@@ -8,13 +8,13 @@ import scala.collection._, JavaConversions._
 import org.elasticsearch.common.geo._
 
 trait Searching 
-	extends Query 
-	with Search 
-	with SearchScroll 
-    with MoreLikeThis
-	with Multisearch 
-	with Percolate 
-	with ValidateQuery {
+  extends Query 
+  with Search 
+  with SearchScroll with ClearScroll
+  with MoreLikeThis
+  with Multisearch 
+  with Percolate 
+  with ValidateQuery {
   self: Indexer =>
 }
 
@@ -106,30 +106,45 @@ object SearchParameterTypes {
 }
 
 trait SearchScroll {
-	self: Indexer =>
-	  
+  self: Indexer =>
+
   def searchScroll(
     scrollId: String,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     scroll: Option[String] = None) = searchScroll_send(scrollId, listenerThreaded, operationThreading, scroll).actionGet
-    
+
   def searchScroll_send(
     scrollId: String,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     scroll: Option[String] = None) = searchScroll_prepare(scrollId, listenerThreaded, operationThreading, scroll).execute
-    
+
   def searchScroll_prepare(
     scrollId: String,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[SearchOperationThreading] = None,
     scroll: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareSearchScroll(scrollId)
     listenerThreaded foreach { request.listenerThreaded(_) }
     operationThreading foreach { request.setOperationThreading(_) }
     scroll foreach { request.setScroll(_) }
+    request
+  }
+}
+
+trait ClearScroll {
+  self: Indexer =>
+
+  def clearScroll(cursorIds: Iterable[String]) = clearScroll_send(cursorIds).actionGet
+
+  def clearScroll_send(cursorIds: Iterable[String]) = clearScroll_prepare(cursorIds).execute
+
+  def clearScroll_prepare(cursorIds: Iterable[String]) = {
+      /* method body */
+    val request = client.prepareClearScroll()
+    request.setScrollIds(cursorIds.toList)
     request
   }
 }
@@ -226,8 +241,10 @@ trait Search {
     source: Option[String] = None,
     statsGroups: Iterable[String] = Nil,
     timeout: Option[String] = None,
-    trackScores: Option[Boolean] = None) = {
-		  /* method body */
+    trackScores: Option[Boolean] = None,
+    highlighterQuery: Option[QueryBuilder] = None,
+    highlighterNoMatchSize: Option[Int] = None) = {
+      /* method body */
     // ... essentials
     val request = client.prepareSearch(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
@@ -256,6 +273,8 @@ trait Search {
     if (!statsGroups.isEmpty) request.setStats(statsGroups.toArray: _*)
     timeout foreach { request.setTimeout(_) }
     trackScores foreach { request.setTrackScores(_) }
+    highlighterQuery foreach { request.setHighlighterQuery(_) }
+    highlighterNoMatchSize foreach { request.setHighlighterNoMatchSize(_) }
     request
   }
 }
@@ -278,7 +297,7 @@ trait Multisearch {
 
 trait MoreLikeThis {
   self: Indexer =>
-    
+
   def moreLikeThis(
     index: String,
     `type`: String,
@@ -300,7 +319,7 @@ trait MoreLikeThis {
     searchType: Option[SearchType] = None,
     searchTypes: Iterable[String] = Nil,
     stopwords: Iterable[String] = Nil) = moreLikeThis_send(index, `type`, id, boostTerms, fields, maxDocFreq, maxQueryTerms, maxWordLen, minDocFreq, minTermFreq, minWordLen, percentTermsToMatch, from, searchIndices, searchScroll, searchSize, searchSource, searchType, searchTypes, stopwords).actionGet
-  
+
   def moreLikeThis_send(
     index: String,
     `type`: String,
@@ -322,7 +341,7 @@ trait MoreLikeThis {
     searchType: Option[SearchType] = None,
     searchTypes: Iterable[String] = Nil,
     stopwords: Iterable[String] = Nil) = moreLikeThis_prepare(index, `type`, id, boostTerms, fields, maxDocFreq, maxQueryTerms, maxWordLen, minDocFreq, minTermFreq, minWordLen, percentTermsToMatch, from, searchIndices, searchScroll, searchSize, searchSource, searchType, searchTypes, stopwords).execute
-  
+
   def moreLikeThis_prepare(
     index: String,
     `type`: String,
@@ -344,7 +363,7 @@ trait MoreLikeThis {
     searchType: Option[SearchType] = None,
     searchTypes: Iterable[String] = Nil,
     stopwords: Iterable[String] = Nil) = {
-		  /* method body */
+      /* method body */
     val request = client.prepareMoreLikeThis(index, `type`, id)
     boostTerms foreach { request.setBoostTerms(_) }
     if (!fields.isEmpty) request.setField(fields.toArray: _*)
@@ -393,7 +412,7 @@ trait Percolate {
     operationThreaded: Option[Boolean] = None,
     preferLocal: Option[Boolean] = None,
     source: Option[String] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.preparePercolate(index, `type`)
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreaded foreach { request.setOperationThreaded(_) }
@@ -429,7 +448,7 @@ trait ValidateQuery {
     explain: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
     operationThreading: Option[BroadcastOperationThreading] = None) = {
-		  /* method body */
+      /* method body */
     val request = client.admin.indices.prepareValidateQuery(indices.toArray: _*)
     request.setTypes(types.toArray: _*)
     request.setQuery(query)
