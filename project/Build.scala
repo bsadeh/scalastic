@@ -66,13 +66,13 @@ object Build extends Build {
     resolvers += Resolver.sonatypeRepo("releases"),
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "0.90.10" withSources,
+      "org.elasticsearch" % "elasticsearch" % "0.90.10",
       "com.google.code.findbugs" % "jsr305" % "1.3.9",
-      "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources,
+      "org.clapper" %% "grizzled-slf4j" % "1.0.1",
 
-      "junit" % "junit" % "4.10" % "test" withSources,
-      "org.scalatest" %% "scalatest" % "2.0" % "test" withSources,
-      "ch.qos.logback" % "logback-classic" % "1.0.2" % "test" withSources
+      "junit" % "junit" % "4.10" % "test",
+      "org.scalatest" %% "scalatest" % "2.0" % "test",
+      "ch.qos.logback" % "logback-classic" % "1.0.2" % "test"
     ),
 
     parallelExecution in Test := false
