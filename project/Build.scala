@@ -8,14 +8,14 @@ object Build extends Build {
   val basicSettings = Seq(
     organization := "org.scalastic",
     name := "scalastic",
-    version := "0.90.10",
+    version := "0.90.10.1",
     description := "a scala driver for elasticsearch",
     homepage := Some(url("https://github.com/bsadeh/scalastic")),
     licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
   )
 
   val scalaSettings = Seq(
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-unchecked", "-feature", "-deprecation")
   )
 
