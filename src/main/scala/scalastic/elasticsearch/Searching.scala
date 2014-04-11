@@ -413,9 +413,12 @@ trait Percolate {
     preferLocal: Option[Boolean] = None,
     source: Option[String] = None) = {
       /* method body */
-    val request = client.preparePercolate(index, `type`)
+    val request = client.preparePercolate
+    request.setIndices(index)
+    request.setDocumentType(`type`)
+    
     listenerThreaded foreach { request.setListenerThreaded(_) }
-    operationThreaded foreach { request.setOperationThreaded(_) }
+    operationThreaded foreach { request.setOperationThreading(_) }
     preferLocal foreach { request.setPreferLocal(_) }
     source foreach { request.setSource(_) }
     request

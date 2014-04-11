@@ -33,7 +33,7 @@ class TransportSearchFailuresTests extends MultiNodesBasedTests {
         response.getFailedShards should equal (3)
         fail("search should fail")
       } catch {
-        case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
+        case e: ElasticsearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
       }
     }
     
@@ -55,7 +55,7 @@ class TransportSearchFailuresTests extends MultiNodesBasedTests {
         response.getFailedShards should equal (3)
         fail("search should fail")
       } catch {
-        case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
+        case e: ElasticsearchException => e.unwrapCause().getClass should equal (classOf[SearchPhaseExecutionException])
       }
     }
   }

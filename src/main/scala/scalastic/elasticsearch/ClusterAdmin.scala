@@ -83,12 +83,12 @@ trait State {
     timeout: Option[String] = None) = {
       /* method body */
     val request = client.admin.cluster.prepareState
-    filterBlocks foreach { request.setFilterBlocks(_) }
-    request.setFilterIndexTemplates(filterIndexTemplates.toArray: _*)
-    request.setFilterIndices(filterIndices.toArray: _*)
-    filterMetaData foreach { request.setFilterMetaData(_) }
-    filterNodes foreach { request.setFilterNodes(_) }
-    filterRoutingTable foreach { request.setFilterRoutingTable(_) }
+    filterBlocks foreach { request.setBlocks(_) }
+    request.setIndexTemplates(filterIndexTemplates.toArray: _*)
+    request.setIndices(filterIndices.toArray: _*)
+    filterMetaData foreach { request.setMetaData(_) }
+    filterNodes foreach { request.setNodes(_) }
+    filterRoutingTable foreach { request.setRoutingTable(_) }
     local foreach { request.setLocal(_) }
     timeout foreach { request.setMasterNodeTimeout(_) }
     request

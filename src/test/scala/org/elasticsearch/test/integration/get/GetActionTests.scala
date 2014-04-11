@@ -62,7 +62,7 @@ class GetActionTests extends IndexerBasedTest {
     response.getSourceAsMap.get("field1").toString should equal ("value1_2")
     response.getSourceAsMap.get("field2").toString should equal ("value2_2")
     val deleteResponse = indexer.delete(indexName, "type1", "1")
-    deleteResponse.isNotFound should equal (false)
+    deleteResponse.isFound should equal (true)
     response = indexer.get(indexName, "type1", "1")
     response.isExists should equal (false)
   }

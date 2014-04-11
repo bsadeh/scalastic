@@ -35,13 +35,13 @@ import scalastic.elasticsearch._
       indexer.metadata.resolveIndexRouting("1", "alias10")
       fail
     } catch {
-      case e: ElasticSearchIllegalArgumentException =>
+      case e: ElasticsearchIllegalArgumentException =>
     }
     try {
       indexer.metadata.resolveIndexRouting(null, "alias0")
       fail
     } catch {
-      case ex: ElasticSearchIllegalArgumentException =>
+      case ex: ElasticsearchIllegalArgumentException =>
     }
   }
 

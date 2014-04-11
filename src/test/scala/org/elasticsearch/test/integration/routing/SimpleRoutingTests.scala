@@ -124,7 +124,7 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
       indexer("node1").index(indexName, "type1", "1", """{"field": "value1"}""", refresh = Some(true))
       fail()
     } catch {
-      case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[RoutingMissingException])
+      case e: ElasticsearchException => e.unwrapCause().getClass should equal (classOf[RoutingMissingException])
     }
     //logger.info("--> verifying get with routing, should find")
     for (i <- 0 until 5) {
@@ -157,7 +157,7 @@ class SimpleRoutingTests extends MultiNodesBasedTests {
       indexer("node1").index(indexName, "type1", "1", """{"field": "value1", "routing_field": "0"}""", routing = Some("1"), refresh = Some(true))
       fail()
     } catch {
-      case e: ElasticSearchException => e.unwrapCause().getClass should equal (classOf[MapperParsingException])
+      case e: ElasticsearchException => e.unwrapCause().getClass should equal (classOf[MapperParsingException])
     }
     //logger.info("--> verifying get with no routing, should not find anything")
     for (i <- 0 until 5) {
