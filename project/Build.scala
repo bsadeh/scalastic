@@ -66,7 +66,7 @@ object Build extends Build {
     resolvers += Resolver.sonatypeRepo("releases"),
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "0.90.10",
+      "org.elasticsearch" % "elasticsearch" % "1.1.0",
       "com.google.code.findbugs" % "jsr305" % "1.3.9",
       "org.clapper" %% "grizzled-slf4j" % "1.0.1",
 
