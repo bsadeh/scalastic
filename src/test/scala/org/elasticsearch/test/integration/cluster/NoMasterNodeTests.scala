@@ -48,7 +48,9 @@ class NoMasterNodeTests extends MultiNodesBasedTests {
       case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)
     }
     try {
-      node.client().preparePercolate(indexName, "type1").setSource("""{}""").execute.actionGet
+      node.client().preparePercolate()
+        .setIndices(indexName).setDocumentType("type1")
+      	.setSource("""{}""").execute.actionGet
       fail()
     } catch {
       case e: ClusterBlockException => e.status() should equal (RestStatus.SERVICE_UNAVAILABLE)

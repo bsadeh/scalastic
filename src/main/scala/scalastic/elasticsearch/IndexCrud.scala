@@ -501,6 +501,7 @@ trait Close {
   }
 }
 
+@deprecated(message="use the new snapshot/restore API instead", since="1.1.0")
 trait GatewaySnapshot {
   self: Indexer =>
   def gatewaySnapshot(indices: String*) = gatewaySnapshot_send(indices.toArray: _*).actionGet

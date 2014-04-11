@@ -66,7 +66,7 @@ trait Index {
     timestamp: Option[String] = None,
     ttl: Option[Long] = None,
     version: Option[Long] = None,
-    versionType: Option[VersionType] = None) = index_prepare(index, `type`, id, source, parent, consistencyLevel, contentType, create, listenerThreaded, operationThreaded, opType, percolate, refresh, replicationType, routing, timeout, timestamp, ttl, version, versionType).execute
+    versionType: Option[VersionType] = None) = index_prepare(index, `type`, id, source, parent, consistencyLevel, contentType, create, listenerThreaded, operationThreaded, opType, refresh, replicationType, routing, timeout, timestamp, ttl, version, versionType).execute
 
   def index_prepare(
     index: String,
@@ -80,7 +80,6 @@ trait Index {
     listenerThreaded: Option[Boolean] = None,
     operationThreaded: Option[Boolean] = None,
     opType: Option[IndexRequest.OpType] = None,
-    percolate: Option[String] = None,
     refresh: Option[Boolean] = None,
     replicationType: Option[ReplicationType] = None,
     routing: Option[String] = None,
@@ -99,7 +98,6 @@ trait Index {
     listenerThreaded foreach { request.setListenerThreaded(_) }
     operationThreaded foreach { request.setOperationThreaded(_) }
     opType foreach { request.setOpType(_) }
-    percolate foreach { request.setPercolate(_) }
     refresh foreach { request.setRefresh(_) }
     replicationType foreach { request.setReplicationType(_) }
     routing foreach { request.setRouting(_) }
@@ -335,7 +333,6 @@ trait Update {
       request.setScriptParams(scriptParams)
       scriptLanguage foreach { request.setScriptLang(_) }
     }
-    percolate foreach { request.setPercolate(_) }
     replicationType foreach { request.setReplicationType(_) }
     consistencyLevel foreach { request.setConsistencyLevel(_) }
     request
