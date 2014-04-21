@@ -26,11 +26,8 @@ class FullRollingRestartTests extends MultiNodesBasedTests {
     Thread.sleep(300)
     closeNode("node2")
     Thread.sleep(300)
-    var foo = indexer("node5").health_prepare().setTimeout("1m").setWaitForGreenStatus().setWaitForRelocatingShards(0).setWaitForNodes("3").execute.actionGet
+    indexer("node5").health_prepare().setTimeout("1m").setWaitForGreenStatus().setWaitForRelocatingShards(0).setWaitForNodes("3").execute.actionGet.isTimedOut should equal (false)
     Thread.sleep(300)
-    withClue(foo.toString) {
-    	foo.isTimedOut should equal (false)
-    }
     indexer("node5").refresh()
 //fixme
 ////    println("first time")
