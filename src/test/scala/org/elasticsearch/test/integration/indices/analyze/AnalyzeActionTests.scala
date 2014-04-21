@@ -17,7 +17,7 @@ class AnalyzeActionTests extends IndexerBasedTest {
   }
 
   test("analyzeWithNoIndex") {
-    indexer.deleteIndex()
+    indexer.deleteIndex(Set("_all"))
     var analyzeResponse = indexer.analyze("THIS IS A TEST", analyzer = Some("simple"))
     analyzeResponse.getTokens.size should equal (4)
     analyzeResponse = indexer.analyze("THIS IS A TEST", tokenizer = Some("keyword"), tokenFilters = Some("lowercase"))

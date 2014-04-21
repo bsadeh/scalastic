@@ -66,9 +66,9 @@ trait CreateIndex {
 
 trait DeleteIndex {
   self: Indexer =>
-  def deleteIndex(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_send(indices, timeout).actionGet
-  def deleteIndex_send(indices: Iterable[String] = Nil, timeout: Option[String] = None) = deleteIndex_prepare(indices, timeout).execute
-  def deleteIndex_prepare(indices: Iterable[String] = Nil, timeout: Option[String] = None) = {
+  def deleteIndex(indices: Iterable[String], timeout: Option[String] = None) = deleteIndex_send(indices, timeout).actionGet
+  def deleteIndex_send(indices: Iterable[String], timeout: Option[String] = None) = deleteIndex_prepare(indices, timeout).execute
+  def deleteIndex_prepare(indices: Iterable[String], timeout: Option[String] = None) = {
     val request = client.admin.indices.prepareDelete(indices.toArray: _*)
     timeout foreach { request.setTimeout(_) }
     request
