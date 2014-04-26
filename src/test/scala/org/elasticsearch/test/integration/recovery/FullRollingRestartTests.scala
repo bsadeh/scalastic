@@ -20,10 +20,14 @@ class FullRollingRestartTests extends MultiNodesBasedTests {
     for (i <- 0 until 10) {
       indexer("node1").count().getCount should equal (2000)
     }
+    Thread.sleep(300)
     closeNode("node1")
     indexer("node5").health_prepare().setTimeout("1m").setWaitForGreenStatus().setWaitForRelocatingShards(0).setWaitForNodes("4").execute.actionGet.isTimedOut should equal (false)
+    Thread.sleep(300)
     closeNode("node2")
+    Thread.sleep(300)
     indexer("node5").health_prepare().setTimeout("1m").setWaitForGreenStatus().setWaitForRelocatingShards(0).setWaitForNodes("3").execute.actionGet.isTimedOut should equal (false)
+    Thread.sleep(300)
     indexer("node5").refresh()
 //fixme
 ////    println("first time")

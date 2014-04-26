@@ -19,6 +19,7 @@ import scalastic.elasticsearch._
     indexer("node2").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA) should contain(GatewayService.STATE_NOT_RECOVERED_BLOCK)
     //logger.info("--> start node (3)")
     startNode("node3", settingsBuilder.put("gateway.recover_after_nodes", 3))
+    Thread.sleep(300) // wait a sec for recovery!
     indexer("node1").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA).isEmpty should equal (true)
     indexer("node2").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA).isEmpty should equal (true)
     indexer("node3").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA).isEmpty should equal (true)
@@ -85,6 +86,7 @@ import scalastic.elasticsearch._
       .put("gateway.recover_after_data_nodes", 2)
       .put("node.data", true)
       .put("node.master", false))
+    Thread.sleep(300)
     indexer("master1").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA).isEmpty should equal (true)
     indexer("master2").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA).isEmpty should equal (true)
     indexer("data1").state(local = Some(true)).getState.blocks().global(ClusterBlockLevel.METADATA).isEmpty should equal (true)
