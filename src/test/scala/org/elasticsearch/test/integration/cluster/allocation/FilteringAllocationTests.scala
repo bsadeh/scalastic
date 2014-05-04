@@ -18,7 +18,7 @@ class FilteringAllocationTests extends MultiNodesBasedTests {
       indexer("node1").index(indexName, "type", i.toString, """{"field": "value%s"}""".format(i))
     }
     indexer("node1").refresh()
-    indexer("node1").count().getCount should equal (100)
+    indexer("node1").count(Set("_all")).getCount should equal (100)
     //logger.info("--> decommission the second node")
     indexer("node1").client.admin().cluster().prepareUpdateSettings()
       .setTransientSettings(settingsBuilder.put("cluster.routing.allocation.exclude._name", "node2"))
@@ -37,6 +37,6 @@ class FilteringAllocationTests extends MultiNodesBasedTests {
       clusterState.nodes().get(shardRouting.currentNodeId()).name() should equal ("node1")
     }
     indexer("node1").refresh()
-    indexer("node1").count().getCount should equal (100)
+    indexer("node1").count(Set("_all")).getCount should equal (100)
   }
 }

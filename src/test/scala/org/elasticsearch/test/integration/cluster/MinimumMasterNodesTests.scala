@@ -63,7 +63,7 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     indexer("node1").refresh()
     //logger.info("--> verify we the data back")
     for (i <- 0 until 10) {
-      indexer("node1").count().getCount should equal (100)
+      indexer("node1").count(Set("_all")).getCount should equal (100)
     }
     var masterNodeName = state.nodes().masterNode().name()
     var nonMasterNodeName = if (masterNodeName == "node1") "node2" else "node1"
@@ -88,7 +88,7 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     clusterHealth.getStatus should equal (ClusterHealthStatus.GREEN)
     //logger.info("--> verify we the data back")
     for (i <- 0 until 10) {
-      indexer("node1").count().getCount should equal (100)
+      indexer("node1").count(Set("_all")).getCount should equal (100)
     }
     masterNodeName = state.nodes().masterNode().name()
     nonMasterNodeName = if (masterNodeName == "node1") "node2" else "node1"
@@ -114,7 +114,7 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     clusterHealth.getStatus should equal (ClusterHealthStatus.GREEN)
     //logger.info("--> verify we the data back")
     for (i <- 0 until 10) {
-      indexer("node1").count().getCount should equal (100)
+      indexer("node1").count(Set("_all")).getCount should equal (100)
     }
   }
 
@@ -154,7 +154,7 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     for (i <- 0 until 100) indexer("node1").index(indexName, "type1", i.toString, """{"field": "value"}""")
     indexer("node1").refresh()
     //logger.info("--> verify we the data back")
-    for (i <- 0 until 10) indexer("node1").count().getCount should equal (100)
+    for (i <- 0 until 10) indexer("node1").count(Set("_all")).getCount should equal (100)
 
     var nodesToShutdown = new mutable.HashSet[String]
     nodesToShutdown.add(nonMasterNodes.removeLast())
@@ -178,6 +178,6 @@ class MinimumMasterNodesTests extends AbstractZenNodesTests {
     state = indexer("node1").state().getState
     state.nodes().size should equal (4)
     //logger.info("--> verify we the data back")
-    for (i <- 0 until 10) indexer("node1").count().getCount should equal (100)
+    for (i <- 0 until 10) indexer("node1").count(Set("_all")).getCount should equal (100)
   }
 }

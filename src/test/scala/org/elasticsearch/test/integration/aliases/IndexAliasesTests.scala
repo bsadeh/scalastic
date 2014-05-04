@@ -359,8 +359,10 @@ class IndexAliasesTests extends MultiNodesBasedTests {
   }
 
   private def assertHits(hits: SearchHits, ids: String*) {
-    hits.totalHits() should equal (ids.length)
-    (hits.getHits map (_.id) toSet).intersect(ids.toSet) should equal (ids.toSet)
+    withClue("hits: ("+hits.getHits().mkString(",")+"), ids: ("+ids.mkString(",")+")") {
+      hits.totalHits() should equal (ids.length)
+      (hits.getHits map (_.id) toSet).intersect(ids.toSet) should equal (ids.toSet)
+    }
   }
 
   private def source(id: String, nameValue: String) = """{"type1": {"id": "%s", "name": "%s"}}""".format(id, nameValue)

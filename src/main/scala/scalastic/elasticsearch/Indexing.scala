@@ -150,7 +150,7 @@ trait Count {
   self: Indexer =>
 
   def count(
-    indices: Iterable[String] = Nil,
+    indices: Iterable[String],
     types: Iterable[String] = Nil,
     query: QueryBuilder = matchAllQuery,
     listenerThreaded: Option[Boolean] = None,
@@ -159,7 +159,7 @@ trait Count {
     routing: Option[String] = None) = count_send(indices, types, query, listenerThreaded, minScore, operationThreading, routing).actionGet
 
   def count_send(
-    indices: Iterable[String] = Nil,
+    indices: Iterable[String],
     types: Iterable[String] = Nil,
     query: QueryBuilder = matchAllQuery,
     listenerThreaded: Option[Boolean] = None,
@@ -168,7 +168,7 @@ trait Count {
     routing: Option[String] = None) = count_prepare(indices, types, query, listenerThreaded, minScore, operationThreading, routing).execute
 
   def count_prepare(
-    indices: Iterable[String] = Nil,
+    indices: Iterable[String],
     types: Iterable[String] = Nil,
     query: QueryBuilder = matchAllQuery,
     listenerThreaded: Option[Boolean] = None,

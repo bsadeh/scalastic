@@ -72,11 +72,11 @@ class SearchScrollTests extends IndexerBasedTest {
     indexer.createIndex(indexName, settings = Map("number_of_shards" -> "5"))
     for (i <- 0 until 500) indexer.index(indexName, "tweet", i.toString, """{"user": "kimchy", "postDate": %s, "message": "test"}""".format(i))
     indexer.refresh()
-    indexer.count().getCount should equal (500)
-    indexer.count(query = termQuery("message", "test")).getCount should equal (500)
-    indexer.count(query = termQuery("message", "test")).getCount should equal (500)
-    indexer.count(query = termQuery("message", "update")).getCount should equal (0)
-    indexer.count(query = termQuery("message", "update")).getCount should equal (0)
+    indexer.count(Set("_all")).getCount should equal (500)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "test")).getCount should equal (500)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "test")).getCount should equal (500)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "update")).getCount should equal (0)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "update")).getCount should equal (0)
     var response = indexer.search(query = queryString("user:kimchy"), size = Some(35), scroll = Some("2m"), sortings = Seq(FieldSort("postDate", order = SortOrder.ASC)))
     do {
       for (searchHit <- response.getHits.hits) {
@@ -86,10 +86,10 @@ class SearchScrollTests extends IndexerBasedTest {
       response = indexer.searchScroll(response.getScrollId, scroll = Some("2m"))
     } while (response.getHits.hits.length > 0)
     indexer.refresh()
-    indexer.count().getCount should equal (500)
-    indexer.count(query = termQuery("message", "test")).getCount should equal (0)
-    indexer.count(query = termQuery("message", "test")).getCount should equal (0)
-    indexer.count(query = termQuery("message", "update")).getCount should equal (500)
-    indexer.count(query = termQuery("message", "update")).getCount should equal (500)
+    indexer.count(Set("_all")).getCount should equal (500)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "test")).getCount should equal (0)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "test")).getCount should equal (0)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "update")).getCount should equal (500)
+    indexer.count(indices = Set("_all"), query = termQuery("message", "update")).getCount should equal (500)
   }
 }

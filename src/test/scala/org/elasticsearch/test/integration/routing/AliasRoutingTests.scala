@@ -110,7 +110,7 @@ class AliasRoutingTests extends MultiNodesBasedTests {
     //logger.info("--> search with no routing, should fine two")
     for (i <- 0 until 5) {
       indexer("node1").search().getHits.totalHits() should equal (2)
-      indexer("node1").count().getCount should equal (2)
+      indexer("node1").count(Set("_all")).getCount should equal (2)
     }
     //logger.info("--> search with 0 routing, should find one")
     for (i <- 0 until 5) {

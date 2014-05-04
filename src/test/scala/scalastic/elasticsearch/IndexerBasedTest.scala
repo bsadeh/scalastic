@@ -14,7 +14,7 @@ abstract class IndexerBasedTest extends FunSuiteLike with Matchers
 
   override def beforeEach() {
 	  indexer_beforeEach
-	  indexer.count().getCount should equal (0)
+	  indexer.count(Set("_all")).getCount should equal (0)
 	  if (shouldCreateDefaultIndex) createDefaultIndex()
   }
   
