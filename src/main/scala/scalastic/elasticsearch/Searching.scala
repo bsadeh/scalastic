@@ -393,30 +393,36 @@ trait Percolate {
     index: String,
     `type`: String,
     listenerThreaded: Option[Boolean] = None,
-    operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None,
+    operationThreaded: Option[String] = None,
+    preferLocal: Option[String] = None,
     source: Option[String] = None) = percolate_send(index, `type`, listenerThreaded, operationThreaded, preferLocal, source).actionGet
 
   def percolate_send(
     index: String,
     `type`: String,
     listenerThreaded: Option[Boolean] = None,
-    operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None,
+    operationThreaded: Option[String] = None,
+    preferLocal: Option[String] = None,
     source: Option[String] = None) = percolate_prepare(index, `type`, listenerThreaded, operationThreaded, preferLocal, source).execute
 
   def percolate_prepare(
     index: String,
     `type`: String,
     listenerThreaded: Option[Boolean] = None,
-    operationThreaded: Option[Boolean] = None,
-    preferLocal: Option[Boolean] = None,
+    operationThreaded: Option[String] = None,
+    preferLocal: Option[String] = None,
     source: Option[String] = None) = {
       /* method body */
-    val request = client.preparePercolate(index, `type`)
+    val request = client.preparePercolate
+    request.setIndices(index)
+    request.setDocumentType(`type`)
+
     listenerThreaded foreach { request.setListenerThreaded(_) }
-    operationThreaded foreach { request.setOperationThreaded(_) }
-    preferLocal foreach { request.setPreferLocal(_) }
+    operationThreaded foreach { request.setOperationThreading(_) }
+    
+    // local, primary, or custom value (changed from setPreferLocal in 1.0+)
+    preferLocal foreach { request.setPreference(_) }
+    
     source foreach { request.setSource(_) }
     request
   }
@@ -431,7 +437,7 @@ trait ValidateQuery {
     query: QueryBuilder = matchAllQuery,
     explain: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
+    operationThreading: Option[String] = None) = validateQuery_send(indices, types, query, explain, listenerThreaded, operationThreading).actionGet
 
   def validateQuery_send(
     indices: Iterable[String] = Nil,
@@ -439,7 +445,7 @@ trait ValidateQuery {
     query: QueryBuilder = matchAllQuery,
     explain: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
+    operationThreading: Option[String] = None) = validateQuery_prepare(indices, types, query, explain, listenerThreaded, operationThreading).execute
 
   def validateQuery_prepare(
     indices: Iterable[String] = Nil,
@@ -447,7 +453,7 @@ trait ValidateQuery {
     query: QueryBuilder = matchAllQuery,
     explain: Option[Boolean] = None,
     listenerThreaded: Option[Boolean] = None,
-    operationThreading: Option[BroadcastOperationThreading] = None) = {
+    operationThreading: Option[String] = None) = {
       /* method body */
     val request = client.admin.indices.prepareValidateQuery(indices.toArray: _*)
     request.setTypes(types.toArray: _*)

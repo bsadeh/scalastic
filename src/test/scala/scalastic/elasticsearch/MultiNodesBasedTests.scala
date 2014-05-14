@@ -21,7 +21,7 @@ abstract class MultiNodesBasedTests extends FunSuiteLike with Matchers with Befo
   def indexer(id: String): Indexer = indexers.getOrElse(id, null)
   def node(id: String): Node = indexer(id).asInstanceOf[NodeIndexer].node
 
-  override def beforeEach = indexers.values foreach (_.deleteIndex())
+  override def beforeEach = indexers.values foreach (_.deleteIndex(Set("_all")))
 
   override def afterAll = closeAllNodes
   def closeAllNodes() = {
